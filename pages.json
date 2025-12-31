@@ -39,6 +39,12 @@
 		{
 			"path": "pages/tabbar-3-detial/tabbar-3-qa/tabbar-3-qa",
 			"style": {}
+		},
+		{
+			"path": "pages/login/aa",
+			"style": {
+				"navigationBarTitleText": "qwqew"
+			}
 		}
 	],
 	"easycom": {

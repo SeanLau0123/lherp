@@ -10,6 +10,10 @@ App.mpType = 'app'
 const app = new Vue({
 	...App
 })
+
+// 引入请求封装，将app参数传递到配置中
+require('@/api/request.js')(app)
+
 app.$mount()
 // #endif
 

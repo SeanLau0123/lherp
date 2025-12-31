@@ -96,6 +96,7 @@
     "uni-app-x": ""
   },
   "dependencies": {
+    "md5": "^2.3.0",
     "uview-ui": "^2.0.38"
   }
 }
