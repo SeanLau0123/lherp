@@ -135,7 +135,7 @@
 					if (res.msgTip == 'user can login') {
 						//this.getPermissionList()
 						uni.$u.toast('登录成功!')
-						///uni.$u.route('/pages/login/aa');
+						uni.$u.route('/pages/index/index');
 					} else if (res.msgTip == 'user is not exist') {
 						err.message = '用户不存在';
 						uni.$u.toast(err.message);
