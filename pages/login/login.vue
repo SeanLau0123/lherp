@@ -1,5 +1,7 @@
 <template>
 	<view>
+		<u-notify ref="uNotify" message="Hi uView"></u-notify>
+		<u-toast ref="uToast"></u-toast>
 		<view class="image-container">
 			<u--image :showLoading="true" duration="450" :src="src" width="200rpx" height="200rpx"></u--image>
 		</view>
@@ -30,7 +32,7 @@
 			<u-col span="12" style="margin-top: 20rpx;">
 				<view style="display: flex; justify-content: center; width: 100%;">
 					<u-button text="登录" type="primary" loadingText="登录中" @click="onLogin"
-					style="width:500rpx; margin: 0;"></u-button>
+						style="width:500rpx; margin: 0;"></u-button>
 				</view>
 			</u-col>
 		</u-row>
@@ -39,18 +41,10 @@
 
 <script>
 	import md5 from 'md5';
-	import {
-		ACCESS_TOKEN,
-		USER_NAME,
-		USER_INFO
-	} from "@/common/util/constants";
-	import {
-		getRandomImage,
-		mLogin
-	} from '@/api/api.js';
-	import {
-		warn
-	} from "vue";
+	import {ACCESS_TOKEN,USER_NAME,	USER_INFO} from "@/common/util/constants";
+	import {getRandomImage,	mLogin} from '@/api/api.js';
+	import {warn} from "vue";
+	import {mapActions} from 'vuex';
 
 	export default {
 		data() {
@@ -60,13 +54,26 @@
 				code: '',
 				src: "https://linghanshop.cn/uploads/attach/2025/11/20251128/c9840ae740abc19c00b3bda853b1abe8.png",
 				loginName: 'jsh',
-				password: '123456'
+				password: '123456',
+				errtext: ''
 			}
 		},
 		onLoad() {
 			this.onRandomImage();
 		},
 		methods: {
+			...mapActions(['mLogin']), // 映射store的action
+      showToast(params) {
+        this.$refs.uToast.show({
+          ...params,
+          complete() {
+            params.url &&
+              uni.navigateTo({
+                url: params.url,
+              });
+          },
+        });
+      },
 			//获取密码加密规则
 			getEncrypte() {
 				var encryptedString = Vue.ls.get(ENCRYPTED_STRING);
@@ -81,8 +88,8 @@
 			//获取图形验证码
 			onRandomImage() {
 				getRandomImage().then((response) => {
-					this.base64Data = response.base64;
-					this.uuid = response.uuid;
+					this.base64Data = response.data.base64;
+					this.uuid = response.data.uuid;
 				}).catch(() => {})
 			},
 			//获取用户权限列表
@@ -92,23 +99,50 @@
 					pNumber: 0,
 					userId: userInfo.id
 				};
-				this.$http.post("/function/findMenuByPNumber", params).then(res => {
-					const menuData = res.data;
-					uni.setStorageSync('permissionList', menuData);
-				})
+				// this.$http.post("/function/findMenuByPNumber", params).then(res => {
+				// 	const menuData = res.data;
+				// 	uni.setStorageSync('permissionList', menuData);
+				// })
 			},
 			// 登录方法
 			onLogin: function() {
 				if (!this.loginName || this.loginName.length == 0) {
-					uni.$u.toast('请填写账号');
+					this.$refs.uNotify.show({
+							top: 12,
+							type: 'error',
+							color: '#ffffff',
+							bgColor: '',
+							message: '请填写账户',
+							duration: 1000,
+							fontSize: 15,
+							safeAreaInsetTop: false
+						})
 					return;
 				}
 				if (!this.password || this.password.length == 0) {
-					uni.$u.toast('请填写密码');
+					this.$refs.uNotify.show({
+							top: 12,
+							type: 'error',
+							color: '#ffffff',
+							bgColor: '',
+							message: '请填写密码',
+							duration: 1000,
+							fontSize: 15,
+							safeAreaInsetTop: false
+						})
 					return;
 				}
 				if (!this.code || this.code.length == 0) {
-					uni.$u.toast('请填写验证码');
+					this.$refs.uNotify.show({
+							top: 12,
+							type: 'error',
+							color: '#ffffff',
+							bgColor: '',
+							message: '请填写验证码',
+							duration: 1000,
+							fontSize: 15,
+							safeAreaInsetTop: false
+						})
 					return;
 				}
 				let loginParams = {
@@ -118,44 +152,69 @@
 					uuid: this.uuid
 				}
 				this.loading = true;
-				mLogin(loginParams).then((res) => {
+
+				// 优先尝试使用store，如果不可用则直接调用API
+				const doLogin = (params) => {
+					if (this.$store && this.$store.dispatch) {
+						return this.$store.dispatch('mLogin', params)
+					} else {
+						// 备用方案：直接调用API
+						return mLogin(params)
+					}
+				};
+				doLogin(loginParams).then((res) => {
 					this.loading = false;
+					console.log('登录响应:', res)
 					this.departConfirm(res, this.loginName)
-				}).catch((res) => {
-					let msg = res.data || "请求出现错误，请稍后再试"
+				}).catch((error) => {
 					this.loading = false;
-					uni.$u.toast(msg);
+					this.$refs.uNotify.show({
+							top: 12,
+							type: 'error',
+							color: '#ffffff',
+							bgColor: '',
+							message: error.message,
+							duration: 3000,
+							fontSize: 15,
+							safeAreaInsetTop: false
+						})
 				}).finally(() => {
 					this.loading = false;
+					this.onRandomImage();
 				})
 			},
 			departConfirm(res, loginName) {
-				if (res.message != "") {
+				console.log('登录响应数据:', res) // 添加调试日志
+				// 检查是否有错误消息或者成功登录
+				if (res.data.msgTip) {
 					let err = {};
-					if (res.msgTip == 'user can login') {
-						//this.getPermissionList()
+					if (res.data.msgTip == 'user can login') {
+						this.getPermissionList()
 						uni.$u.toast('登录成功!')
-						uni.$u.route('/pages/index/index');
-					} else if (res.msgTip == 'user is not exist') {
+						// 使用switchTab跳转到tabBar页面
+						uni.switchTab({
+							url: '/pages/index/index'
+						});
+					} else if (res.data.msgTip == 'user is not exist') {
 						err.message = '用户不存在';
 						uni.$u.toast(err.message);
-					} else if (res.msgTip == 'user password error') {
+					} else if (res.data.msgTip == 'user password error') {
 						err.message = '用户密码不正确';
 						uni.$u.toast(err.message, warn);
-					} else if (res.msgTip == 'user is black') {
+					} else if (res.data.msgTip == 'user is black') {
 						err.message = '用户被禁用';
 						uni.$u.toast(err.message);
-					} else if (res.msgTip == 'tenant is black') {
+					} else if (res.data.msgTip == 'tenant is black') {
 						if (loginName === 'jsh') {
 							err.message = 'jsh用户已停用，请注册租户进行体验！';
 						} else {
 							err.message = '用户所属的租户被禁用';
 						}
 						uni.$u.toast(err.message);
-					} else if (res.msgTip == 'tenant is expire') {
+					} else if (res.data.msgTip == 'tenant is expire') {
 						err.message = '试用期已结束，请联系客服续费';
 						uni.$u.toast(err.message);
-					} else if (res.msgTip == 'access service error') {
+					} else if (res.data.msgTip == 'access service error') {
 						err.message = '查询服务异常';
 						uni.$u.toast(err.message);
 					} else if (res.message == "验证码已失效") {
@@ -166,10 +225,8 @@
 						uni.$u.toast(err.message);
 					}
 				} else {
-					this.loading = false;
-					uni.$u.toast(msg);
+					uni.$u.toast('登录响应异常');
 				}
-				this.onRandomImage()
 				this.code = '';
 			},
 		}

@@ -1,10 +1,10 @@
 <template>
 	<view class="content">
-		<view class="text-area">
-			<text class="title">{{title}}</text>
-		</view>
 		<view>
 			<tab-bar :tabIndex="4"></tab-bar>
+		</view>
+		<view>
+			<u-navbar title="报表"></u-navbar>
 		</view>
 	</view>
 </template>
@@ -18,9 +18,7 @@
 			}
 		},
 		data() {
-			return {
-				title: '报表'
-			}
+			return {src: "https://static.jeecg.com/upload/test/blue_1595818030310.png"}
 		}
 	}
 </script>
@@ -31,15 +29,5 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-	}
-
-	.text-area {
-		display: flex;
-		justify-content: center;
-	}
-
-	.title {
-		font-size: 64rpx;
-		color: #8f8f94;
 	}
 </style>
