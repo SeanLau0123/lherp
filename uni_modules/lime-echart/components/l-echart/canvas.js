@@ -1,3 +1,5 @@
+import {getDeviceInfo} from './utils';
+
 const cacheChart = {}
 const fontSizeReg = /([\d\.]+)px/;
 class EventEmit {
@@ -124,7 +126,9 @@ export class Canvas {
 		this.tagName = 'canvas'
 		this.canvasNode = canvasNode;
 		this.com = com;
-		if (!isNew) {this._initStyle(ctx)}
+		if (!isNew) {
+			this._initStyle(ctx)
+		}
 		this._initEvent();
 		this._ee = new EventEmit()
 	}
@@ -133,19 +137,24 @@ export class Canvas {
 			return this.ctx;
 		}
 	}
+	setAttribute(key, value) {
+		if(key === 'aria-label') {
+			this.com['ariaLabel'] = value
+		}
+	}
 	setChart(chart) {
 		this.chart = chart;
 	}
 	createOffscreenCanvas(param){
 		if(!this.children) {
-			this.com.isOffscreenCanvas = true
-			this.com.offscreenWidth = param.width||300
-			this.com.offscreenHeight = param.height||300
-			const com = this.com
-			const canvasId = this.com.offscreenCanvasId
-			const context = uni.createCanvasContext(canvasId, this.com)
-			this._initStyle(context)
-			this.children = new OffscreenCanvas(context, com, canvasId)
+			// this.com.isOffscreenCanvas = true
+			// this.com.offscreenWidth = param.width||300
+			// this.com.offscreenHeight = param.height||300
+			// const com = this.com
+			// const canvasId = this.com.offscreenCanvasId
+			// const context = uni.createCanvasContext(canvasId, this.com)
+			// this._initStyle(context)
+			// this.children = new OffscreenCanvas(context, com, canvasId)
 		} 
 		return this.children
 	}
@@ -171,13 +180,13 @@ export class Canvas {
 		this._ee.off(type, listener)
 	}
 	_initCanvas(zrender, ctx) {
-		zrender.util.getContext = function() {
-			return ctx;
-		};
-		zrender.util.$override('measureText', function(text, font) {
-			ctx.font = font || '12px sans-serif';
-			return ctx.measureText(text, font);
-		});
+		// zrender.util.getContext = function() {
+		// 	return ctx;
+		// };
+		// zrender.util.$override('measureText', function(text, font) {
+		// 	ctx.font = font || '12px sans-serif';
+		// 	return ctx.measureText(text, font);
+		// });
 	}
 	_initStyle(ctx, child) {
 		const styles = [
@@ -194,17 +203,22 @@ export class Canvas {
 			'lineJoin',
 			'lineDash',
 			'miterLimit',
-			'font'
+			// #ifdef H5 || APP
+			'font',
+			// #endif
 		];
 		const colorReg = /#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])\b/g;
 		styles.forEach(style => {
 			Object.defineProperty(ctx, style, {
 				set: value => {
+					// #ifdef H5 || APP
 					if (style === 'font' && fontSizeReg.test(value)) {
 						const match = fontSizeReg.exec(value);
 						ctx.setFontSize(match[1]);
 						return;
 					}
+					// #endif
+					
 					if (style === 'opacity') {
 						ctx.setGlobalAlpha(value)
 						return;
@@ -246,8 +260,10 @@ export class Canvas {
 				ctx.fillText(...a)
 			}
 		}
-		// 钉钉不支持 
-		if (!ctx.measureText) {
+		
+		// 钉钉不支持 , 鸿蒙是异步
+		if (!ctx.measureText || getDeviceInfo().osName == 'harmonyos') {
+			ctx._measureText = ctx.measureText
 			const strLen = (str) => {
 				let len = 0;
 				for (let i = 0; i < str.length; i++) {
@@ -260,13 +276,16 @@ export class Canvas {
 				return len;
 			}
 			ctx.measureText = (text, font) => {
-				let fontSize = 12;
+				let fontSize = ctx?.state?.fontSize || 12;
 				if (font) {
 					fontSize = parseInt(font.match(/([\d\.]+)px/)[1])
 				}
 				fontSize /= 2;
+				let isBold = fontSize >= 16;
+				const widthFactor = isBold ? 1.3 : 1;
+				// ctx._measureText(text, (res) => {})
 				return {
-					width: strLen(text) * fontSize
+					width: strLen(text) * fontSize * widthFactor
 				};
 			}
 		}
@@ -323,16 +342,19 @@ export class Canvas {
 	}
 }
 
-export function dispatch(name, {x,y}) {
+export function dispatch(name, {x,y, wheelDelta}) {
 	this.dispatch(name, {
 		zrX: x,
 		zrY: y,
+		zrDelta: wheelDelta,
 		preventDefault: () => {},
 		stopPropagation: () =>{}
 	});
 }
 export function setCanvasCreator(echarts, {canvas, node}) {
-	// echarts.setCanvasCreator(() => canvas);
+	if(echarts && !echarts.registerPreprocessor) {
+		return console.warn('echarts 版本不对或未传入echarts，vue3请使用esm格式')
+	}
 	echarts.registerPreprocessor(option => {
 		if (option && option.series) {
 			if (option.series.length > 0) {
@@ -364,8 +386,14 @@ export function setCanvasCreator(echarts, {canvas, node}) {
 		echarts.setPlatformAPI({
 			loadImage: canvas.setChart ? loadImage : null,
 			createCanvas(){
-				return canvas
+				const key = 'createOffscreenCanvas'
+				return uni.canIUse(key) && uni[key] ? uni[key]({type: '2d'}) : canvas
 			}
 		})
+	} else if(echarts.setCanvasCreator) {
+		echarts.setCanvasCreator(() => {
+		    return canvas;
+		});
 	}
+	
 }

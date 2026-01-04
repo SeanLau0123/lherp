@@ -12,6 +12,9 @@ try {
   store = null
 }
 
+import VueCompositionAPI from '@vue/composition-api'
+Vue.use(VueCompositionAPI)
+
 import uView from "uview-ui";
 Vue.use(uView);
 Vue.config.productionTip = false

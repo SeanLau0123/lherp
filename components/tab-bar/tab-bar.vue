@@ -20,13 +20,11 @@
 		},
 		data() {
 			return {
-				title: '首页',
 				tabList: [{
 						text: '首页',
 						name: 0,
 						icon: 'home',
-						badge: 9559,
-						badgeStyle:"right:20px;",
+						badgeStyle:"right:150px;",
 						pagePath: "/pages/index/index"
 					},
 					{

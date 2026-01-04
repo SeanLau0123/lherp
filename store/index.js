@@ -50,7 +50,7 @@ const store = new Vuex.Store({
 						uni.setStorageSync('roleType', result.roleType);
 						resolve(response)
 					} else {
-						reject(new Error(response.data.message || '登录失败'));
+						resolve(response)
 					}
 				}).catch(error => {
 					console.log("Store登录错误:", error)
