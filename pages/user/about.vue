@@ -1,20 +1,18 @@
 <template>
 	<view>
-		<cu-custom :bgColor="NavBarColor" :isBack="true">
-			<block slot="backText">返回</block>
-			<block slot="content">关于</block>
-		</cu-custom>
+		<view>
+			<u-navbar :autoBack="true" :safeArea="true" :placeholder="true" :title="title" class="topNavbar"></u-navbar>
+		</view>
 		<view class="content">
 			<image class="zai-logo" src="/static/erplogo.png"></image>
-			<view class="padding flex flex-direction  text-center">
+			<view class="padding flex flex-direction text-center">
 				当前版本:{{version}}
 			</view>
 			<view class="text-area" @click="toUpdate">
-				<text class="title">{{title}}</text>
+				<text class="title">检查更新</text>
 			</view>
 		</view>
 	</view>
-
 </template>
 
 <script>
@@ -22,7 +20,7 @@
 	export default {
 		data() {
 			return {
-				title: '点我更新',
+				title: '关于我们',
 				version: ''
 			}
 		},
@@ -42,8 +40,8 @@
 
 <style>
 	.zai-logo {
-		width: 200upx;
-		height: 150upx;
+		width: 200rpx;
+		height: 200rpx;
 	}
 
 	.text-center {
@@ -55,20 +53,6 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		justify-content: center;
-	}
-
-	.logo {
-		height: 200rpx;
-		width: 200rpx;
-		margin-top: 200rpx;
-		margin-left: auto;
-		margin-right: auto;
-		margin-bottom: 50rpx;
-	}
-
-	.text-area {
-		display: flex;
 		justify-content: center;
 	}
 

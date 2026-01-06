@@ -1,44 +1,47 @@
 <template>
-	<view class="content">
-		<view class="home">
-			<u-navbar title="首页"></u-navbar>
+	<view class="page-container">
+		<view class="custom-navbar-wrap">
+			<u-navbar :placeholder="true" :title="title" bgColor="#0b3d91" leftIconColor="white" titleStyle ="color:white;"></u-navbar>
 		</view>
-		<view>
-			<tab-bar :tabIndex="0"></tab-bar>
-		</view>
-		<scroll-view style="width: 100%; height: 100%;margin-inline-start: 0,0,50px,0;">
-			<!-- 轮播 -->
-			<u-swiper :list="swiperList" indicator indicatorMode="line" radius=0 circular interval="5000"
-				duration="500"></u-swiper>
-			<!-- 常用服务 -->
-			<view class="cu-bar bg-white solid-bottom">
-				<view class="action">
-					<u--text prefixIcon="heart-fill" iconStyle="font-size: 16px" text="常用服务"></u--text>
-				</view>			
+			<scroll-view scroll-y="true">
+				<!-- 轮播 -->
+				<u-swiper :list="swiperList" indicator indicatorMode="line" radius=0 circular interval="5000"
+					duration="500"></u-swiper>
+				<!-- 常用服务 -->
+				<view class="cu-bar bg-white solid-bottom">
+					<view class="action">
+						<u--text prefixIcon="heart-fill" iconStyle="font-size: 16px" text="常用服务"></u--text>
+					</view>
 				</view>
-			<u-grid :border="true" col="3">
-				<u-grid-item :customStyle="{height:160+'rpx'}" v-for="(listItem,listIndex) in list" :key="listIndex">
-					<text class="grid-text">{{listItem.title}}</text>
-					<text class="grid-text">¥{{listItem.value.toFixed(2)}}</text>
-				</u-grid-item>
-			</u-grid>
-			<u-line></u-line>
+				<u-grid :border="true" col="3">
+					<u-grid-item :customStyle="{ height: 160 + 'rpx' }" v-for="(listItem, listIndex) in list"
+						:key="listIndex">
+						<text class="grid-text">{{ listItem.title }}</text>
+						<text class="grid-text">¥{{ listItem.value.toFixed(2) }}</text>
+					</u-grid-item>
+				</u-grid>
+				<u-line></u-line>
 
-			<!-- 今日统计 -->
-			<!--将三个图表合并为一个更紧凑的展示 -->
-			<view style="height: 200px;">
-				<l-echart ref="chart"></l-echart>
-			</view>
-			<view style="height: 200px;">
-				<l-echart ref="chart2"></l-echart>
-			</view>
-			<view style="height: 200px;">
-				<l-echart ref="chart3"></l-echart>
-			</view>
-		</scroll-view>
-		<view style="width: 100%; height: 50px;"></view>
+				<!-- 今日统计 -->
+				<!--将三个图表合并为一个更紧凑的展示 -->
+				<view style="height: 620rpx; margin: 0rpx 30rpx 0rpx 30rpx;">
+					<view style="height: 200px;">
+						<l-echart ref="chart"></l-echart>
+					</view>
+					<u-line margin="10px 0 0 0"></u-line>
+					<view style="height: 200px;">
+						<l-echart ref="chart2"></l-echart>
+					</view>
+					<u-line margin="10px 0 0 0"></u-line>
+					<view style="height: 200px;">
+						<l-echart ref="chart3"></l-echart>
+					</view>
+				</view>
+			</scroll-view>
+		<view style="width: 100%;">
+			<tab-bar :tabIndex="1"></tab-bar>
+		</view>
 	</view>
-
 </template>
 <script>
 	import {
@@ -93,15 +96,9 @@
 		CanvasRenderer
 	]);
 	export default {
-		name: 'tabbar',
-		props: {
-			tabIndex: {
-				type: Number,
-				default: 0
-			}
-		},
 		data() {
 			return {
+				title: '首页',
 				list: [],
 				buyPriceDataX: [],
 				buyPriceDataY: [],
@@ -357,6 +354,7 @@
 			}
 		},
 		mounted() {
+			uni.hideTabBar();
 			this.loadGetBuyAndSaleStatistics()
 			this.loadGetPurchaseStatics()
 
@@ -364,15 +362,13 @@
 	}
 </script>
 
-<style>
-	@import url("../../common/colorui/main.css");
-
-	.home {
-		margin-top: -7px;
-	}
+<style lang="scss">
+	@import url("@/common/colorui/main.css");
+	@import url(@/common/colorui/icon.css);
+	@import url(@/common/colorui/animation.css);
 
 	.grid-text {
-		font-size: 24upx;
+		font-size: 24rpx;
 		padding: 10rpx 0 10rpx 0rpx;
 		/* #ifndef APP-PLUS */
 		box-sizing: border-box;

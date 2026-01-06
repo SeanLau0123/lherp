@@ -19,7 +19,7 @@
 				<view class="downSize">下载中:{{downSize}}M/{{fileSize}}M</view>
 			</view> 
 			<view class="closeImg" @click="closeShow"> 
-				<image src="/static/home/128/app_update_close.png" mode="aspectFit"></image>
+				<image src="/static/icon/app_update_close.png" mode="aspectFit"></image>
 			</view>
 		</view>
 	</view>

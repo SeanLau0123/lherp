@@ -1,5 +1,6 @@
 export const ACCESS_TOKEN = 'X-Access-Token'
 export const USER_NAME = 'login_username'
+export const USER_PWD = 'login_userpwd'
 export const USER_INFO = 'login_user_info'
 
 
