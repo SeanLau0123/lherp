@@ -1,0 +1,122 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/splash",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/index/login",
+			"style": {
+				"navigationBarTextStyle": "white",
+				"navigationStyle": "custom" // 隐藏系统导航栏
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTextStyle": "white",
+				"navigationStyle": "custom" // 隐藏系统导航栏
+			}
+		},
+		/*
+		 *
+		 */
+		{
+			"path": "pages/report/report",
+			"style": {
+				"navigationBarTextStyle": "white",
+				"navigationStyle": "custom" // 隐藏系统导航栏
+			}
+		},
+		/*
+		 *
+		 */
+		{
+			"path": "pages/user/user",
+			"style": {
+				"navigationBarTitleText": ""
+
+			}
+		},
+		{
+			"path": "pages/user/my",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom" // 隐藏系统导航栏
+			}
+		},
+		/*
+		 *
+		 */
+		{
+			"path": "pages/manage/manage",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom" // 隐藏系统导航栏
+			}
+		},
+		{
+			"path": "pages/manage/material/material",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom" // 隐藏系统导航栏
+			}
+		},
+		/*
+		 *
+		 */
+		{
+			"path": "pages/order/order",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom" // 隐藏系统导航栏
+			}
+		}
+	],
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			// npm 方式
+			"^u-(.*)": "uview-pro/components/u-$1/u-$1.vue"
+			// uni_modules 方式
+			// "^u-(.*)": "@/uni_modules/uview-pro/components/u-$1/u-$1.vue"
+		}
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#909399",
+		"selectedColor": "#0b3d91",
+		"backgroundColor": "#ffffff",
+		"borderStyle": "false",
+		"custom": true,
+		"list": [{
+				"pagePath": "pages/index/index",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/manage/manage",
+				"text": "管理"
+			},
+			{
+				"pagePath": "pages/order/order",
+				"text": "开单"
+			},
+			{
+				"pagePath": "pages/report/report",
+				"text": "报表"
+			},
+			{
+				"pagePath": "pages/user/my",
+				"text": "我的"
+			}
+		]
+	},
+	"uniIdRouter": {}
+}
