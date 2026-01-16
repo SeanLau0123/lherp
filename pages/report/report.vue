@@ -1,7 +1,7 @@
 <template>
-	<view>
+	<view style="height: 100vh;">
 		<view>
-			<u-navbar :is-back="false" title-color='#ffffff' back-icon-color='#ffffff' :background="background">
+			<u-navbar :is-back="false" :background="background">
 				<view class="slot-wrap">{{title}}</view>
 			</u-navbar>
 		</view>
@@ -25,14 +25,18 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, reactive, onMounted } from 'vue'
-	const title = ref<string>('报表')
+	import { ref, reactive, onMounted,watch } from 'vue'
+	import { Request, color, $u, useTheme } from 'uview-pro'
+	const title = ref<string>('报表中心')
+	const {currentTheme,themes,darkMode} = useTheme();
 	//定义顶部导航背景数
 	const background = reactive({
-		backgroundImage: "linear-gradient(45deg, #0081ff, #1cbbb4)"
+		backgroundColor: ""
 	})
+	const updateNavbarBackground = () => {
+		background.backgroundColor = $u.color.primary;
+	};
 	const currentTab = ref<number>(3)
-
 	const usList = ref<string>([])
 	// 初始化报表菜单列表
 	const initReportlList = () => {
@@ -161,6 +165,22 @@
 		// 更新响应式数据
 		usList.value = data
 	}
+	watch(
+		[
+			() => currentTheme.value,
+			() => darkMode.value
+		],
+		([newTheme, newDarkMode], [oldTheme, oldDarkMode]) => {
+			// 仅当主题或暗黑模式变化时，更新导航栏背景
+			if (newTheme !== oldTheme || newDarkMode !== oldDarkMode) {
+				updateNavbarBackground();
+			}
+		},
+		{
+			immediate: true,
+			deep: false
+		}
+	);
 	onMounted(() => {
 		initReportlList()
 	})
@@ -174,10 +194,8 @@
 		font-size: 42rpx;
 		color: #ffffff;
 	}
-
 	.grid-text {
 		font-size: 12px;
-		color: #000000;
 		padding: 10rpx 0 20rpx 0rpx;
 		/* #ifndef APP-PLUS */
 		box-sizing: border-box;

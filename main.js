@@ -16,7 +16,7 @@ app.$mount()
 // #ifdef VUE3
 import {createSSRApp} from 'vue'
 import store from './store'
-
+import themes from './src/uview-pro.theme'
 import uViewPro from 'uview-pro'
 import {
 	httpPlugin
@@ -28,7 +28,13 @@ import {
 
 export function createApp() {
 	const app = createSSRApp(App)
-	app.use(uViewPro)
+  app.use(uViewPro, {
+      theme: {
+          themes: themes,
+          defaultTheme: 'green', // 默认主题名称
+          defaultDarkMode: 'auto' // 默认暗黑模式：auto、light、dark
+      }
+  });
 	app.use(httpPlugin, {
 		interceptor: httpInterceptor,
 		requestConfig: httpRequestConfig

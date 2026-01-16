@@ -1,7 +1,7 @@
 <template>
-	<view>
+	<view style="height: 100vh;">
 		<view>
-			<u-navbar :is-back="false" title-color='#ffffff' back-icon-color='#ffffff' :background="background">
+			<u-navbar :is-back="false" :background="background">
 				<view class="slot-wrap">{{title}}</view>
 			</u-navbar>
 		</view>
@@ -15,7 +15,7 @@
 				<u-grid-item :customStyle="{ height: 200 + 'rpx' }" v-for="(listItem, listIndex) in usList"
 					:key="listIndex">
 					<u-image :showLoading="true" :src="listItem.icon" width="30px" height="30px" :lazy-load="true"
-						@click="goPage(listItem.page,listItem.url)"></u-image>
+						@click="goPage(listItem.page, listItem.url)"></u-image>
 					<text class="grid-text">{{ listItem.title }}</text>
 				</u-grid-item>
 			</u-grid>
@@ -27,7 +27,7 @@
 				<u-grid-item :customStyle="{ height: 200 + 'rpx' }" v-for="(listItem, listIndex) in systemList"
 					:key="listIndex">
 					<u-image :showLoading="true" :src="listItem.icon" width="30px" height="30px" :lazy-load="true"
-						@click="goPage(listItem.page,listItem.url)"></u-image>
+						@click="goPage(listItem.page, listItem.url)"></u-image>
 					<text class="grid-text">{{ listItem.title }}</text>
 				</u-grid-item>
 			</u-grid>
@@ -37,12 +37,18 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, reactive, onMounted } from 'vue'
+	import { ref, reactive, onMounted,watch } from 'vue'
+	import { Request, color, $u, useTheme } from 'uview-pro'
 	const title = ref<string>('管理')
+	const {currentTheme,themes,darkMode} = useTheme();
 	//定义顶部导航背景数
 	const background = reactive({
-		backgroundImage: "linear-gradient(45deg, #0081ff, #1cbbb4)"
+		backgroundColor: ""
 	})
+	const updateNavbarBackground = () => {
+		background.backgroundColor = $u.color.primary;
+	};
+
 	const currentTab = ref<number>(1)
 
 	const usList = ref<string>([])
@@ -60,7 +66,7 @@
 			{ url: "/material/material_category", page: "categorys", title: "商品类别", icon: "/static/icon/categorys.png" },
 			{ url: "/system/unit", page: "unites", title: "多单位", icon: "/static/icon/unites.png" },
 			{ url: "/material/material_attribute", page: "multiAttribute", title: "多属性", icon: "/static/icon/multiAttribute.png" },
-			{ url: "/system/vendor", page: "vendors", title: "供应商信息", icon: "/static/icon/vendors.png" },
+			{ url: "/system/vendor", page: "supplier", title: "供应商信息", icon: "/static/icon/vendors.png" },
 			{ url: "/system/customer", page: "customers", title: "客户信息", icon: "/static/icon/customers.png" },
 			{ url: "/system/member", page: "members", title: "会员信息", icon: "/static/icon/members.png" },
 			{ url: "/system/depot", page: "depot", title: "仓库信息", icon: "/static/icon/depot.png" },
@@ -73,7 +79,7 @@
 		]
 
 		// 权限匹配逻辑（保持原逻辑不变）
-		if (permissionList?.length) { // 可选链+长度判断，简化健壮性校验
+		if (permissionList?.length) {
 			// 步骤1：将物料列表转为 URL -> 物料信息的Map，优化查询性能（O(1) 查找）
 			const materialUrlMap = new Map(materialList.map(item => [item.url, item]));
 
@@ -92,7 +98,7 @@
 								description: targetMaterial.title,
 								useCount: 1000,
 								page: targetMaterial.page,
-								url:targetMaterial.url
+								url: targetMaterial.url
 							};
 
 							// 三元表达式简化分类逻辑，语义清晰
@@ -107,15 +113,77 @@
 		usList.value = data
 		systemList.value = sysdata
 	}
-	
-	const goPage = (page: string, url: string) => {
+
+	const goPage = (page : string, url : string) => {
 		// 根据实际需求实现点击逻辑
-		//console.log('点击了宫格:', page+"--"+url)
-		const targetRoute = `/pages/manage${url}`;
-		//pages/manage/material/material
+		console.log('点击了宫格:', page + "--" + url)
+		let targetRoute = ''
+		switch (page) {
+			case 'material':
+				targetRoute = `/pages/manage${url}`;
+				break;
+			case 'categorys':
+				targetRoute = '商品类别'
+				break;
+			case 'unites':
+				targetRoute = '多单位'
+				break;
+			case 'multiAttribute':
+				targetRoute = '多属性'
+				break;
+			case 'supplier':
+				targetRoute = '/pages/manage/supplier/supplier'
+				break;
+			case 'customers':
+				targetRoute = '/pages/manage/customers/customers'
+				break;
+			case 'members':
+				targetRoute = '会员信息'
+				break;
+			case 'depot':
+				targetRoute = '/pages/manage/warehouse/warehouse'
+				break;
+			case 'inOutItemList':
+				targetRoute = '收支项目'
+				break;
+			case 'accounts':
+				targetRoute = '账户管理'
+				break;
+			case 'person':
+				targetRoute = '经手人管理'
+				break;
+			case 'role':
+				targetRoute = '角色管理'
+				break;
+			case 'log':
+				targetRoute = '日志管理'
+				break;
+			case 'user':
+				targetRoute = '用户管理'
+				break;
+			default:
+				break;
+		}
 		uni.$u.route(targetRoute);
 	}
 	
+	watch(
+		[
+			() => currentTheme.value,
+			() => darkMode.value
+		],
+		([newTheme, newDarkMode], [oldTheme, oldDarkMode]) => {
+			// 仅当主题或暗黑模式变化时，更新导航栏背景
+			if (newTheme !== oldTheme || newDarkMode !== oldDarkMode) {
+				updateNavbarBackground();
+			}
+		},
+		{
+			immediate: true,
+			deep: false
+		}
+	);
+
 	onMounted(() => {
 		initMaterialList()
 	})
@@ -132,7 +200,6 @@
 
 	.grid-text {
 		font-size: 12px;
-		color: #000000;
 		padding: 10rpx 0 20rpx 0rpx;
 		/* #ifndef APP-PLUS */
 		box-sizing: border-box;

@@ -1,16 +1,15 @@
 <template>
 	<view>
 		<view>
-			<u-navbar :is-back="false" title-color='#ffffff' back-icon-color='#ffffff' :background="background">
+			<u-navbar :is-back="false" :background="background">
 				<view class="slot-wrap">{{title}}</view>
 			</u-navbar>
 		</view>
 		<!-- 轮播 -->
-		<view class="wrap">
+		<view>
 			<u-swiper height="500rpx" :list="swiperList" interval="5000" :title="true"></u-swiper>
 		</view>
 		<scroll-view scroll-y="true">
-
 			<!-- 常用服务 -->
 			<u-cell-group>
 				<u-cell-item icon="heart-fill" title="常用服务" :arrow="false"></u-cell-item>
@@ -39,24 +38,47 @@
 				</view>
 			</view>
 		</scroll-view>
-		<view style="width: 100%;">
-			<tab-bar v-model="currentTab"></tab-bar>
-		</view>
+		<tab-bar v-model="currentTab"></tab-bar>
 	</view>
 </template>
 
 <script setup lang="ts">
-	import { reactive } from 'vue'
-	import { ref, onMounted } from 'vue'
-	import type { TabbarItem } from 'uview-pro/types/global'
+	import { onUnmounted, reactive } from 'vue'
+	import { ref, onMounted, watch } from 'vue'
+	import { Request, color, $u, useTheme } from 'uview-pro'
 	import { getBuyAndSaleStatistics, getPurchaseStatics } from '../../api/api';
-	import * as echarts from 'echarts'
+	import store from '../../store';
+	import * as echarts from 'echarts/core'
+	import { LineChart, BarChart } from 'echarts/charts';
+	import { TitleComponent, TooltipComponent, GridComponent, DatasetComponent, TransformComponent, LegendComponent } from 'echarts/components';
+	// 标签自动布局，全局过渡动画等特性
+	import { LabelLayout, UniversalTransition } from 'echarts/features';
+	// 引入 Canvas 渲染器，注意引入 CanvasRenderer 是必须的一步
+	import { CanvasRenderer } from 'echarts/renderers';
+	// 注册必须的组件
+	echarts.use([
+		LegendComponent,
+		TitleComponent,
+		TooltipComponent,
+		GridComponent,
+		DatasetComponent,
+		TransformComponent,
+		LineChart,
+		BarChart,
+		LabelLayout,
+		UniversalTransition,
+		CanvasRenderer
+	]);
 	const title = ref<string>("首页")
 	const currentTab = ref<number>(0)
-	//定义顶部导航背景数
+
 	const background = reactive({
-		backgroundImage: "linear-gradient(45deg, #0081ff, #1cbbb4)"
+		backgroundColor: ""
 	})
+	const {currentTheme,themes,darkMode} = useTheme();
+	const updateNavbarBackground = () => {
+		background.backgroundColor = $u.color.primary;
+	};
 	// 轮播图项接口
 	interface SwiperItem {
 		image : string
@@ -124,6 +146,9 @@
 		}
 	}
 
+	let chart1 = null;
+	let chart2 = null;
+	let chart3 = null;
 	const chart1Ref = ref(null)
 	const chart2Ref = ref(null)
 	const chart3Ref = ref(null)
@@ -167,7 +192,7 @@
 			data: []
 		}]
 	}
-	const option2 ={
+	const option2 = {
 		title: {
 			text: '销售统计'
 		},
@@ -207,7 +232,7 @@
 			data: []
 		}]
 	}
-	const option3 ={
+	const option3 = {
 		title: {
 			text: '零售统计'
 		},
@@ -255,64 +280,85 @@
 			const buyPriceDataY = buyPriceData.map(o => o?.y);
 			option1.xAxis[0].data = buyPriceDataX
 			option1.series[0].data = buyPriceDataY
-			
-			const chart1 = await chart1Ref.value.init(echarts)
-			chart1.setOption(option1)
-			
-			
+			if (!chart1) {
+				chart1 = await chart1Ref.value.init(echarts)
+			}
+			chart1.setOption(option1, true)
+
+
 			let salePriceData = res.data.salePriceList;
 			const salePriceDataX = salePriceData.map(o => o?.x || '') // 空值兜底
 			const salePriceDataY = salePriceData.map(o => o?.y || 0) // 数值空值默认0
 			option2.xAxis[0].data = salePriceDataX
 			option2.series[0].data = salePriceDataY
-			const chart2 = await chart2Ref.value.init(echarts)
-			chart2.setOption(option2)
-			
+			if (!chart2) {
+				chart2 = await chart2Ref.value.init(echarts)
+			}
+			chart2.setOption(option2, true)
+
 			let retailPriceData = res.data.retailPriceList;
 			const retailPriceDataX = retailPriceData.map(o => o?.x || '') // 空值兜底
 			const retailPriceDataY = retailPriceData.map(o => o?.y || 0) // 数值空值默认0
 			option3.xAxis[0].data = retailPriceDataX
 			option3.series[0].data = retailPriceDataY
-			const chart3 = await chart3Ref.value.init(echarts)
-			chart3.setOption(option3)
+			if (!chart3) {
+				chart3 = await chart3Ref.value.init(echarts)
+			}
+			chart3.setOption(option3, true)
 		}
 	}
-	
-	
-	let pageEnterTime = 0;
-	const time = ref<string>("")
-	onMounted(() => {
-		  // 记录起始时间戳（高精度）
-		   pageEnterTime = new Date().getTime();
-		  console.log('[index] 页面进入起始时间戳（毫秒）：', pageEnterTime);
-		  
+
+	const refreshHomeData = () => {
 		loadGetBuyAndSaleStatistics();
 		loadGetPurchaseStatics();
-		// setTimeout(async () => {
-		// 	if (!chart1Ref.value) return
-		// 	const chart1 = await chart1Ref.value.init(echarts)
-		// 	chart1.setOption(option1)
-		// }, 300)
-		
-		  const pageDomReadyTime = new Date().getTime();
-		  const domCost = pageDomReadyTime - pageEnterTime;
-		  time.value=`完成耗时：${domCost} 毫秒（${(domCost / 1000).toFixed(2)} 秒）`;
-		  console.log(`[index] 页面 DOM 渲染完成耗时：${domCost} 毫秒（${(domCost / 1000).toFixed(2)} 秒）`);
+	};
+
+	watch(
+		[
+			() => currentTheme.value,
+			() => darkMode.value,
+			() => store.getters['userModule/userid']
+		],
+		([newTheme, newDarkMode, newUserId], [oldTheme, oldDarkMode, oldUserId]) => {
+			// 仅当主题或暗黑模式变化时，更新导航栏背景
+			if (newTheme !== oldTheme || newDarkMode !== oldDarkMode) {
+				updateNavbarBackground();
+			}
+
+			// 仅当用户ID变化且有效时，刷新数据
+			if (newUserId && newUserId !== oldUserId) {
+				refreshHomeData();
+			}
+		},
+		{ immediate: true, deep: false }
+	);
+	onMounted(() => {
+		refreshHomeData();
+	})
+	onUnmounted(() => {
+		if (chart1) {
+			echarts.dispose(chart1);
+			chart1 = null;
+		}
+		if (chart2) {
+			echarts.dispose(chart2);
+			chart2 = null;
+		}
+		if (chart3) {
+			echarts.dispose(chart3);
+			chart3 = null;
+		}
 	})
 </script>
 
 <style lang="scss" scoped>
 	.slot-wrap {
-	    display: flex;
-	    align-items: center;
-	     flex: 1; 
-	    padding: 0 30rpx;
+		display: flex;
+		align-items: center;
+		flex: 1;
+		padding: 0 30rpx;
 		font-size: 42rpx;
 		color: #ffffff;
-	  }
-	.wrap {
-		padding: 20rpx;
-		background-color: #aaffff;
 	}
 
 	.action {

@@ -4,8 +4,8 @@
 			<!-- 所有内容的容器 -->
 		</view>
 		<!-- 与包裹页面所有内容的元素u-page同级，且在它的下方 -->
-		<u-tabbar v-model="currentIndex" :list="tabList" activeColor="#00aa00" inactiveColor="#55ffff" bg-color="#0b3d91"
-			@change="handleTabChange"></u-tabbar>
+		<u-tabbar v-model="currentIndex" :list="tabList" :activeColor="$u.color.primary"
+		@change="handleTabChange"></u-tabbar><!-- bg-color="#062a57" -->
 	</view>
 </template>
 
@@ -32,12 +32,12 @@
 			pagePath: "/pages/manage/manage"
 		},
 		{
-			iconPath: "plus",
-			selectedIconPath: "checkmark-circle-fill",
+			iconPath: "edit-pen",
+			selectedIconPath: "edit-pen-fill",
 			text: "开单",
 			isDot: false,
 			customIcon: false,
-			pagePath: "/pages/order/order"
+			pagePath: "/pages/openorder/openorder"
 		},
 		{
 			iconPath: "file-text",
@@ -60,25 +60,5 @@
 
 	const handleTabChange  = (index : number) => {
 		currentIndex.value = index;
-		// 根据索引执行不同逻辑（示例）
-		// switch (index) {
-		// 	case 0:
-		// 		console.log('');
-		// 		// 可添加首页相关逻辑，如刷新数据
-		// 		break;
-		// 	case 1:
-		// 		break;
-		// 	case 2:
-		// 		console.log('');
-		// 		break;
-		// 	case 3:
-		// 		console.log('');
-		// 		break;
-		// 	case 4:
-		// 		console.log('');
-		// 		break;
-		// 	default:
-		// 		break;
-		// }
 	}
 </script>

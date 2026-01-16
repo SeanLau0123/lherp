@@ -27,11 +27,11 @@
 		<u-row justify="space-between" style="margin-left: 20rpx;margin-top:48rpx;">
 			<u-col span="8">
 				<u-checkbox-group>
-					<u-checkbox v-model="remChecked" active-color="blue" size="28rpx">记住用户名</u-checkbox>
+					<u-checkbox v-model="remChecked" size="28rpx">记住用户名</u-checkbox>
 				</u-checkbox-group>
 			</u-col>
 			<u-col span="4">
-				<u-text type="primary" size="28rpx" text="忘记密码"></u-text>
+				<u-text type="error" size="28rpx" text="忘记密码"></u-text>
 			</u-col>
 		</u-row>
 		<u-row>
@@ -54,12 +54,14 @@
 	import { getPlatformName, getRandomImage, findMenuByPNumber, mLogin } from '@/api/api.js'
 	import md5Libs from "uview-pro/libs/function/md5";
 	import store from '@/store/index.js'
+	import {$u } from 'uview-pro'
+	
 
 	const src = ref<string>("https://linghanshop.cn/uploads/attach/2025/11/20251128/c9840ae740abc19c00b3bda853b1abe8.png")
 	const platformName = ref<string>("")
 	const border = ref<boolean>(true)
 	const remChecked = ref<boolean>(true)
-	const borderColor = ref<string>("#2b85e4")
+	const borderColor = ref<string>("")
 	const clearable = ref<boolean>(true)
 	const base64Data = ref<string>("")
 	const uuid = ref<string>("")
@@ -203,6 +205,7 @@
 		}
 	}
 	onMounted(async () => {
+		borderColor.value = $u.color.primary;
 		await onPlatformName();
 		await onRandomImage();
 	})
@@ -211,8 +214,9 @@
 <style scoped lang="scss">
 	.container {
 		width: 100%;
+		height: 100vh;
 		padding: 60rpx 40rpx;
-		background: #f8f8f8;
+		background: $u-bg-color;
 	}
 
 	.image-container {
@@ -221,13 +225,13 @@
 		flex-direction: column;
 		align-items: center;
 		width: 100%;
-		background-color: #f8f8f8;
+		border-radius: 8px;
 	}
 
 	.platformTitle {
 		margin-top: 10rpx;
 		font-size: 35px;
-		color: #666;
+		color: $u-type-primary;
 		font-family: Chinese Quote, -apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Helvetica Neue, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
 		font-weight: 700;
 	}

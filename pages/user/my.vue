@@ -1,50 +1,52 @@
 <template>
-	<view>
+	<view style="height: 100vh;">
 		<view>
-			<u-navbar :is-back="false" title-color='#ffffff' back-icon-color='#ffffff' :background="background">
+			<u-navbar :is-back="false" :background="background">
 				<view class="slot-wrap">{{title}}</view>
 			</u-navbar>
 		</view>
 		<scroll-view>
-			<u-swiper height="500rpx" :list="list" interval="5000" :title="true" mode="none"></u-swiper>
-			<u-grid :col="2">
-				<u-grid-item>
-					<view class="text-xl text-orange">{{ personalList.username ? personalList.username : '登录用户' }}
-					</view>
-					<view class="margin-top-sm">用户</view>
-				</u-grid-item>
-				<u-grid-item>
-					<view class="text-xl text-green">{{ personalList.position ? personalList.position : '员工' }}</view>
-					<view class="margin-top-sm">职务</view>
-				</u-grid-item>
-			</u-grid>
+			<u-swiper height="500rpx" :list="list" :title="true" mode="none" border-radius="0" </u-swiper>
+				<u-grid :col="2">
+					<u-grid-item>
+						<view class="text-xl text-orange">{{ personalList.username ? personalList.username : '-' }}
+						</view>
+						<view class="margin-top-sm">用户</view>
+					</u-grid-item>
+					<u-grid-item>
+						<view class="text-xl text-green">{{ personalList.position ? personalList.position : '-' }}
+						</view>
+						<view class="margin-top-sm">职务</view>
+					</u-grid-item>
+				</u-grid>
 
-			<u-cell-group title="设置喜好">
-				<u-cell-item icon="setting-fill" title="个人设置"></u-cell-item>
-				<u-cell-item icon="integral-fill" title="会员等级" value="新版本"></u-cell-item>
-				<u-cell-item icon="qzone" title="夕阳无限好" arrow-direction="down"></u-cell-item>
-				<u-cell-item icon="setting-fill" title="只是近黄昏"></u-cell-item>
-			</u-cell-group>
+				<u-cell-group>
+					<u-cell-item :title-style="cellTitleStyle" icon="heart-fill" title="个人详情" @click="ToUserDetail()"></u-cell-item>
+					<u-cell-item :title-style="cellTitleStyle" icon="photo-fill" title="切换主题" @click="ToChangeTheme()"></u-cell-item>
+					<u-cell-item :title-style="cellTitleStyle" icon="qzone" title="夕阳无限好" arrow-direction="down"></u-cell-item>
+					<u-cell-item :title-style="cellTitleStyle" icon="setting-fill" title="只是近黄昏"></u-cell-item>
+				</u-cell-group>
 
-			<u-button class="custom-style" type="error" :ripple="true" ripple-bg-color="#909399"
-				@click="open">退出系统</u-button>
-			<view>
-				<u-modal v-model="show" :content="content" :show-cancel-button="true" cancel-color="#606266"
-					confirm-color="#2979ff" @confirm="confirm" :show-title="false"></u-modal>
-			</view>
+				<u-button class="custom-style" type="error" :ripple="true" ripple-bg-color="#909399"
+					@click="open">退出系统</u-button>
+				<view>
+					<u-modal v-model="show" :content="content" :show-cancel-button="true" cancel-color="#606266"
+						confirm-color="#2979ff" @confirm="confirm" :show-title="false"></u-modal>
+				</view>
 		</scroll-view>
 		<tab-bar v-model="currentTab"></tab-bar>
-
 	</view>
 </template>
 
 <script setup lang="ts">
-	import { ref, reactive, onMounted } from 'vue'
+	import type { DarkMode } from 'uview-pro/types/global';
+	import { ref, reactive, onMounted, watch } from 'vue'
 	import { getUserSession, mLogout } from '@/api/api.js'
-	import { Request } from 'uview-pro'
-	import store from '@/store/index.js'
-
+	import { Request, color, $u, useTheme } from 'uview-pro'
+	import store, { userStore } from '@/store/index.js'
 	const title = ref<string>('我的')
+	const {currentTheme,themes,darkMode} = useTheme();
+	
 	// 定义轮播图项接口
 	interface SwiperItem {
 		image : string
@@ -75,8 +77,7 @@
 	}
 
 	const personalList = reactive({
-		avatar: '',
-		realname: '',
+		id: '',
 		username: '',
 		position: ''
 	});
@@ -86,14 +87,20 @@
 		if (res) {
 			personalList.username = res.data.user.username;
 			personalList.position = res.data.user.position;
-
 		}
 	}
+	const ToUserDetail = () => {
+		uni.$u.route('/pages/user/userdetail');
+	}
+	const ToChangeTheme = () => {
+		uni.$u.route('/pages/user/changeTheme');
+	}
+
 	//退出系统
 	const LoginOut = async () => {
 		const res = await store.dispatch('userModule/mLogout')
-		 uni.navigateTo({
-		 	url: '/pages/index/login'
+		uni.navigateTo({
+			url: '/pages/index/login'
 		})
 	}
 	const show = ref<boolean>(false)
@@ -103,19 +110,50 @@
 	}
 	// 定义确认按钮的回调函数
 	const confirm = () => {
-			// 如果不想关闭，而单是清除loading状态，需要通过ref手动调用方法
-			// uModalRef.value?.clearLoading()
 		LoginOut()
 	}
+	const cellTitleStyle = {
+		color: $u.color.primary,
+		fontWeight: 500,
+	};
 	//定义顶部导航背景数
 	const background = reactive({
-		backgroundImage: "linear-gradient(45deg, #0081ff, #1cbbb4)"
+		backgroundColor: ""
 	})
+	const updateNavbarBackground = () => {
+		background.backgroundColor = $u.color.primary;
+	};
+	
 	const currentTab = ref<number>(4)
-
-	onMounted(async () => {
-		OngetUserSession();
+	
+	const refreshData = () => {
 		onBingImage();
+		OngetUserSession();
+	};
+	watch(
+		[
+			() => currentTheme.value,
+			() => darkMode.value,
+			() => store.getters['userModule/userid']
+		],
+		([newTheme, newDarkMode, newUserId], [oldTheme, oldDarkMode, oldUserId]) => {
+			// 仅当主题或暗黑模式变化时，更新导航栏背景
+			if (newTheme !== oldTheme || newDarkMode !== oldDarkMode) {
+				updateNavbarBackground();
+			}
+
+			// 仅当用户ID变化且有效时，刷新数据
+			if (newUserId && newUserId !== oldUserId) {
+				refreshData();
+			}
+		},
+		{
+			immediate: true,
+			deep: false
+		}
+	);
+	onMounted(async () => {
+		refreshData();
 	})
 </script>
 <style>
@@ -137,7 +175,11 @@
 	.text-xl {
 		font-size: 42upx;
 	}
-
+	
+	.label {
+		color: $u-type-primary;
+	}
+	
 	.text-green,
 	.line-green,
 	.lines-green {
@@ -162,7 +204,6 @@
 
 	.u-body-item {
 		font-size: 32rpx;
-		color: #333;
 		padding: 20rpx 10rpx;
 	}
 

@@ -21,7 +21,7 @@
 			}
 		},
 		/*
-		 *
+		 *报表中心
 		 */
 		{
 			"path": "pages/report/report",
@@ -31,7 +31,7 @@
 			}
 		},
 		/*
-		 *
+		 *个人中心
 		 */
 		{
 			"path": "pages/user/user",
@@ -44,11 +44,25 @@
 			"path": "pages/user/my",
 			"style": {
 				"navigationBarTitleText": "",
-				"navigationStyle": "custom" // 隐藏系统导航栏
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/user/userdetail",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom" 
+			}
+		},
+		{
+			"path": "pages/user/changeTheme",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom" 
 			}
 		},
 		/*
-		 *
+		 *基础数据
 		 */
 		{
 			"path": "pages/manage/manage",
@@ -64,14 +78,35 @@
 				"navigationStyle": "custom" // 隐藏系统导航栏
 			}
 		},
-		/*
-		 *
-		 */
 		{
-			"path": "pages/order/order",
+			"path": "pages/manage/supplier/supplier",
 			"style": {
 				"navigationBarTitleText": "",
-				"navigationStyle": "custom" // 隐藏系统导航栏
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/manage/customers/customers",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/manage/warehouse/warehouse",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
+			}
+		},
+		/*
+		 *开单
+		 */
+		{
+			"path": "pages/openorder/openorder",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
 			}
 		}
 	],
@@ -105,7 +140,7 @@
 				"text": "管理"
 			},
 			{
-				"pagePath": "pages/order/order",
+				"pagePath": "pages/openorder/openorder",
 				"text": "开单"
 			},
 			{

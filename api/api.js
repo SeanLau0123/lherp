@@ -42,3 +42,14 @@ export const findMenuByPNumber = (params, config = {}) => http.post('/function/f
  */
 //获取商品信息
 export const getMaterialList = (params, config = {}) => http.get('/material/list', params, config)
+
+//获取商品类型
+export const getMaterialCategory = (params, config = {}) => http.get('/materialCategory/getMaterialCategoryTree', params, config)
+
+//获取供应商信息
+export const getSupplierlList = (params, config = {}) => http.get('/supplier/list', params, config)
+
+//获取仓库信息
+export const getWareHouselList = (params, config = {}) => http.get('/depot/list', params, config)
+
+
