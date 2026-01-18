@@ -24,6 +24,8 @@ export const mLogout = (params, config = {}) => http.post('/user/logout', params
 export const getRandomImage = (data = {}) => http.get('/user/randomImage', {data})
 //获取用户信息
 export const getUserSession = (data = {}) => http.get('/user/getUserSession', {data})
+//修改密码
+export const updatePwd = (params, config = {}) => http.put('/user/updatePwd', params, config)
 /**
  * 统计采购、销售、零售的总金额
  */

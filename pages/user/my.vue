@@ -20,15 +20,14 @@
 					</u-grid-item>
 				</u-grid>
 
-				<u-cell-group>
-					<u-cell-item :title-style="cellTitleStyle" icon="heart-fill" title="个人详情" @click="ToUserDetail()"></u-cell-item>
-					<u-cell-item :title-style="cellTitleStyle" icon="photo-fill" title="切换主题" @click="ToChangeTheme()"></u-cell-item>
-					<u-cell-item :title-style="cellTitleStyle" icon="qzone" title="夕阳无限好" arrow-direction="down"></u-cell-item>
-					<u-cell-item :title-style="cellTitleStyle" icon="setting-fill" title="只是近黄昏"></u-cell-item>
+				<u-cell-group title="基础">
+					<u-cell-item :title-style="cellTitleStyle" title="个人详情" @click="ToUserDetail()"></u-cell-item>
+					<u-cell-item :title-style="cellTitleStyle" title="切换主题" @click="ToChangeTheme()"></u-cell-item>
+					<u-cell-item :title-style="cellTitleStyle" title="修改密码" @click="ToChangePwd()"></u-cell-item>
+					<u-cell-item :title-style="cellTitleStyle" title="关于我们" @click="ToAbout()"></u-cell-item>
 				</u-cell-group>
 
-				<u-button class="custom-style" type="error" :ripple="true" ripple-bg-color="#909399"
-					@click="open">退出系统</u-button>
+				<u-button class="custom-style" type="error" :ripple="true"	@click="open">退出系统</u-button>
 				<view>
 					<u-modal v-model="show" :content="content" :show-cancel-button="true" cancel-color="#606266"
 						confirm-color="#2979ff" @confirm="confirm" :show-title="false"></u-modal>
@@ -92,8 +91,14 @@
 	const ToUserDetail = () => {
 		uni.$u.route('/pages/user/userdetail');
 	}
+	const ToChangePwd = () => {
+		uni.$u.route('/pages/user/changePwd');
+	}
 	const ToChangeTheme = () => {
 		uni.$u.route('/pages/user/changeTheme');
+	}
+	const ToAbout = () => {
+		uni.$u.route('/pages/user/about');
 	}
 
 	//退出系统
@@ -115,6 +120,7 @@
 	const cellTitleStyle = {
 		color: $u.color.primary,
 		fontWeight: 500,
+		fontSize: '32rpx'
 	};
 	//定义顶部导航背景数
 	const background = reactive({

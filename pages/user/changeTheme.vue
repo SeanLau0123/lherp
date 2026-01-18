@@ -261,7 +261,7 @@
 	}
 
 	.panel-content {
-		padding: 16rpx;
+		padding: 8rpx;
 		border-top: 1px solid $u-border-color;
 	}
 
@@ -314,7 +314,7 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr;
 		gap: 12px;
-		margin-bottom: 16px;
+		margin-bottom: 12px;
 	}
 
 	.mode-item {

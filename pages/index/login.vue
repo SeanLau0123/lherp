@@ -56,7 +56,6 @@
 	import store from '@/store/index.js'
 	import {$u } from 'uview-pro'
 	
-
 	const src = ref<string>("https://linghanshop.cn/uploads/attach/2025/11/20251128/c9840ae740abc19c00b3bda853b1abe8.png")
 	const platformName = ref<string>("")
 	const border = ref<boolean>(true)

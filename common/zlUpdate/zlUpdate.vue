@@ -1,32 +1,29 @@
 <template>
-	<view class="mask">
-		<view class="content">
+	<view  class="mask">
+		<view  class="content">
 			<view class="updata-code">V{{updata_Info.version}}</view>
-			<view class="updata-cont">
+			<view class="updata-cont"> 
 				<view class="cont">
-					{{updata_Info.versionInfo}}
+					{{updata_Info.note}}
 				</view>
 			</view>
-			<view class="update-btn" v-if="isUpdate == false">
+			<view class="update-btn"  v-if="isUpdate == false">
 				<view class="btn" @click="updata_DowUrl">立即升级</view>
 				<view class="lanel">建议在WIFI环境下更新</view>
-			</view>
+			</view> 
 			<view class="progress-btn" v-else>
 				<view class="press">
-					<u-line-progress :percentage="downloadNum" activeColor="#3C9CFF"
-						:showText="false"></u-line-progress>
+					<u-line-progress :percentage="downloadNum" activeColor="#3C9CFF" :showText="false"></u-line-progress>
 					<text>{{downloadNum}}%</text>
-				</view>
+				</view>  
 				<view class="downSize">下载中:{{downSize}}M/{{fileSize}}M</view>
-			</view>
-			<view class="closeImg" @click="closeShow">
-				<image src="/common/util/zlUpdate/icon/app_update_close2.png" mode="aspectFit"></image>
+			</view> 
+			<view class="closeImg" @click="closeShow"> 
+				<image src="/common/zlUpdate/icon/app_update_close.png" mode="aspectFit"></image>
 			</view>
 		</view>
 	</view>
-
 </template>
-
 <script>
 	export default {
 		data() {
@@ -42,7 +39,7 @@
 		},
 		onLoad(options) {
 			this.updata_Info = JSON.parse(options.dowInfo)
-			this.dow_Url = this.updata_Info.downloadUrl
+			this.dow_Url = this.updata_Info.url
 		},
 		methods: {
 			updata_DowUrl() {
@@ -89,8 +86,7 @@
 				});
 			},
 			closeShow() {
-				console.log(this.isUpdow)
-				if (this.isUpdow == true1111) {
+				if (this.isUpdow == true) {
 					uni.showToast({
 						title: '应用更新中...',
 						icon: 'none',
@@ -99,16 +95,7 @@
 					})
 					return;
 				} else {
-					uni.navigateBack({
-						delta: 1,
-						success: function() {
-							const pages = getCurrentPages();
-							const prevPage = pages[pages.length - 2];
-							if (prevPage.route === 'pages/index/index') {
-								prevPage.$vm.PageCur = 'report';
-							}
-						}
-					});
+					uni.navigateBack();
 				}
 			}
 		}
@@ -139,7 +126,7 @@
 			height: 370px;
 			border-radius: 20rpx;
 			background: rgba(255, 255, 255, 0);
-			background-image: url('/common/util/zlUpdate/icon/dowUpBg.png');
+			background-image: url('/common/zlUpdate/icon/dowUpBg.png');
 			background-repeat: no-repeat;
 			background-size: 100% 100%;
 			margin-bottom: 100rpx;

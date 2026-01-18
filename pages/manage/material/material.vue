@@ -1,11 +1,12 @@
 <template>
-	<view>
+	<view  style="height: 100vh;">
 		<u-navbar :is-back="true" :background="background" :title="title" back-icon-color="#ffffff"
 			title-color="#ffffff">
 			<view class="navbar-right-icon">
 				<u-icon name='search' @click="popupShow = true" size="48rpx" label-pos="right"></u-icon>
 			</view>
 		</u-navbar>
+		<scroll-view class="scrollviewpadding">	
 		<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="8">
 			<view class="popup-title">
 				<u-form label-width="130rpx">
@@ -26,9 +27,6 @@
 				</u-form>
 			</view>
 		</u-popup>
-		<u-empty text="没有搜索结果" mode="search" margin-top="100" :show="emptyShow"
-			style="width: 100%; height:900rpx;"></u-empty>
-		<scroll-view class="scrollviewpadding">
 			<view v-for="(good, index) in materialList" :key="good.id || index">
 				<view class="good-item" style="min-height: 80rpx;">
 					<u-row gutter="10">
@@ -37,7 +35,7 @@
 								<u-collapse-item :title="good.name">
 									<view class="goods-row-coll">
 										<text class="label">名称：</text>
-										<text class="value">{{ good.name }}</text>
+										<text>{{ good.name }}</text>
 									</view>
 									<view class="goods-row-coll">
 										<text class="label">采购价：</text>
@@ -74,6 +72,7 @@
 				</view>
 			</view>
 		</scroll-view>
+		<u-empty text="没有搜索结果" mode="search" :show="emptyShow" class="u-empty-fullscreen"></u-empty>
 		<view class="pagination-fixed">
 			<u-pagination v-model="current" :total="listTotal" :pageSize="pageSize"
 				@change="handleChange"></u-pagination>
@@ -274,4 +273,28 @@
 		margin-top: 45px;
 		padding: 10rpx 20rpx;
 	}
+		// 新增：u-empty 全屏样式
+		.u-empty-fullscreen {
+			/* 绝对定位，脱离文档流 */
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			/* 高度铺满整个父容器（100vh），扣除导航栏和分页栏高度 */
+			height: 100%;
+			/* 弹性布局，让内容垂直水平居中（核心） */
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			/* 背景色与页面保持一致，避免透明穿透 */
+			background-color: $u-bg-color;
+			/* 层级低于分页栏，不遮挡分页 */
+			z-index: 1;
+			/* 扣除 navbar 高度，避免内容被导航栏遮挡 */
+			padding-top: var(--u-navbar-height, 88rpx);
+			/* 扣除分页栏高度，避免内容被分页遮挡 */
+			padding-bottom: 40px;
+		}
 </style>

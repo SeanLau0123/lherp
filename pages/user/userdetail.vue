@@ -1,8 +1,8 @@
 <template>
-	<view>
+	<view  style="height: 100vh;">
 		<view>
-			<u-navbar :is-back="true" :title="title" :background="background">
-			</u-navbar>
+			<u-navbar :is-back="true" :background="background" :title="title" back-icon-color="#ffffff"
+				title-color="#ffffff"></u-navbar>
 		</view>
 		<view>
 			<u-cell-group>
@@ -19,15 +19,34 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, reactive, onMounted } from 'vue'
+	import { ref, reactive, onMounted,watch } from 'vue'
 	import { getUserSession } from '@/api/api.js'
-	import {$u} from 'uview-pro'
+	import {$u,useTheme} from 'uview-pro'
+	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('个人详情')
 	const color = ref('');
 	const background = reactive({
-		//backgroundImage: "linear-gradient(45deg, #0081ff, #1cbbb4)"
-		backgroundColor:color
+		backgroundColor: ""
 	})
+	const updateNavbarBackground = () => {
+		background.backgroundColor = $u.color.primary;
+	};
+	watch(
+		[
+			() => currentTheme.value,
+			() => darkMode.value
+		],
+		([newTheme, newDarkMode], [oldTheme, oldDarkMode]) => {
+			// 仅当主题或暗黑模式变化时，更新导航栏背景
+			if (newTheme !== oldTheme || newDarkMode !== oldDarkMode) {
+				updateNavbarBackground();
+			}
+		},
+		{
+			immediate: true,
+			deep: false
+		}
+	);
 	const personal = ref({
 		id: '',
 		loginName: '',

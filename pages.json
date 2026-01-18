@@ -9,14 +9,12 @@
 		{
 			"path": "pages/index/login",
 			"style": {
-				"navigationBarTextStyle": "white",
 				"navigationStyle": "custom" // 隐藏系统导航栏
 			}
 		},
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTextStyle": "white",
 				"navigationStyle": "custom" // 隐藏系统导航栏
 			}
 		},
@@ -26,7 +24,6 @@
 		{
 			"path": "pages/report/report",
 			"style": {
-				"navigationBarTextStyle": "white",
 				"navigationStyle": "custom" // 隐藏系统导航栏
 			}
 		},
@@ -37,7 +34,6 @@
 			"path": "pages/user/user",
 			"style": {
 				"navigationBarTitleText": ""
-
 			}
 		},
 		{
@@ -51,14 +47,35 @@
 			"path": "pages/user/userdetail",
 			"style": {
 				"navigationBarTitleText": "",
-				"navigationStyle": "custom" 
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/user/about",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
 			}
 		},
 		{
 			"path": "pages/user/changeTheme",
 			"style": {
 				"navigationBarTitleText": "",
-				"navigationStyle": "custom" 
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/user/changePwd",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/user/test",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
 			}
 		},
 		/*
@@ -108,6 +125,19 @@
 				"navigationBarTitleText": "",
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "common/zlUpdate/zlUpdate",
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					"animationType": "fade-in", //动画效果
+					"background": "transparent", //背景透明
+					"backgroundColor": "rgba(0,0,0,0)", //背景透明
+					"popGesture": "none" //禁止苹果侧滑返回 
+				},
+				"disableScroll": true
+			}
 		}
 	],
 	"easycom": {
@@ -120,7 +150,7 @@
 		}
 	},
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
+		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
@@ -131,7 +161,8 @@
 		"backgroundColor": "#ffffff",
 		"borderStyle": "false",
 		"custom": true,
-		"list": [{
+		"list": [
+			{
 				"pagePath": "pages/index/index",
 				"text": "首页"
 			},
