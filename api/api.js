@@ -55,3 +55,16 @@ export const getSupplierlList = (params, config = {}) => http.get('/supplier/lis
 export const getWareHouselList = (params, config = {}) => http.get('/depot/list', params, config)
 
 
+/**
+ *报表中心
+ */
+//获取采购统计信息
+export const getbuyInList = (params, config = {}) => http.get('/depotItem/buyIn', params, config)
+//获取供应商对账信息
+export const getsupplierAccountList = (params, config = {}) => http.get('/depotHead/getStatementAccount', params, config)
+//获取账户信息余额
+export const getAccountList = (params, config = {}) => http.get('/account/listWithBalance', params, config)
+
+//获取结算账户信息余额的统计
+export const getAccountListStatistics = (params, config = {}) => http.get('/account/getStatistics', params, config)
+

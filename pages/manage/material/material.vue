@@ -1,18 +1,18 @@
 <template>
-	<view  style="height: 100vh;">
+	<view style="height: 100vh;">
 		<u-navbar :is-back="true" :background="background" :title="title" back-icon-color="#ffffff"
 			title-color="#ffffff">
 			<view class="navbar-right-icon">
 				<u-icon name='search' @click="popupShow = true" size="48rpx" label-pos="right"></u-icon>
 			</view>
 		</u-navbar>
-		<scroll-view class="scrollviewpadding">	
-		<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="8">
-			<view class="popup-title">
-				<u-form label-width="130rpx">
-					<u-form-item label="关键词："><u-input border="true" v-model="searchname"
-							placeholder="请输入名称、条码、助记码查询" /></u-form-item>
-					<!-- <u-form-item label="商品类型">
+		<scroll-view class="scrollviewpadding">
+			<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="8">
+				<view class="popup-title">
+					<u-form label-width="130rpx">
+						<u-form-item label="关键词："><u-input v-model="searchname"
+								placeholder="请输入名称、条码、助记码查询" /></u-form-item>
+						<!-- <u-form-item label="商品类型">
 							<view>
 								<u-input v-model="categoryName" type="select" @click="selectShow = true" />
 								<u-input v-model="categoryId" />
@@ -20,13 +20,13 @@
 									@confirm="confirm"></u-select>
 							</view>
 						</u-form-item> -->
-					<u-gap></u-gap>
-					<u-button type="primary" @click="search()">搜索</u-button>
-					<u-gap></u-gap>
-					<u-button type="warning" @click="reset()">重置</u-button>
-				</u-form>
-			</view>
-		</u-popup>
+						<u-gap></u-gap>
+						<u-button type="primary" @click="search()">搜索</u-button>
+						<u-gap></u-gap>
+						<u-button @click="reset()">重置</u-button>
+					</u-form>
+				</view>
+			</u-popup>
 			<view v-for="(good, index) in materialList" :key="good.id || index">
 				<view class="good-item" style="min-height: 80rpx;">
 					<u-row gutter="10">
@@ -189,12 +189,12 @@
 	.goods-row-coll {
 		border-radius: 8rpx;
 		width: calc(100% - 32rpx);
-		margin: 10rpx 10rpx 10rpx 40rpx;
+		margin: 10rpx 0rpx 10rpx 10rpx;
 	}
 
 	.colllabel {
 		font-size: 28rpx;
-		width: 160rpx;
+		width: 120rpx;
 		text-align: right;
 		padding-right: 10rpx;
 	}
@@ -207,12 +207,11 @@
 	}
 
 	.good-item {
-		background: rgba(var(--u-type-primary-rgb), 0.05);
+		background: rgba(var(--u-type-primary-rgb), 0.15);
 		border: 1px solid rgba(var(--u-type-primary-rgb), 0.2);
 		border-radius: 8rpx;
 		width: calc(100% - 32rpx);
-		padding: 16rpx;
-		margin: 10rpx 10rpx 20rpx 20rpx;
+		margin: 10rpx 12rpx 20rpx;
 	}
 
 	.goods-row {
@@ -220,7 +219,6 @@
 		margin-bottom: 5rpx;
 		line-height: 1.5;
 		flex-wrap: wrap;
-		;
 	}
 
 	.label {
@@ -266,35 +264,35 @@
 		top: 50%;
 		transform: translateY(-50%);
 		z-index: 99;
-		color: #ffffff;
 	}
 
 	.popup-title {
 		margin-top: 45px;
 		padding: 10rpx 20rpx;
 	}
-		// 新增：u-empty 全屏样式
-		.u-empty-fullscreen {
-			/* 绝对定位，脱离文档流 */
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			/* 高度铺满整个父容器（100vh），扣除导航栏和分页栏高度 */
-			height: 100%;
-			/* 弹性布局，让内容垂直水平居中（核心） */
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			/* 背景色与页面保持一致，避免透明穿透 */
-			background-color: $u-bg-color;
-			/* 层级低于分页栏，不遮挡分页 */
-			z-index: 1;
-			/* 扣除 navbar 高度，避免内容被导航栏遮挡 */
-			padding-top: var(--u-navbar-height, 88rpx);
-			/* 扣除分页栏高度，避免内容被分页遮挡 */
-			padding-bottom: 40px;
-		}
+
+	// 新增：u-empty 全屏样式
+	.u-empty-fullscreen {
+		/* 绝对定位，脱离文档流 */
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		/* 高度铺满整个父容器（100vh），扣除导航栏和分页栏高度 */
+		height: 100%;
+		/* 弹性布局，让内容垂直水平居中（核心） */
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		/* 背景色与页面保持一致，避免透明穿透 */
+		background-color: $u-bg-color;
+		/* 层级低于分页栏，不遮挡分页 */
+		z-index: 1;
+		/* 扣除 navbar 高度，避免内容被导航栏遮挡 */
+		padding-top: var(--u-navbar-height, 88rpx);
+		/* 扣除分页栏高度，避免内容被分页遮挡 */
+		padding-bottom: 40px;
+	}
 </style>

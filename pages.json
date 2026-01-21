@@ -27,6 +27,19 @@
 				"navigationStyle": "custom" // 隐藏系统导航栏
 			}
 		},
+		{
+			"path": "pages/report/buyin",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/report/supplierAccount",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
 		/*
 		 *个人中心
 		 */
@@ -138,6 +151,12 @@
 				},
 				"disableScroll": true
 			}
+		},
+		{
+			"path": "pages/report/account",
+			"style": {
+				"navigationBarTitleText": ""
+			}
 		}
 	],
 	"easycom": {
@@ -153,7 +172,8 @@
 		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"backgroundColor": "#F8F8F8",
+		"navigationStyle": "custom"
 	},
 	"tabBar": {
 		"color": "#909399",

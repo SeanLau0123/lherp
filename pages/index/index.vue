@@ -7,7 +7,7 @@
 		</view>
 		<!-- 轮播 -->
 		<view>
-			<u-swiper height="500rpx" :list="swiperList" interval="5000" :title="true"></u-swiper>
+			<u-swiper height="500rpx" :list="swiperList" interval="5000" :title="true" border-radius="0"></u-swiper>
 		</view>
 		<scroll-view scroll-y="true">
 			<!-- 常用服务 -->

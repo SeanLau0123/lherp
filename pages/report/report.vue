@@ -7,15 +7,15 @@
 		</view>
 		<!-- 常用服务 -->
 		<u-cell-group>
-			<u-cell-item icon="setting" icon-size="42" title="报表" :arrow="false">
+			<u-cell-item icon="pushpin" icon-size="42" title="报表" :arrow="false">
 			</u-cell-item>
 		</u-cell-group>
 		<view>
 			<u-grid :border="true" col="4">
 				<u-grid-item :customStyle="{ height: 200 + 'rpx' }" v-for="(listItem, listIndex) in usList"
 					:key="listIndex">
-					<u-image :showLoading="true" :src="listItem.icon" width="30px" height="30px" :lazy-load="true"
-						@click="goPage(listItem.page)"></u-image>
+						<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="64" :color="$u.color.primary"
+						@click="goPage(listItem.page, listItem.url)"></u-icon>
 					<text class="grid-text">{{ listItem.title }}</text>
 				</u-grid-item>
 			</u-grid>
@@ -114,7 +114,7 @@
 			},
 			{
 				url: "/report/vendor_account",
-				page: "vendoraccount",
+				page: "supplierAccount",
 				icon: "/static/icon/vendoraccount.png",
 				title: "供应商对账"
 			},
@@ -160,10 +160,68 @@
 						}
 					});
 				}
-			});
+			});
 		}
 		// 更新响应式数据
 		usList.value = data
+	}
+	const goPage = (page : string, url : string) => {
+		// 根据实际需求实现点击逻辑
+		console.log('点击了宫格:', page + "--" + url)
+		let targetRoute = ''
+		switch (page) {
+			case 'buyin':
+				targetRoute = `/pages/report/${page}`;
+				break;
+			case 'supplierAccount':
+				targetRoute = `/pages/report/${page}`;
+				break;
+			case 'account':
+				targetRoute = `/pages/report/${page}`;
+				break;
+			case 'multiAttribute':
+				targetRoute = ''
+				break;
+			case 'supplier':
+				targetRoute = '/pages/manage/supplier/supplier'
+				break;
+			case 'customers':
+				targetRoute = '/pages/manage/customers/customers'
+				break;
+			case 'members':
+				targetRoute = '会员信息'
+				break;
+			case 'depot':
+				targetRoute = '/pages/manage/warehouse/warehouse'
+				break;
+			case 'inOutItemList':
+				targetRoute = '收支项目'
+				break;
+			case 'accounts':
+				targetRoute = '账户管理'
+				break;
+			case 'person':
+				targetRoute = '经手人管理'
+				break;
+			case 'role':
+				targetRoute = '角色管理'
+				break;
+			case 'log':
+				targetRoute = '日志管理'
+				break;
+			case 'user':
+				targetRoute = '用户管理'
+				break;
+			default:
+				break;
+		}
+		if (targetRoute === ''){
+			uni.showToast({
+				icon: 'error',
+				title: "开发中"
+			})
+		}
+		uni.$u.route(targetRoute);
 	}
 	watch(
 		[

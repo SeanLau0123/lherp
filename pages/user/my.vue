@@ -6,7 +6,7 @@
 			</u-navbar>
 		</view>
 		<scroll-view>
-			<u-swiper height="500rpx" :list="list" :title="true" mode="none" border-radius="0" </u-swiper>
+			<u-swiper height="500rpx" :list="list" :title="true" mode="none" border-radius="0"> </u-swiper>
 				<u-grid :col="2">
 					<u-grid-item>
 						<view class="text-xl text-orange">{{ personalList.username ? personalList.username : '-' }}

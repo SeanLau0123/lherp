@@ -7,15 +7,15 @@
 		</view>
 		<!-- 常用服务 -->
 		<u-cell-group>
-			<u-cell-item icon="setting" icon-size="42" title="基础资料" :arrow="false">
+			<u-cell-item icon="star" icon-size="42" title="基础资料" :arrow="false">
 			</u-cell-item>
 		</u-cell-group>
 		<view>
 			<u-grid :border="true" col="4">
 				<u-grid-item :customStyle="{ height: 200 + 'rpx' }" v-for="(listItem, listIndex) in usList"
 					:key="listIndex">
-					<u-image :showLoading="true" :src="listItem.icon" width="30px" height="30px" :lazy-load="true"
-						@click="goPage(listItem.page, listItem.url)"></u-image>
+					<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="62" :color="$u.color.primary"
+						@click="goPage(listItem.page, listItem.url)"></u-icon>
 					<text class="grid-text">{{ listItem.title }}</text>
 				</u-grid-item>
 			</u-grid>
@@ -26,8 +26,8 @@
 			<u-grid :border="true" col="4">
 				<u-grid-item :customStyle="{ height: 200 + 'rpx' }" v-for="(listItem, listIndex) in systemList"
 					:key="listIndex">
-					<u-image :showLoading="true" :src="listItem.icon" width="30px" height="30px" :lazy-load="true"
-						@click="goPage(listItem.page, listItem.url)"></u-image>
+					<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="62" :color="$u.color.primary"
+						@click="goPage(listItem.page, listItem.url)"></u-icon>
 					<text class="grid-text">{{ listItem.title }}</text>
 				</u-grid-item>
 			</u-grid>
@@ -37,10 +37,10 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, reactive, onMounted,watch } from 'vue'
+	import { ref, reactive, onMounted, watch } from 'vue'
 	import { Request, color, $u, useTheme } from 'uview-pro'
 	const title = ref<string>('管理')
-	const {currentTheme,themes,darkMode} = useTheme();
+	const { currentTheme, themes, darkMode } = useTheme();
 	//定义顶部导航背景数
 	const background = reactive({
 		backgroundColor: ""
@@ -62,20 +62,20 @@
 
 		// 重构：用数组直接菜单列表
 		const materialList = [
-			{ url: "/material/material", page: "material", title: "商品信息", icon: "/static/icon/goods.png" },
-			{ url: "/material/material_category", page: "categorys", title: "商品类别", icon: "/static/icon/categorys.png" },
-			{ url: "/system/unit", page: "unites", title: "多单位", icon: "/static/icon/unites.png" },
-			{ url: "/material/material_attribute", page: "multiAttribute", title: "多属性", icon: "/static/icon/multiAttribute.png" },
-			{ url: "/system/vendor", page: "supplier", title: "供应商信息", icon: "/static/icon/vendors.png" },
-			{ url: "/system/customer", page: "customers", title: "客户信息", icon: "/static/icon/customers.png" },
-			{ url: "/system/member", page: "members", title: "会员信息", icon: "/static/icon/members.png" },
-			{ url: "/system/depot", page: "depot", title: "仓库信息", icon: "/static/icon/depot.png" },
-			{ url: "/system/in_out_item", page: "inOutItemList", title: "收支项目", icon: "/static/icon/inOutItemList.png" },
-			{ url: "/system/account", page: "accounts", title: "账户管理", icon: "/static/icon/accounts.png" },
-			{ url: "/system/person", page: "person", title: "经手人管理", icon: "/static/icon/person.png" },
-			{ url: "/system/role", page: "role", title: "角色管理", type: 'system', icon: "/static/icon/role.png" },
-			{ url: "/system/log", page: "log", title: "日志管理", type: 'system', icon: "/static/icon/logs.png" },
-			{ url: "/system/user", page: "user", title: "用户管理", type: 'system', icon: "/static/icon/user.png" }
+			{ url: "/material/material", page: "material", title: "商品信息", icon: "material" },
+			{ url: "/material/material_category", page: "categorys", title: "商品类别", icon: "categorys" },
+			{ url: "/system/unit", page: "unites", title: "多单位", icon: "unites" },
+			{ url: "/material/material_attribute", page: "multiAttribute", title: "多属性", icon: "SKU" },
+			{ url: "/system/vendor", page: "supplier", title: "供应商信息", icon: "supplier" },
+			{ url: "/system/customer", page: "customers", title: "客户信息", icon: "customers" },
+			{ url: "/system/member", page: "members", title: "会员信息", icon: "members" },
+			{ url: "/system/depot", page: "depot", title: "仓库信息", icon: "depot" },
+			{ url: "/system/in_out_item", page: "inOutItemList", title: "收支项目", icon: "inOutItemList" },
+			{ url: "/system/account", page: "accounts", title: "账户管理", icon: "accounts" },
+			{ url: "/system/person", page: "person", title: "经手人管理", icon: "person" },
+			{ url: "/system/role", page: "role", title: "角色管理", type: 'system', icon: "role" },
+			{ url: "/system/log", page: "log", title: "日志管理", type: 'system', icon: "log" },
+			{ url: "/system/user", page: "user", title: "用户管理", type: 'system', icon: "user" }
 		]
 
 		// 权限匹配逻辑（保持原逻辑不变）
@@ -123,13 +123,13 @@
 				targetRoute = `/pages/manage${url}`;
 				break;
 			case 'categorys':
-				targetRoute = '商品类别'
+				targetRoute = ''
 				break;
 			case 'unites':
-				targetRoute = '多单位'
+				targetRoute = ''
 				break;
 			case 'multiAttribute':
-				targetRoute = '多属性'
+				targetRoute = ''
 				break;
 			case 'supplier':
 				targetRoute = '/pages/manage/supplier/supplier'
@@ -138,35 +138,41 @@
 				targetRoute = '/pages/manage/customers/customers'
 				break;
 			case 'members':
-				targetRoute = '会员信息'
+				targetRoute = ''
 				break;
 			case 'depot':
 				targetRoute = '/pages/manage/warehouse/warehouse'
 				break;
 			case 'inOutItemList':
-				targetRoute = '收支项目'
+				targetRoute = ''
 				break;
 			case 'accounts':
-				targetRoute = '账户管理'
+				targetRoute = ''
 				break;
 			case 'person':
-				targetRoute = '经手人管理'
+				targetRoute = ''
 				break;
 			case 'role':
-				targetRoute = '角色管理'
+				targetRoute = ''
 				break;
 			case 'log':
-				targetRoute = '日志管理'
+				targetRoute = ''
 				break;
 			case 'user':
-				targetRoute = '用户管理'
+				targetRoute = ''
 				break;
 			default:
 				break;
 		}
+		if (targetRoute === ''){
+			uni.showToast({
+				icon: 'error',
+				title: "开发中"
+			})
+		}
 		uni.$u.route(targetRoute);
 	}
-	
+
 	watch(
 		[
 			() => currentTheme.value,

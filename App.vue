@@ -13,6 +13,6 @@
 </script>
 
 <style lang="scss">
-	@import "static/customicon/iconfont.css";
+	@import "./static/customicon/iconfont.css";
 	@import "uview-pro/index.scss";
 </style>

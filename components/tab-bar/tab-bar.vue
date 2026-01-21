@@ -17,6 +17,7 @@
 	const tabList = ref<TabbarItem[]>([
 		{
 			iconPath: "home",
+			iconSize:48,
 			selectedIconPath: "home-fill",
 			text: "首页",
 			isDot: false,
@@ -25,6 +26,7 @@
 		},
 		{
 			iconPath: "grid",
+			iconSize:48,
 			selectedIconPath: "grid-fill",
 			text: "资料",
 			isDot: false,
@@ -33,6 +35,7 @@
 		},
 		{
 			iconPath: "edit-pen",
+			iconSize:48,
 			selectedIconPath: "edit-pen-fill",
 			text: "开单",
 			isDot: false,
@@ -41,6 +44,7 @@
 		},
 		{
 			iconPath: "file-text",
+			iconSize:48,
 			selectedIconPath: "file-text-fill",
 			text: "报表",
 			isDot: false,
@@ -49,6 +53,7 @@
 		},
 		{
 			iconPath: "account",
+			iconSize:48,
 			selectedIconPath: "account-fill",
 			text: "我的",
 			isDot: false,
