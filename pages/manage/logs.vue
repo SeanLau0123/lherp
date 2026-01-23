@@ -1,6 +1,6 @@
-<!-- 报表-采购统计 -->
+<!-- 报表-日志管理 -->
 <template>
-	<view style="height: 100vh;">
+	<view style="height: 100vh;background-color: $u-bg-color;">
 		<u-navbar :is-back="true" :title="title" title-color='#ffffff' back-icon-color='#ffffff'
 			:background="background">
 			<view class="navbar-right-icon">
@@ -8,18 +8,14 @@
 			</view>
 		</u-navbar>
 		<u-empty text="没有搜索结果" mode="search" :show="emptyShow" class="u-empty-fullscreen"></u-empty>
-		<u-sticky>
-			<view class="sticky">
-				<u-text :bold="true" text="实际采购金额："></u-text>
-				<u-text :bold="true" mode="price" :text="realityPriceTotal"></u-text>
-			</view>
-		</u-sticky>
 		<scroll-view class="scrollviewpadding">
 			<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="14">
 				<view class="popup-title">
 					<u-form label-width="160rpx">
-						<u-form-item label="商品信息：">
-							<u-input v-model="searchname" placeholder="请输入名称、条码、助记码查询" /></u-form-item>
+						<u-form-item label="操作模块：">
+							<u-input v-model="operation" placeholder="请输入操作模块" /></u-form-item>
+						<u-form-item label="操作详情：">
+							<u-input v-model="content" placeholder="请输入操作详情" /></u-form-item>
 						<u-form-item label="开始时间：">
 							<u-input v-model="beginTime" :type="type" placeholder="请选择开始时间"
 								@click="pickBeginDateShow = true" />
@@ -31,6 +27,10 @@
 								@click="pickEndDateShow = true" />
 							<u-picker v-model="pickEndDateShow" mode="time" :default-time="endTime"
 								@confirm="endTimeConfirm"></u-picker></u-form-item>
+						<u-form-item label="操作员：">
+							<u-input v-model="userInfo" placeholder="请输入操作员" /></u-form-item>
+						<u-form-item label="操作IP：">
+							<u-input v-model="clientIp" placeholder="操作IP" /></u-form-item>
 						<u-gap></u-gap>
 						<u-button type="primary" @click="search()">搜索</u-button>
 						<u-gap></u-gap>
@@ -38,51 +38,32 @@
 					</u-form>
 				</view>
 			</u-popup>
-			<view v-for="(buyIn, index) in buyInList" :key="buyIn.barCode || index">
+			<view v-for="(log, index) in logList" :key="log.barCode || index">
 				<view class="good-item">
 					<u-row gutter="10">
 						<u-col span="12">
 							<u-collapse :head-style="headStyle">
-								<u-collapse-item :title="buyIn.materialName">
+								<u-collapse-item :title="`操作模块：${log.operation}`">
 									<view class="goods-row">
-										<text class="label">品牌：</text>
-										<text class="value">{{ buyIn.materialBrand }}</text>
-										<text class="label">制造商：</text>
-										<text class="value">{{buyIn.materialMfrs}}</text>
+										<text class="label">操作账号：</text>
+										<text class="value">{{log.loginName}}</text>
+										<text class="label">操作员姓名：</text>
+										<u-text :text="log.userName"></u-text>
 									</view>
 									<u-line :color="$u.color.primary"></u-line>
 								</u-collapse-item>
 							</u-collapse>
 						</u-col>
-						<u-col span="5">
+						<u-col span="12">
 							<view class="goods-row">
-								<text class="label">采购数量：</text>
-								<text class="value">{{buyIn.inSum}}</text>
-							</view>
-						</u-col>
-						<u-col span="7">
-							<view class="goods-row">
-								<text class="label">采购金额：</text>
-								<u-text mode="price" :text="buyIn.inSumPrice"></u-text>
-							</view>
-						</u-col>
-						<u-col span="5">
-							<view class="goods-row">
-								<text class="label">退货数量：</text>
-								<text class="value">{{buyIn.outSum || '-' }}</text>
-							</view>
-						</u-col>
-						<u-col span="7">
-							<view class="goods-row">
-								<text class="label">退货金额：</text>
-								<u-text mode="price" :text="buyIn.outSumPrice"></u-text>
+								<text class="label">操作详情：</text>
+								<text class="value">{{log.content}}</text>
 							</view>
 						</u-col>
 						<u-col span="12">
 							<view class="goods-row">
-								<text class="label">实际采购金额：</text>
-								<u-text mode="price" :text="buyIn.inOutSumPrice"></u-text>
-
+								<text class="label">操作时间：</text>
+								<u-text :text="log.createTimeStr"></u-text>
 							</view>
 						</u-col>
 					</u-row>
@@ -97,10 +78,10 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getbuyInList } from '@/api/api.js'
+	import { getLogs } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
-	const title = ref<string>('采购统计')
+	const title = ref<string>('日志管理')
 	const background = reactive({
 		backgroundColor: ""
 	})
@@ -144,10 +125,13 @@
 
 	function search() {
 		popupShow.value = false;
-		loadGetbuyInList();
+		loadGetlogList();
 	}
 	function reset() {
-		searchname.value = '';
+		operation.value = ''
+		content.value = ''
+		userInfo.value = ''
+		clientIp.value = ''
 		initDefaultDates();
 		search();
 	}
@@ -155,10 +139,6 @@
 
 	//商品分类选择器
 	const selectShow = ref<boolean>(false)
-	const categoryName = ref<string>('')
-	const categoryId = ref<string>('')
-	const supplierId = ref("");
-	const depotId = ref("");
 	const realityPriceTotal = ref(0);
 
 	const beginTime = ref("");
@@ -166,7 +146,7 @@
 	const initDefaultDates = () => {
 		const today = new Date();
 		const threeMonthsAgo = new Date(today);
-		threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+		threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 1);
 		beginTime.value = threeMonthsAgo.toISOString().split('T')[0];
 		endTime.value = new Date().toISOString().split('T')[0];
 	};
@@ -184,35 +164,28 @@
 	}
 
 
-
-
-
-	const buyInList = ref<Array>([]);
-	const searchname = ref<string>('');
-	const loadGetbuyInList = async () => {
+	const logList = ref<Array>([]);
+	const operation = ref<string>('');
+	const content = ref<string>('')
+	const userInfo = ref<string>('')
+	const clientIp = ref("");
+	const loadGetlogList = async () => {
 		let params = {
 			currentPage: current.value,
-			pageSize: pageSize.value,
-			materialParam: '',
+			pageSize: pageSize.value
+		}
+		params.search = JSON.stringify({
 			beginTime: beginTime.value,
 			endTime: endTime.value,
-			mpList: ''
-		}
-
-
-		if (searchname.value) {
-			params.materialParam = searchname.value;
-		}
-		if (supplierId.value) {
-			params.materialParam = supplierId.value;
-		}
-		if (depotId.value) {
-			params.depotId = depotId.value;
-		}
-		const res = await getbuyInList(params)
+			operation: operation.value,
+			content: content.value,
+			userInfo: userInfo.value,
+			clientIp: clientIp.value
+		})
+		const res = await getLogs(params)
 		if (res && res.code === 200) {
 			listTotal.value = res.data.total
-			buyInList.value = res.data.rows
+			logList.value = res.data.rows
 			realityPriceTotal.value = res.data.realityPriceTotal
 			if (listTotal.value == 0) {
 
@@ -238,12 +211,12 @@
 		else {
 			current.value = current.value
 		}
-		loadGetbuyInList();
+		loadGetlogList();
 	}
 
 	onMounted(async () => {
 		initDefaultDates();
-		await loadGetbuyInList();
+		await loadGetlogList();
 
 	})
 </script>
@@ -253,12 +226,6 @@
 		border-radius: 8rpx;
 		width: calc(100% - 32rpx);
 		//margin: 5rpx 10rpx 10rpx 10rpx;
-	}
-
-	.sticky {
-		text-align: center;
-		padding: 10rpx 10rpx 10rpx 10rpx;
-		background: $u-bg-color;
 	}
 
 	.collvalue {
@@ -281,8 +248,6 @@
 		margin-bottom: 5rpx;
 		line-height: 1.5;
 		flex-wrap: wrap;
-
-		;
 	}
 
 	.label {

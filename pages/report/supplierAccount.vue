@@ -101,7 +101,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getsupplierAccountList, getSupplierlList } from '@/api/api.js'
+	import { getsupplierAccountList, getPartnerlList } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('供应商对账')
@@ -156,7 +156,7 @@
 	}
 
 
-	//商品分类选择器
+	//选择器
 	const selectShow = ref<boolean>(false)
 	const depotId = ref("");
 	const firstMoney = ref(0);
@@ -215,7 +215,7 @@
 		let params = {
 			search: '{"supplier":"","type":"供应商"}'
 		}
-		const res = await getSupplierlList(params)
+		const res = await getPartnerlList(params)
 		if (res && res.code === 200) {
 			supplierList.value = res.data.rows.map(item => ({
 				value: item.id.toString(), 

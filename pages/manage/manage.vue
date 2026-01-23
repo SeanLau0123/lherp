@@ -123,7 +123,7 @@
 				targetRoute = `/pages/manage${url}`;
 				break;
 			case 'categorys':
-				targetRoute = ''
+				targetRoute = '/pages/manage/category/category'
 				break;
 			case 'unites':
 				targetRoute = ''
@@ -138,25 +138,25 @@
 				targetRoute = '/pages/manage/customers/customers'
 				break;
 			case 'members':
-				targetRoute = ''
+				targetRoute = '/pages/manage/members/members'
 				break;
 			case 'depot':
 				targetRoute = '/pages/manage/warehouse/warehouse'
 				break;
 			case 'inOutItemList':
-				targetRoute = ''
+				targetRoute = '/pages/manage/inoutItem/inoutItem'
 				break;
 			case 'accounts':
-				targetRoute = ''
+				targetRoute = '/pages/manage/accounts/accounts'
 				break;
 			case 'person':
-				targetRoute = ''
+				targetRoute = '/pages/manage/handler/handler'
 				break;
 			case 'role':
 				targetRoute = ''
 				break;
 			case 'log':
-				targetRoute = ''
+				targetRoute = '/pages/manage/logs'
 				break;
 			case 'user':
 				targetRoute = ''

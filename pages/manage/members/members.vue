@@ -1,7 +1,8 @@
+<!-- 资料-供应商信息 -->
 <template>
-	<view style="height: 100vh;">
-		<u-navbar :is-back="true" :background="background" :title="title" back-icon-color="#ffffff"
-			title-color="#ffffff">
+	<view>
+		<u-navbar :is-back="true" :title="title" title-color='#ffffff' back-icon-color='#ffffff'
+			:background="background">
 			<view class="navbar-right-icon">
 				<u-icon name='search' @click="popupShow = true" color="#ffffff" size="48rpx" label-pos="right"></u-icon>
 			</view>
@@ -9,17 +10,10 @@
 		<scroll-view class="scrollviewpadding">
 			<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="8">
 				<view class="popup-title">
-					<u-form label-width="130rpx">
-						<u-form-item label="关键词："><u-input v-model="searchname"
-								placeholder="请输入名称、条码、助记码查询" /></u-form-item>
-						<!-- <u-form-item label="商品类型">
-							<view>
-								<u-input v-model="categoryName" type="select" @click="selectShow = true" />
-								<u-input v-model="categoryId" />
-								<u-select :list="list" v-model="selectShow" mode="mutil-column"
-									@confirm="confirm"></u-select>
-							</view>
-						</u-form-item> -->
+					<u-form label-width="160rpx">
+						<u-form-item label="会员卡号："><u-input v-model="searchNo" placeholder="请输入卡号查询" /></u-form-item>
+						<u-form-item label="联系人："><u-input v-model="contacts" placeholder="请输入联系人查询" /></u-form-item>
+						<u-form-item label="手机号码："><u-input v-model="telephone" placeholder="请输入手机号码查询" /></u-form-item>
 						<u-gap></u-gap>
 						<u-button type="primary" @click="search()">搜索</u-button>
 						<u-gap></u-gap>
@@ -27,20 +21,18 @@
 					</u-form>
 				</view>
 			</u-popup>
-			<view v-for="(good, index) in materialList" :key="good.id || index">
+			<view v-for="(member, index) in memberList" :key="member.id || index">
 				<view class="good-item" style="min-height: 80rpx;">
 					<u-row gutter="10">
 						<u-col span="12">
 							<u-collapse :head-style="headStyle">
-								<u-collapse-item :title="good.name">
-									<view class="goods-row-coll">
-										<text class="label">名称：</text>
-										<text>{{ good.name }}</text>
-									</view>
-									<view class="goods-row-coll">
-										<text class="label">采购价：</text>
-										<text style="color: red; font-size: 36rpx;font-weight: bold;">{{
-											good.purchaseDecimal }}</text>
+								<u-collapse-item :title="`会员卡号：${member.supplier}`">
+									<view class="goods-row">
+										<text class="label">联系人：</text>
+										<text class="value">{{ member.contacts || '-' }}</text>
+										<text class="label">预付款：</text>
+										<text
+											style="color: red; font-size: 36rpx;font-weight: bold;">{{member.advanceIn || '0' }}</text>
 									</view>
 									<u-line :color="$u.color.primary"></u-line>
 								</u-collapse-item>
@@ -48,26 +40,14 @@
 						</u-col>
 						<u-col span="12">
 							<view class="goods-row">
-								<text class="label">品牌：</text>
-								<text class="value">{{ good.brand || '-' }}</text>
-								<text class="label">商品类别：</text>
-								<text class="value">{{ good.categoryName || '-' }}</text>
+								<text class="label">手机号码：</text>
+								<text class="value">{{member.telephone || '-' }}</text>
 							</view>
 						</u-col>
 						<u-col span="12">
 							<view class="goods-row">
-								<text class="label">销售价：</text>
-								<text class="value">{{ good.wholesaleDecimal || '-' }}</text>
-								<text class="label">零售价：</text>
-								<text class="value">{{ good.commodityDecimal || '-' }}</text>
-							</view>
-						</u-col>
-						<u-col span="12">
-							<view class="goods-row">
-								<text class="label">商品条码：</text>
-								<text class="value">{{good.mBarCode || '-' }}</text>
-								<text class="label">序列号：</text>
-								<text class="value">{{good.enableSerialNumber === '1' ? '是' : '否'}}</text>
+								<text class="label">备注：</text>
+								<text class="value">{{member.description || '-' }}</text>
 							</view>
 						</u-col>
 					</u-row>
@@ -83,67 +63,84 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getMaterialList, getMaterialCategory } from '../../../api/api'
-	import { Request, color, $u, useTheme } from 'uview-pro'
+	import { getPartnerlList } from '../../../api/api'
+	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
-	const title = ref<string>('商品信息')
+	const title = ref<string>('会员信息')
 	const background = reactive({
 		backgroundColor: ""
 	})
 	const updateNavbarBackground = () => {
 		background.backgroundColor = $u.color.primary;
 	};
+	watch(
+		[
+			() => currentTheme.value,
+			() => darkMode.value
+		],
+		([newTheme, newDarkMode], [oldTheme, oldDarkMode]) => {
+			// 仅当主题或暗黑模式变化时，更新导航栏背景
+			if (newTheme !== oldTheme || newDarkMode !== oldDarkMode) {
+				updateNavbarBackground();
+			}
+		},
+		{
+			immediate: true,
+			deep: false
+		}
+	);
+
 	const popupShow = ref<boolean>(false)
 	const emptyShow = ref<boolean>(false)
 
 	const headStyle = reactive({
 		fontSize: '28rpx',
-		lineHeight: '32rpx',
 		color: $u.color.primary,
-		fontWeight: 'bold',
-		paddingLeft:'10rpx'
+		lineHeight: '32rpx',
+		fontWeight: 'bold'
 	})
 
 	const uFormRef = ref();
-	const form = reactive({
-		name: '',
-		category: ''
-	});
 
 	function search() {
 		popupShow.value = false;
-		loadGetMaterialList();
+		loadGetmemberList();
 	}
 	function reset() {
-		searchname.value = '';
+		searchNo.value = '';
+		telephone.value = '';
+		contacts.value = '';
 		search();
 	}
 
 
 	//商品分类选择器
 	const selectShow = ref<boolean>(false)
-	const categoryName = ref<string>('')
-	const categoryId = ref<string>('')
 
-	//加载商品列表
-	const materialList = ref<Array>([]);
-	const searchname = ref<string>('');
-	const loadGetMaterialList = async () => {
+	//加载会员列表
+	const memberList = ref<Array>([]);
+	const searchNo = ref<string>('');
+	const telephone = ref<string>('');
+	const contacts = ref<string>('');
+	const loadGetmemberList = async () => {
 		let params = {
 			currentPage: current.value,
 			pageSize: pageSize.value,
 			search: JSON.stringify({
-				materialParam: searchname.value
+				supplier: searchNo.value,
+				telephone: telephone.value,
+				contacts: contacts.value,
+				type: "会员"
 			})
 		}
-		const res = await getMaterialList(params)
+		const res = await getPartnerlList(params)
 		if (res && res.code === 200) {
 			listTotal.value = res.data.total
-			materialList.value = res.data.rows
+			memberList.value = res.data.rows
 			if (listTotal.value == 0) {
 
 				emptyShow.value = true
-				listTotal.value = 0
+				listTotal.value = 1
 
 			}
 			else { emptyShow.value = false }
@@ -164,27 +161,11 @@
 		else {
 			current.value = current.value
 		}
-		loadGetMaterialList();
+		loadGetmemberList();
 	}
 
-	watch(
-		[
-			() => currentTheme.value,
-			() => darkMode.value
-		],
-		([newTheme, newDarkMode], [oldTheme, oldDarkMode]) => {
-			// 仅当主题或暗黑模式变化时，更新导航栏背景
-			if (newTheme !== oldTheme || newDarkMode !== oldDarkMode) {
-				updateNavbarBackground();
-			}
-		},
-		{
-			immediate: true,
-			deep: false
-		}
-	);
 	onMounted(async () => {
-		await loadGetMaterialList();
+		await loadGetmemberList();
 	})
 </script>
 
@@ -193,19 +174,6 @@
 		border-radius: 8rpx;
 		width: calc(100% - 32rpx);
 		margin: 10rpx 0rpx 10rpx 10rpx;
-	}
-
-	.colllabel {
-		font-size: 28rpx;
-		width: 120rpx;
-		text-align: right;
-	}
-
-	.collvalue {
-		flex: 1;
-		min-width: calc(40% - 130rpx);
-		word-break: break-all;
-		font-size: 28rpx;
 	}
 
 	.good-item {
@@ -249,16 +217,15 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
+		background-color: $u-bg-color;
 		padding: 10rpx 50rpx;
 		///border-top: 1rpx solid #f5f5f5;
 		z-index: 999;
-		background-color: $u-bg-color;
 	}
 
 	.scrollviewpadding {
 		padding-bottom: 40px;
 		background: $u-bg-color;
-		min-height: calc(100% - 200rpx);
 	}
 
 	.navbar-right-icon {
@@ -274,17 +241,13 @@
 		padding: 10rpx 20rpx;
 	}
 
-	// 新增：u-empty 全屏样式
 	.u-empty-fullscreen {
-		/* 绝对定位，脱离文档流 */
 		position: absolute;
 		top: 0;
 		left: 0;
 		right: 0;
 		bottom: 0;
-		/* 高度铺满整个父容器（100vh），扣除导航栏和分页栏高度 */
 		height: 100%;
-		/* 弹性布局，让内容垂直水平居中（核心） */
 		display: flex;
 		flex-direction: column;
 		align-items: center;

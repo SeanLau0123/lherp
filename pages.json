@@ -40,6 +40,12 @@
 				"navigationBarTitleText": ""
 			}
 		},
+		{
+			"path": "pages/report/account",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
 		/*
 		 *个人中心
 		 */
@@ -129,6 +135,41 @@
 				"navigationStyle": "custom"
 			}
 		},
+		{
+			"path": "pages/manage/inoutItem/inoutItem",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/manage/handler/handler",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/manage/logs",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/manage/accounts/accounts",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},		{
+			"path": "pages/manage/members/members",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/manage/category/category",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
 		/*
 		 *开单
 		 */
@@ -139,6 +180,9 @@
 				"navigationStyle": "custom"
 			}
 		},
+		/*
+		*组件
+		*/
 		{
 			"path": "common/zlUpdate/zlUpdate",
 			"style": {
@@ -153,7 +197,7 @@
 			}
 		},
 		{
-			"path": "pages/report/account",
+			"path": "components/tki-tree/tki-tree",
 			"style": {
 				"navigationBarTitleText": ""
 			}

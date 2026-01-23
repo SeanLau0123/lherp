@@ -205,8 +205,8 @@
 	}
 	onMounted(async () => {
 		borderColor.value = $u.color.primary;
-		onPlatformName();
-		onRandomImage();
+		await onPlatformName();
+		await onRandomImage();
 	})
 </script>
 

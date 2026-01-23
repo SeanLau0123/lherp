@@ -3,7 +3,7 @@
 	<view style="height: 100vh;">
 		<u-navbar :is-back="true" :title="title" :background="background" back-icon-color="#ffffff" title-color	="#ffffff">
 			<view class="navbar-right-icon">
-				<u-icon name='search' @click="popupShow = true" size="48rpx" label-pos="right"></u-icon>
+				<u-icon name='search' @click="popupShow = true" color="#ffffff" size="48rpx" label-pos="right"></u-icon>
 			</view>
 		</u-navbar>
 		<scroll-view class="scrollviewpadding">

@@ -7,7 +7,7 @@
 				<u-icon name='search' @click="popupShow = true" color="#ffffff" size="48rpx" label-pos="right"></u-icon>
 			</view>
 		</u-navbar>
-		<view>
+		<scroll-view class="scrollviewpadding">
 			<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="8">
 				<view class="popup-title">
 					<u-form label-width="100rpx">
@@ -19,9 +19,6 @@
 					</u-form>
 				</view>
 			</u-popup>
-		</view>
-		<u-empty text="没有搜索结果" mode="search" :show="emptyShow" class="u-empty-fullscreen"></u-empty>
-		<scroll-view class="scrollviewpadding">
 			<view v-for="(supplier, index) in supplierlList" :key="supplier.id || index">
 				<view class="good-item" style="min-height: 80rpx;">
 					<u-row gutter="10">
@@ -69,6 +66,7 @@
 				</view>
 			</view>
 		</scroll-view>
+		<u-empty text="没有搜索结果" mode="search" :show="emptyShow" class="u-empty-fullscreen"></u-empty>
 		<view class="pagination-fixed">
 			<u-pagination v-model="current" :total="listTotal" :pageSize="pageSize"
 				@change="handleChange"></u-pagination>
@@ -77,7 +75,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getSupplierlList } from '../../../api/api'
+	import { getPartnerlList } from '../../../api/api'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('供应商信息')
@@ -149,7 +147,7 @@
 				type: "供应商"
 			})
 		}
-		const res = await getSupplierlList(params)
+		const res = await getPartnerlList(params)
 		if (res && res.code === 200) {
 			listTotal.value = res.data.total
 			supplierlList.value = res.data.rows
@@ -191,20 +189,6 @@
 		width: calc(100% - 32rpx);
 		margin: 10rpx 0rpx 10rpx 10rpx;
 	}
-
-	.colllabel {
-		font-size: 28rpx;
-		width: 160rpx;
-		text-align: right;
-	}
-
-	.collvalue {
-		flex: 1;
-		min-width: calc(40% - 130rpx);
-		word-break: break-all;
-		font-size: 28rpx;
-	}
-
 	.good-item {
 		background: rgba(var(--u-type-primary-rgb), 0.15);
 		border: 1px solid rgba(var(--u-type-primary-rgb), 0.2);
@@ -254,6 +238,7 @@
 
 	.scrollviewpadding {
 		padding-bottom: 40px;
+		background: $u-bg-color;
 	}
 
 	.navbar-right-icon {
@@ -267,5 +252,25 @@
 	.popup-title {
 		margin-top: 45px;
 		padding: 10rpx 20rpx;
+	}
+	.u-empty-fullscreen {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		/* 背景色与页面保持一致，避免透明穿透 */
+		background-color: $u-bg-color;
+		/* 层级低于分页栏，不遮挡分页 */
+		z-index: 1;
+		/* 扣除 navbar 高度，避免内容被导航栏遮挡 */
+		padding-top: var(--u-navbar-height, 88rpx);
+		/* 扣除分页栏高度，避免内容被分页遮挡 */
+		padding-bottom: 40px;
 	}
 </style>

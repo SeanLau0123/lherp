@@ -82,7 +82,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted,watch } from 'vue'
-	import { getSupplierlList } from '../../../api/api'
+	import { getPartnerlList } from '../../../api/api'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('客户信息')
@@ -154,7 +154,7 @@
 				type: "客户"
 			})
 		}
-		const res = await getSupplierlList(params)
+		const res = await getPartnerlList(params)
 		if (res && res.code === 200) {
 			listTotal.value = res.data.total
 			supplierlList.value = res.data.rows

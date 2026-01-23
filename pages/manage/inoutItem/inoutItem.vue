@@ -1,5 +1,6 @@
+<!-- 资料-客户信息 -->
 <template>
-	<view style="height: 100vh;">
+	<view>
 		<u-navbar :is-back="true" :background="background" :title="title" back-icon-color="#ffffff"
 			title-color="#ffffff">
 			<view class="navbar-right-icon">
@@ -7,19 +8,15 @@
 			</view>
 		</u-navbar>
 		<scroll-view class="scrollviewpadding">
-			<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="8">
+			<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="14">
 				<view class="popup-title">
-					<u-form label-width="130rpx">
-						<u-form-item label="关键词："><u-input v-model="searchname"
-								placeholder="请输入名称、条码、助记码查询" /></u-form-item>
-						<!-- <u-form-item label="商品类型">
-							<view>
-								<u-input v-model="categoryName" type="select" @click="selectShow = true" />
-								<u-input v-model="categoryId" />
-								<u-select :list="list" v-model="selectShow" mode="mutil-column"
-									@confirm="confirm"></u-select>
-							</view>
-						</u-form-item> -->
+					<u-form label-width="100rpx">
+						<u-form-item label="名称："><u-input v-model="searchname" placeholder="请输入名称查询" /></u-form-item>
+						<u-form-item label="备注："><u-input v-model="remark" placeholder="请输入备注查询" /></u-form-item>
+						<u-form-item label-align="right" label="类型：">
+							<u-input v-model="typeName" :type="type" @click="typeShow = true" />
+							<u-select v-model="typeShow" :list="typeList" @confirm="typeConfirm"></u-select>
+						</u-form-item>
 						<u-gap></u-gap>
 						<u-button type="primary" @click="search()">搜索</u-button>
 						<u-gap></u-gap>
@@ -27,47 +24,37 @@
 					</u-form>
 				</view>
 			</u-popup>
-			<view v-for="(good, index) in materialList" :key="good.id || index">
+			<view v-for="(item, index) in InOutItemList" :key="item.id || index">
 				<view class="good-item" style="min-height: 80rpx;">
 					<u-row gutter="10">
 						<u-col span="12">
 							<u-collapse :head-style="headStyle">
-								<u-collapse-item :title="good.name">
-									<view class="goods-row-coll">
-										<text class="label">名称：</text>
-										<text>{{ good.name }}</text>
+								<u-collapse-item :title="`名称：${item.name}`">
+									<view class="goods-row">
+										<text class="label">是否启用：</text>
+										<text v-if="item.enabled == '0'"
+											style="color:red; font-size: 32rpx;font-weight: bold">禁用</text>
+										<text v-if="item.enabled == '1'"
+											style="color:green;font-size: 32rpx;font-weight: bold">启用</text>
+										<text class="label">编号：</text>
+										<text class="value">{{ item.id || '-' }}</text>
 									</view>
-									<view class="goods-row-coll">
-										<text class="label">采购价：</text>
-										<text style="color: red; font-size: 36rpx;font-weight: bold;">{{
-											good.purchaseDecimal }}</text>
-									</view>
-									<u-line :color="$u.color.primary"></u-line>
+									<u-line color="#ffffff"></u-line>
 								</u-collapse-item>
 							</u-collapse>
 						</u-col>
 						<u-col span="12">
 							<view class="goods-row">
-								<text class="label">品牌：</text>
-								<text class="value">{{ good.brand || '-' }}</text>
-								<text class="label">商品类别：</text>
-								<text class="value">{{ good.categoryName || '-' }}</text>
+								<text class="label">类型：</text>
+								<text class="value">{{ item.type || '-' }}</text>
+								<text class="label">排序：</text>
+								<text class="value">{{ item.sort || '-' }}</text>
 							</view>
 						</u-col>
 						<u-col span="12">
 							<view class="goods-row">
-								<text class="label">销售价：</text>
-								<text class="value">{{ good.wholesaleDecimal || '-' }}</text>
-								<text class="label">零售价：</text>
-								<text class="value">{{ good.commodityDecimal || '-' }}</text>
-							</view>
-						</u-col>
-						<u-col span="12">
-							<view class="goods-row">
-								<text class="label">商品条码：</text>
-								<text class="value">{{good.mBarCode || '-' }}</text>
-								<text class="label">序列号：</text>
-								<text class="value">{{good.enableSerialNumber === '1' ? '是' : '否'}}</text>
+								<text class="label">备注：</text>
+								<text class="value">{{item.remark || '-' }}</text>
 							</view>
 						</u-col>
 					</u-row>
@@ -83,68 +70,93 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getMaterialList, getMaterialCategory } from '../../../api/api'
-	import { Request, color, $u, useTheme } from 'uview-pro'
+	import { getInOutItem } from '../../../api/api'
+	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
-	const title = ref<string>('商品信息')
+	const title = ref<string>('收支项目')
 	const background = reactive({
 		backgroundColor: ""
 	})
 	const updateNavbarBackground = () => {
 		background.backgroundColor = $u.color.primary;
 	};
+	watch(
+		[
+			() => currentTheme.value,
+			() => darkMode.value
+		],
+		([newTheme, newDarkMode], [oldTheme, oldDarkMode]) => {
+			// 仅当主题或暗黑模式变化时，更新导航栏背景
+			if (newTheme !== oldTheme || newDarkMode !== oldDarkMode) {
+				updateNavbarBackground();
+			}
+		},
+		{
+			immediate: true,
+			deep: false
+		}
+	);
+
 	const popupShow = ref<boolean>(false)
 	const emptyShow = ref<boolean>(false)
-
+	const type = ref<string>('select')
 	const headStyle = reactive({
 		fontSize: '28rpx',
-		lineHeight: '32rpx',
 		color: $u.color.primary,
+		lineHeight: '32rpx',
 		fontWeight: 'bold',
-		paddingLeft:'10rpx'
+		paddingLeft: '10rpx'
 	})
 
 	const uFormRef = ref();
-	const form = reactive({
-		name: '',
-		category: ''
-	});
 
 	function search() {
 		popupShow.value = false;
-		loadGetMaterialList();
+		loadGetInOutItemList();
 	}
 	function reset() {
 		searchname.value = '';
+		remark.value = '';
+		typeName.value='';
 		search();
 	}
 
 
-	//商品分类选择器
-	const selectShow = ref<boolean>(false)
-	const categoryName = ref<string>('')
-	const categoryId = ref<string>('')
+	//分类选择器
+	const typeShow = ref<boolean>(false)
+	const typeName = ref<string>('')
+	interface ListItem {
+		label : string
+	}
+	const typeList = ref<ListItem[]>([
+		{ label: '收入'}, { label: '支出'}])
+	// 定义确认回调函数
+	const typeConfirm = (e : any[]) => {
+		typeName.value = e[0].label;
+	}
+	
 
-	//加载商品列表
-	const materialList = ref<Array>([]);
+	//加载收支项目列表
+	const InOutItemList = ref<Array>([]);
 	const searchname = ref<string>('');
-	const loadGetMaterialList = async () => {
+	const remark = ref<string>('');
+	const loadGetInOutItemList = async () => {
 		let params = {
 			currentPage: current.value,
 			pageSize: pageSize.value,
 			search: JSON.stringify({
-				materialParam: searchname.value
+				name: searchname.value,
+				type: typeName.value,
+				remark: remark.value
 			})
 		}
-		const res = await getMaterialList(params)
+		const res = await getInOutItem(params)
 		if (res && res.code === 200) {
 			listTotal.value = res.data.total
-			materialList.value = res.data.rows
+			InOutItemList.value = res.data.rows
 			if (listTotal.value == 0) {
-
 				emptyShow.value = true
-				listTotal.value = 0
-
+				listTotal.value = 1
 			}
 			else { emptyShow.value = false }
 		}
@@ -164,27 +176,11 @@
 		else {
 			current.value = current.value
 		}
-		loadGetMaterialList();
+		loadGetInOutItemList();
 	}
 
-	watch(
-		[
-			() => currentTheme.value,
-			() => darkMode.value
-		],
-		([newTheme, newDarkMode], [oldTheme, oldDarkMode]) => {
-			// 仅当主题或暗黑模式变化时，更新导航栏背景
-			if (newTheme !== oldTheme || newDarkMode !== oldDarkMode) {
-				updateNavbarBackground();
-			}
-		},
-		{
-			immediate: true,
-			deep: false
-		}
-	);
 	onMounted(async () => {
-		await loadGetMaterialList();
+		await loadGetInOutItemList();
 	})
 </script>
 
@@ -193,19 +189,6 @@
 		border-radius: 8rpx;
 		width: calc(100% - 32rpx);
 		margin: 10rpx 0rpx 10rpx 10rpx;
-	}
-
-	.colllabel {
-		font-size: 28rpx;
-		width: 120rpx;
-		text-align: right;
-	}
-
-	.collvalue {
-		flex: 1;
-		min-width: calc(40% - 130rpx);
-		word-break: break-all;
-		font-size: 28rpx;
 	}
 
 	.good-item {
@@ -249,16 +232,15 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
+		background-color: $u-bg-color;
 		padding: 10rpx 50rpx;
 		///border-top: 1rpx solid #f5f5f5;
 		z-index: 999;
-		background-color: $u-bg-color;
 	}
 
 	.scrollviewpadding {
 		padding-bottom: 40px;
 		background: $u-bg-color;
-		min-height: calc(100% - 200rpx);
 	}
 
 	.navbar-right-icon {
@@ -274,17 +256,13 @@
 		padding: 10rpx 20rpx;
 	}
 
-	// 新增：u-empty 全屏样式
 	.u-empty-fullscreen {
-		/* 绝对定位，脱离文档流 */
 		position: absolute;
 		top: 0;
 		left: 0;
 		right: 0;
 		bottom: 0;
-		/* 高度铺满整个父容器（100vh），扣除导航栏和分页栏高度 */
 		height: 100%;
-		/* 弹性布局，让内容垂直水平居中（核心） */
 		display: flex;
 		flex-direction: column;
 		align-items: center;
