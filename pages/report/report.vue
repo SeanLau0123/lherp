@@ -14,7 +14,7 @@
 			<u-grid :border="true" col="4">
 				<u-grid-item :customStyle="{ height: 200 + 'rpx' }" v-for="(listItem, listIndex) in usList"
 					:key="listIndex">
-						<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="64" :color="$u.color.primary"
+					<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="64" :color="$u.color.primary"
 						@click="goPage(listItem.page, listItem.url)"></u-icon>
 					<text class="grid-text">{{ listItem.title }}</text>
 				</u-grid-item>
@@ -25,10 +25,10 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, reactive, onMounted,watch } from 'vue'
+	import { ref, reactive, onMounted, watch } from 'vue'
 	import { Request, color, $u, useTheme } from 'uview-pro'
 	const title = ref<string>('报表中心')
-	const {currentTheme,themes,darkMode} = useTheme();
+	const { currentTheme, themes, darkMode } = useTheme();
 	//定义顶部导航背景数
 	const background = reactive({
 		backgroundColor: ""
@@ -49,86 +49,86 @@
 			{
 				url: "/report/material_stock",
 				page: "material_stock",
-				icon: "/static/icon/material_stock.png",
+				icon: "material_stock",
 				title: "商品库存"
 			},
 			{
 				url: "/report/buy_in_report",
 				page: "buyin",
-				icon: "/static/icon/warehouseReceipt.png",
+				icon: "buyin",
 				title: "采购统计"
-			},
-			{
-				url: "/report/account_report",
-				page: "account",
-				icon: "/static/icon/account.png",
-				title: "账户统计"
 			},
 			{
 				url: "/report/sale_out_report",
 				page: "saleout",
-				icon: "/static/icon/salesOutbound.png",
+				icon: "saleout",
 				title: "销售统计"
 			},
 			{
 				url: "/report/in_detail",
-				page: "indetail",
-				icon: "/static/icon/indetail.png",
+				page: "InDetail",
+				icon: "indetail",
 				title: "入库明细"
 			},
 			{
 				url: "/report/out_detail",
 				page: "outdetail",
-				icon: "/static/icon/outdetail.png",
+				icon: "outdetail",
 				title: "出库明细"
 			},
 			{
 				url: "/report/allocation_detail",
 				page: "allocationdetail",
-				icon: "/static/icon/allocationdetail.png",
+				icon: "allocationdetail",
 				title: "调拨明细"
 			},
 			{
 				url: "/report/in_material_count",
 				page: "inmaterialcount",
-				icon: "/static/icon/inmaterialcount.png",
+				icon: "inmaterialcount",
 				title: "入库汇总"
 			},
 			{
 				url: "/report/out_material_count",
 				page: "outmaterialcount",
-				icon: "/static/icon/outmaterialcount.png",
+				icon: "outmaterialcount",
 				title: "出库汇总"
 			},
 			{
 				url: "/report/in_out_stock_report",
 				page: "inoutstockreport",
-				icon: "/static/icon/inoutstockreport.png",
+				icon: "inoutstockreport",
 				title: "进销存统计"
 			},
 			{
 				url: "/report/customer_account",
 				page: "customeraccount",
-				icon: "/static/icon/customeraccount.png",
+				icon: "customeraccount",
 				title: "客户对账"
 			},
 			{
 				url: "/report/vendor_account",
 				page: "supplierAccount",
-				icon: "/static/icon/vendoraccount.png",
+				icon: "supplierAccount",
 				title: "供应商对账"
 			},
 			{
 				url: "/report/stock_warning_report",
 				page: "stockwarningreport",
-				icon: "/static/icon/stockwarningreport.png",
+				icon: "stockwarningreport",
 				title: "库存预警"
 			},
 			{
 				url: "/report/retail_out_report",
 				page: "retailout",
-				icon: "/static/icon/retailout.png",
+				icon: "retailout",
 				title: "零售统计"
+			},
+			{
+				url: "/report/account_report",
+				page: "account",
+				icon: "account",
+				title: "账户统计"
 			}
 		];
 
@@ -173,14 +173,14 @@
 			case 'buyin':
 				targetRoute = `/pages/report/${page}`;
 				break;
+			case 'InDetail':
+				targetRoute = `/pages/report/${page}`;
+				break;
 			case 'supplierAccount':
 				targetRoute = `/pages/report/${page}`;
 				break;
 			case 'account':
 				targetRoute = `/pages/report/${page}`;
-				break;
-			case 'multiAttribute':
-				targetRoute = ''
 				break;
 			case 'supplier':
 				targetRoute = '/pages/manage/supplier/supplier'
@@ -209,13 +209,13 @@
 			case 'log':
 				targetRoute = '日志管理'
 				break;
-			case 'user':
-				targetRoute = '用户管理'
+			case 'stockwarningreport':
+				targetRoute = `/pages/report/${page}`;
 				break;
 			default:
 				break;
 		}
-		if (targetRoute === ''){
+		if (targetRoute === '') {
 			uni.showToast({
 				icon: 'error',
 				title: "开发中"
@@ -252,6 +252,7 @@
 		font-size: 42rpx;
 		color: #ffffff;
 	}
+
 	.grid-text {
 		font-size: 12px;
 		padding: 10rpx 0 20rpx 0rpx;

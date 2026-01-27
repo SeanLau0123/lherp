@@ -1,5 +1,5 @@
 <template>
-	<view style="height: 100vh;">
+	<view style="height: 100vh;background:rgba(var(--u-type-primary-rgb), 0.1);">
 		<u-navbar :is-back="true" :background="background" :title="title" back-icon-color="#ffffff"
 			title-color="#ffffff">
 		</u-navbar>
@@ -234,7 +234,7 @@
 		tkiTreeRef.value._confirm()
 		const id = selectedName.value
 		if (!id) {
-			showToast('请选择删除的类别', 'error');
+			showToast('请选择删除的类别', 'warning');
 			return
 		}
 		showDeleteModal.value = true

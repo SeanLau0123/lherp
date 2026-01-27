@@ -1,9 +1,7 @@
 <template>
-	<view  style="height: 100vh;">
-		<view>
-			<u-navbar :is-back="true" :background="background" :title="title" back-icon-color="#ffffff"
-				title-color="#ffffff"></u-navbar>
-		</view>
+	<view style="height: 100vh;">
+		<u-navbar :is-back="true" :background="background" :title="title" back-icon-color="#ffffff"
+			title-color="#ffffff"></u-navbar>
 		<view>
 			<u-cell-group>
 				<u-cell-item icon="bookmark-fill" title="工号" :arrow="false" :value="personal.id"></u-cell-item>
@@ -19,9 +17,9 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, reactive, onMounted,watch } from 'vue'
+	import { ref, reactive, onMounted, watch } from 'vue'
 	import { getUserSession } from '@/api/api.js'
-	import {$u,useTheme} from 'uview-pro'
+	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('个人详情')
 	const color = ref('');

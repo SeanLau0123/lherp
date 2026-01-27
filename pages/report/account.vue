@@ -41,7 +41,7 @@
 								<u-collapse-item :title="item.name">
 									<view class="goods-row">
 										<text class="label">编号:</text>
-										<text class="value">{{ item.serialNo }}</text>
+										<u-text :text="item.serialNo"></u-text>
 										<text class="label">当前余额：</text>
 										<u-text mode="price" :text="item.currentAmount"></u-text>
 									</view>
@@ -49,15 +49,11 @@
 								</u-collapse-item>
 							</u-collapse>
 						</u-col>
-						<u-col span="6">
+						<u-col span="12">
 							<view class="goods-row">
 								<text class="label">期初金额：</text>
 								<u-text mode="price" :text="item.initialAmount"></u-text>
-							</view>
-						</u-col>
-						<u-col span="12">
-							<view class="goods-row">
-								<text class="label">本月发生额：</text>
+								<text class="label">本月金额：</text>
 								<u-text mode="price" :text="item.thisMonthAmount"></u-text>
 							</view>
 						</u-col>
@@ -114,7 +110,8 @@
 		fontSize: '28rpx',
 		color: $u.color.primary,
 		lineHeight: '32rpx',
-		fontWeight: 'bold'
+		fontWeight: 'bold',
+		paddingLeft:"10rpx"
 	})
 
 	function search() {

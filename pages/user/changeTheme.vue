@@ -1,80 +1,81 @@
-<template>	
-	<u-navbar :is-back="true" :background="background" :title="title" back-icon-color="#ffffff"
-		title-color="#ffffff">
-	</u-navbar>
-	<view class="theme-selector-example">
-		<!-- 标题 -->
-		<view class="header">
-			<text class="title">主题管理</text>
-			<text class="subtitle">useTheme完整演示</text>
-		</view>
-		<!-- 当前主题信息展示 -->
-		<view class="info-card">
-			<view class="info-row">
-				<text class="label">当前主题：</text>
-				<text class="value">{{ currentTheme?.label || currentTheme?.name || '未初始化' }}</text>
+<template>
+	<view style="height: 100vh;">
+		<u-navbar :is-back="true" :background="background" :title="title" back-icon-color="#ffffff"
+			title-color="#ffffff">
+		</u-navbar>
+		<view class="theme-selector-example">
+			<!-- 标题 -->
+			<view class="header">
+				<text class="title">主题管理</text>
 			</view>
-			<view class="info-row">
-				<text class="label">暗黑模式：</text>
-				<text class="value">{{ darkModeLabel }}</text>
+			<!-- 当前主题信息展示 -->
+			<view class="info-card">
+				<view class="info-row">
+					<text class="label">当前主题：</text>
+					<text class="value">{{ currentTheme?.label || currentTheme?.name || '未初始化' }}</text>
+				</view>
+				<view class="info-row">
+					<text class="label">暗黑模式：</text>
+					<text class="value">{{ darkModeLabel }}</text>
+				</view>
+				<view class="info-row">
+					<text class="label">实际模式：</text>
+					<text class="value" :style="{ color: isDarkModeActive ? '#666' : '#333' }">
+						{{ isDarkModeActive ? '暗黑模式' : '亮色模式' }}
+					</text>
+				</view>
+				<view class="info-row">
+					<text class="label">可用主题数：</text>
+					<text class="value">{{ themes.length }}</text>
+				</view>
 			</view>
-			<view class="info-row">
-				<text class="label">实际模式：</text>
-				<text class="value" :style="{ color: isDarkModeActive ? '#666' : '#333' }">
-					{{ isDarkModeActive ? '暗黑模式' : '亮色模式' }}
-				</text>
-			</view>
-			<view class="info-row">
-				<text class="label">可用主题数：</text>
-				<text class="value">{{ themes.length }}</text>
-			</view>
-		</view>
 
-		<!-- 主题切换面板 -->
-		<view class="panel">
-			<view class="panel-header" @click="showThemePanel = !showThemePanel">
-				<text class="panel-title">主题选择</text>
-				<text class="toggle-icon">{{ showThemePanel ? '▼' : '▶' }}</text>
-			</view>
-			<view v-if="showThemePanel" class="panel-content">
-				<view class="theme-grid">
-					<view v-for="theme in themes" :key="theme.name" class="theme-item"
-						:class="{ active: currentTheme?.name === theme.name }" @click="handleThemeChange(theme.name)">
-						<view class="theme-color" :style="{
+			<!-- 主题切换面板 -->
+			<view class="panel">
+				<view class="panel-header" @click="showThemePanel = !showThemePanel">
+					<text class="panel-title">主题选择</text>
+					<text class="toggle-icon">{{ showThemePanel ? '▼' : '▶' }}</text>
+				</view>
+				<view v-if="showThemePanel" class="panel-content">
+					<view class="theme-grid">
+						<view v-for="theme in themes" :key="theme.name" class="theme-item"
+							:class="{ active: currentTheme?.name === theme.name }"
+							@click="handleThemeChange(theme.name)">
+							<view class="theme-color" :style="{
                                     backgroundColor: theme.color.primary
                                 }"></view>
-						<text class="theme-name">{{ theme.label || theme.name }}</text>
-						<text class="theme-desc">{{ theme.description || theme.name }}</text>
+							<text class="theme-name">{{ theme.label || theme.name }}</text>
+							<text class="theme-desc">{{ theme.description || theme.name }}</text>
+						</view>
 					</view>
 				</view>
 			</view>
-		</view>
-
-		<!-- 暗黑模式面板 -->
-		<view class="panel">
-			<view class="panel-header" @click="showDarkModePanel = !showDarkModePanel">
-				<text class="panel-title">暗黑模式</text>
-				<text class="toggle-icon">{{ showDarkModePanel ? '▼' : '▶' }}</text>
-			</view>
-			<view v-if="showDarkModePanel" class="panel-content">
-				<view class="dark-mode-grid">
-					<view class="mode-item" :class="{ active: darkMode === 'auto' }"
-						@click="handleDarkModeChange('auto')">
-						<text class="mode-icon">🔄</text>
-						<text class="mode-name">自动</text>
-						<text class="mode-desc">跟随系统设置</text>
-					</view>
-					<view class="mode-item" :class="{ active: darkMode === 'light' }"
-						@click="handleDarkModeChange('light')">
-						<text class="mode-icon">☀️</text>
-						<text class="mode-name">亮色</text>
-						<text class="mode-desc">强制亮色模式</text>
-					</view>
-					<view class="mode-item" :class="{ active: darkMode === 'dark' }"
-						@click="handleDarkModeChange('dark')">
-						<text class="mode-icon">🌙</text>
-						<text class="mode-name">暗黑</text>
-						<text class="mode-desc">强制暗黑模式</text>
+			<!-- 暗黑模式面板 -->
+			<view class="panel">
+				<view class="panel-header" @click="showDarkModePanel = !showDarkModePanel">
+					<text class="panel-title">暗黑模式</text>
+					<text class="toggle-icon">{{ showDarkModePanel ? '▼' : '▶' }}</text>
+				</view>
+				<view v-if="showDarkModePanel" class="panel-content">
+					<view class="dark-mode-grid">
+						<view class="mode-item" :class="{ active: darkMode === 'auto' }"
+							@click="handleDarkModeChange('auto')">
+							<text class="mode-icon">🔄</text>
+							<text class="mode-name">自动</text>
+							<text class="mode-desc">跟随系统设置</text>
+						</view>
+						<view class="mode-item" :class="{ active: darkMode === 'light' }"
+							@click="handleDarkModeChange('light')">
+							<text class="mode-icon">☀️</text>
+							<text class="mode-name">亮色</text>
+							<text class="mode-desc">强制亮色模式</text>
+						</view>
+						<view class="mode-item" :class="{ active: darkMode === 'dark' }"
+							@click="handleDarkModeChange('dark')">
+							<text class="mode-icon">🌙</text>
+							<text class="mode-name">暗黑</text>
+							<text class="mode-desc">强制暗黑模式</text>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -178,7 +179,7 @@
 		padding: 10px;
 		background: $u-bg-color;
 		color: $u-main-color;
-		height: 80vh;
+		height: calc(100% - 60px);
 	}
 
 	.header {
@@ -193,17 +194,11 @@
 		display: block;
 		margin-bottom: 8px;
 	}
-
-	.subtitle {
-		font-size: 14px;
-		color: $u-content-color;
-	}
-
 	.info-card {
 		background: rgba(var(--u-type-primary-rgb), 0.05);
 		border: 1px solid rgba(var(--u-type-primary-rgb), 0.2);
 		border-radius: 8px;
-		padding: 16px;
+		padding: 12px;
 		margin-bottom: 24px;
 	}
 
@@ -231,7 +226,7 @@
 		background: $u-bg-color;
 		border: 1px solid rgba(var(--u-border-color-rgb), 0.6);
 		border-radius: 8px;
-		margin-bottom: 16px;
+		margin-bottom: 12px;
 		overflow: hidden;
 	}
 
@@ -239,7 +234,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 16px;
+		padding: 12px;
 		background: rgba(var(--u-border-color-rgb), 0.2);
 		cursor: pointer;
 		user-select: none;
@@ -252,7 +247,7 @@
 	.panel-title {
 		font-weight: 600;
 		font-size: 16px;
-		color: $u-main-color;
+		color: $u-type-primary;
 	}
 
 	.toggle-icon {

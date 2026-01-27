@@ -46,9 +46,9 @@
 								<u-collapse-item :title="buyIn.materialName">
 									<view class="goods-row">
 										<text class="label">品牌：</text>
-										<text class="value">{{ buyIn.materialBrand }}</text>
+										<u-text :text="buyIn.materialBrand"></u-text>
 										<text class="label">制造商：</text>
-										<text class="value">{{buyIn.materialMfrs}}</text>
+										<u-text :text="buyIn.materialMfrs"></u-text>
 									</view>
 									<u-line :color="$u.color.primary"></u-line>
 								</u-collapse-item>
@@ -57,7 +57,7 @@
 						<u-col span="5">
 							<view class="goods-row">
 								<text class="label">采购数量：</text>
-								<text class="value">{{buyIn.inSum}}</text>
+								<u-text :text="buyIn.inSum"></u-text>
 							</view>
 						</u-col>
 						<u-col span="7">
@@ -69,7 +69,7 @@
 						<u-col span="5">
 							<view class="goods-row">
 								<text class="label">退货数量：</text>
-								<text class="value">{{buyIn.outSum || '-' }}</text>
+								<u-text :text="buyIn.outSum"></u-text>
 							</view>
 						</u-col>
 						<u-col span="7">
@@ -261,13 +261,6 @@
 		background: $u-bg-color;
 	}
 
-	.collvalue {
-		flex: 1;
-		min-width: calc(40% - 130rpx);
-		word-break: break-all;
-		font-size: 28rpx;
-	}
-
 	.good-item {
 		background: rgba(var(--u-type-primary-rgb), 0.05);
 		border: 1px solid rgba(var(--u-type-primary-rgb), 0.2);
@@ -281,8 +274,6 @@
 		margin-bottom: 5rpx;
 		line-height: 1.5;
 		flex-wrap: wrap;
-
-		;
 	}
 
 	.label {
@@ -299,7 +290,7 @@
 		min-width: calc(40% - 240rpx);
 		word-break: break-all;
 		font-size: 28rpx;
-		color: $uni-text-color;
+		color: $u-content-color;
 	}
 
 	.name {

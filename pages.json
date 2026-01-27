@@ -201,6 +201,24 @@
 			"style": {
 				"navigationBarTitleText": ""
 			}
+		},
+		{
+			"path": "pages/report/InDetail",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/InboundOrder/InboundOrder",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/InboundOrder/InboundOrderDetail",
+			"style": {
+				"navigationBarTitleText": ""
+			}
 		}
 	],
 	"easycom": {

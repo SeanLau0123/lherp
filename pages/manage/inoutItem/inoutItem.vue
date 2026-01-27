@@ -1,6 +1,6 @@
 <!-- 资料-客户信息 -->
 <template>
-	<view>
+	<view style="height: 100vh;">
 		<u-navbar :is-back="true" :background="background" :title="title" back-icon-color="#ffffff"
 			title-color="#ffffff">
 			<view class="navbar-right-icon">
@@ -220,6 +220,7 @@
 		min-width: calc(40% - 130rpx);
 		word-break: break-all;
 		font-size: 28rpx;
+		color: $u-content-color;
 	}
 
 	.name {
@@ -241,6 +242,7 @@
 	.scrollviewpadding {
 		padding-bottom: 40px;
 		background: $u-bg-color;
+		height: calc(100% - 120px);
 	}
 
 	.navbar-right-icon {

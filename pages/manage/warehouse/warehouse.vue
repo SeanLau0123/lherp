@@ -196,8 +196,6 @@
 		margin-bottom: 5rpx;
 		line-height: 1.5;
 		flex-wrap: wrap;
-
-		;
 	}
 
 	.label {
@@ -209,7 +207,7 @@
 	}
 
 	.value {
-		color: $u-main-color;
+		color: $u-content-color;
 		flex: 1;
 		min-width: calc(40% - 130rpx);
 		word-break: break-all;

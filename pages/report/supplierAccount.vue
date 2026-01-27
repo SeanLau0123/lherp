@@ -57,9 +57,9 @@
 								<u-collapse-item :title="item.supplier">
 									<view class="goods-row">
 										<text class="label">联系人:</text>
-										<text class="value">{{ item.contacts }}</text>
+										<u-text :text="item.contacts"></u-text>
 										<text class="label">联系方式：</text>
-										<text class="value">{{item.telephone}}</text>
+										<u-text :text="item.telephone"></u-text>
 									</view>
 									<u-line :color="$u.color.primary"></u-line>
 								</u-collapse-item>

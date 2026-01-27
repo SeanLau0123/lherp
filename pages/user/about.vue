@@ -4,10 +4,12 @@
 		<u-navbar :is-back="true" :background="background" :title="title" back-icon-color="#ffffff"
 			title-color="#ffffff"></u-navbar>
 			<view class="content">
-				<image class="zai-logo" src="/static/erplogo.png"></image>
-				<view class="text-center">
-					{{ version }}
-				</view>
+				  <u-image width="200rpx" height="200rpx" :src="src" shape="circle">
+				    <template #loading>
+				      <u-loading></u-loading>
+				    </template>
+				  </u-image>
+				<view class="text-center">{{version}}</view>
 			</view>
 			<u-cell-group class="cell">
 				<u-cell-item title="检查更新" :value-style="versionStyle" :value="versionValue"
@@ -23,7 +25,7 @@
 	const title = ref<string>('关于我们')
 	const versionValue = ref('')
 	const version = ref('')
-
+	const src = ref<string>("https://linghanshop.cn/uploads/attach/2025/11/20251128/c9840ae740abc19c00b3bda853b1abe8.png")
 	const uToastRef = ref()
 	const versionStyle = ref({});
 	const showToast = (title : string) => {
@@ -154,11 +156,6 @@
 </script>
 
 <style>
-	.zai-logo {
-		width: 200rpx;
-		height: 200rpx;
-	}
-
 	.text-center {
 		margin-top: 10px;
 		text-align: center;

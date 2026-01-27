@@ -11,30 +11,25 @@ import { http } from 'uview-pro'
 /**
 *获取系统名称
 */
-export const getPlatformName = (data = {}) => http.get('/platformConfig/getPlatform/name', {data})
+export const getPlatformName = (data = {}) => http.get('/platformConfig/getPlatform/name', { data })
 // post请求，登录系统
 export const mLogin = (params, config = {}) => http.post('/user/login', params, config)
-	
-	/*** 退出 */
+
+/*** 退出 */
 export const mLogout = (params, config = {}) => http.post('/user/logout', params, config)
 
 /**
  * 获取验证码图片
  */
-export const getRandomImage = (data = {}) => http.get('/user/randomImage', {data})
+export const getRandomImage = (data = {}) => http.get('/user/randomImage', { data })
 //获取用户信息
-export const getUserSession = (data = {}) => http.get('/user/getUserSession', {data})
+export const getUserSession = (data = {}) => http.get('/user/getUserSession', { data })
 //修改密码
 export const updatePwd = (params, config = {}) => http.put('/user/updatePwd', params, config)
-/**
- * 统计采购、销售、零售的总金额
- */
-export const getPurchaseStatics = (data = {}) => http.get('/depotItem/buyOrSalePrice', {data})
-/**
- * 统计今日采购额、昨日采购额、本月采购额、今年采购额|销售额|零售额
- */
-export const getBuyAndSaleStatistics = (data = {}) => http.get('/depotHead/getBuyAndSaleStatistics', {data})
-
+//统计采购、销售、零售的总金额
+export const getPurchaseStatics = (data = {}) => http.get('/depotItem/buyOrSalePrice', { data })
+//统计今日采购额、昨日采购额、本月采购额、今年采购额|销售额|零售额
+export const getBuyAndSaleStatistics = (data = {}) => http.get('/depotHead/getBuyAndSaleStatistics', { data })
 //根据父编号查询菜单
 export const findMenuByPNumber = (params, config = {}) => http.post('/function/findMenuByPNumber', params, config)
 
@@ -67,12 +62,12 @@ export const getInOutItem = (params, config = {}) => http.get('/inOutItem/list',
 //获取结算账户列表
 export const getAccounts = (params, config = {}) => http.get('/account/list', params, config)
 //获取经手人列表
-export const getHandler= (params, config = {}) => http.get('/person/list', params, config)
+export const getHandler = (params, config = {}) => http.get('/person/list', params, config)
 /*
 *系统管理
 */
 //获取操作日志
-export const getLogs= (params, config = {}) => http.get('/log/list', params, config)
+export const getLogs = (params, config = {}) => http.get('/log/list', params, config)
 /**
  *报表中心
  */
@@ -87,6 +82,17 @@ export const getAccountList = (params, config = {}) => http.get('/account/listWi
 //获取结算账户信息余额的统计
 export const getAccountListStatistics = (params, config = {}) => http.get('/account/getStatistics', params, config)
 
+//获取入库明细
+export const getInDetail = (params, config = {}) => http.get('/depotHead/findInOutDetail', params, config)
 
 
+/*
+*采购入库详情
+*/
+//根据单号获取采购入库主表明细
+export const getInDetailById = (number, config = {}) => http.get(`/depotHead/getDetailByNumber?number=${number}`, config)
+//根据单号获取付款单
+export const getFinancialBillNoByBillId = (billId, config = {}) => http.get(`/accountHead/getFinancialBillNoByBillId?billId=${billId}`, config)
 
+//获取采购入库单商品明细
+export const getGoodsDetailByNumber = (params, config = {}) => http.get('depotItem/getDetailList', params, config)
