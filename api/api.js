@@ -82,17 +82,15 @@ export const getAccountList = (params, config = {}) => http.get('/account/listWi
 //获取结算账户信息余额的统计
 export const getAccountListStatistics = (params, config = {}) => http.get('/account/getStatistics', params, config)
 
-//获取入库明细
-export const getInDetail = (params, config = {}) => http.get('/depotHead/findInOutDetail', params, config)
-
-
+//获取入库明细,出库明细
+export const getInOutDetail = (params, config = {}) => http.get('/depotHead/findInOutDetail', params, config)
 /*
 *采购入库详情
 */
-//根据单号获取采购入库主表明细
+//根据单号获取采购入库主表明细,销售出库详情
 export const getInDetailById = (number, config = {}) => http.get(`/depotHead/getDetailByNumber?number=${number}`, config)
 //根据单号获取付款单
 export const getFinancialBillNoByBillId = (billId, config = {}) => http.get(`/accountHead/getFinancialBillNoByBillId?billId=${billId}`, config)
 
-//获取采购入库单商品明细
+//获取采购入库单商品明细，销售出库单商品明细
 export const getGoodsDetailByNumber = (params, config = {}) => http.get('depotItem/getDetailList', params, config)

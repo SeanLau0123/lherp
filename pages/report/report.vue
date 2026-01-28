@@ -72,7 +72,7 @@
 			},
 			{
 				url: "/report/out_detail",
-				page: "outdetail",
+				page: "OutDetail",
 				icon: "outdetail",
 				title: "出库明细"
 			},
@@ -176,6 +176,9 @@
 			case 'InDetail':
 				targetRoute = `/pages/report/${page}`;
 				break;
+			case 'OutDetail':
+				targetRoute = `/pages/report/${page}`;
+				break;
 			case 'supplierAccount':
 				targetRoute = `/pages/report/${page}`;
 				break;
@@ -187,9 +190,6 @@
 				break;
 			case 'customers':
 				targetRoute = '/pages/manage/customers/customers'
-				break;
-			case 'members':
-				targetRoute = '会员信息'
 				break;
 			case 'depot':
 				targetRoute = '/pages/manage/warehouse/warehouse'

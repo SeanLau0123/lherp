@@ -8,7 +8,7 @@
 			<u-row gutter="10">
 				<u-col span="12">
 					<view class="goods-row">
-						<text class="label">供应商：</text>
+						<text class="label">客户：</text>
 						<u-text :text="InDetailList.organName"></u-text>
 					</view>
 				</u-col>
@@ -108,7 +108,7 @@
 										<u-row gutter="10">
 											<u-col span="6">
 												<view class="goods-row">
-													<text class="label">总数：</text>
+													<text class="label">总数量：</text>
 													<text class="value">{{ good.operNumber }}</text>
 												</view>
 											</u-col>
@@ -144,7 +144,7 @@
 			<u-row gutter="10">
 				<u-col span="6">
 					<view class="goods-row">
-						<text class="label">付款折扣：</text>
+						<text class="label">收款折扣：</text>
 						<u-text :text="InDetailList.discountMoney"></u-text>
 					</view>
 				</u-col>
@@ -168,10 +168,10 @@
 				</u-col>
 				<u-col span="12">
 					<view class="goods-row">
-						<text class="label">扣除订单：</text>
-						<u-text :text="InDetailList.deposit"></u-text>
 						<text class="label">本次付款：</text>
 						<u-text :text="InDetailList.changeAmount"></u-text>
+						<text class="label">本次欠款：</text>
+						<u-text :text="InDetailList.debt"></u-text>
 					</view>
 				</u-col>
 				<u-col span="12">
@@ -181,8 +181,9 @@
 				</u-col>
 				<u-col span="12">
 					<view class="goods-row">
-						<text class="label">本次欠款：</text>
-						<u-text :text="InDetailList.debt"></u-text>
+
+						<text class="label">销售人员：</text>
+						<u-text :text="InDetailList.salesManStr"></u-text>
 					</view>
 				</u-col>
 			</u-row>
@@ -204,7 +205,7 @@
 	import { $u, useTheme } from 'uview-pro'
 	import { getInDetailById, getFinancialBillNoByBillId, getGoodsDetailByNumber } from '@/api/api.js'
 	const { currentTheme, themes, darkMode } = useTheme();
-	const title = ref<string>('采购入库-详情')
+	const title = ref<string>('销售出库-详情')
 	const background = reactive({
 		backgroundColor: ""
 	})
@@ -297,6 +298,7 @@
 	.scrollviewpadding {
 		min-height: calc(100% - 200rpx);
 	}
+
 	.good-item {
 		background: rgba(var(--u-type-primary-rgb), 0.05);
 		border: 1px solid rgba(var(--u-type-primary-rgb), 0.2);

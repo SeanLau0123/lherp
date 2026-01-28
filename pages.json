@@ -46,6 +46,12 @@
 				"navigationBarTitleText": ""
 			}
 		},
+		{
+			"path": "pages/report/OutDetail",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
 		/*
 		 *个人中心
 		 */
@@ -216,6 +222,18 @@
 		},
 		{
 			"path": "pages/openorder/InboundOrder/InboundOrderDetail",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/OutboundOrder/OutboundOrder",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/OutboundOrder/OutboundOrderDetail",
 			"style": {
 				"navigationBarTitleText": ""
 			}
