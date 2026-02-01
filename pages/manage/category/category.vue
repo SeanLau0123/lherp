@@ -40,7 +40,7 @@
 				</u-row>
 			</u-form>
 			<u-gap></u-gap>
-			<view class="flex-buttons">
+			<view>
 				<u-row gutter="10">
 					<u-button type="warning" size="default" @click="editCategory">编辑</u-button>
 					<u-button type="primary" size="default" @click="resetSearch">重置</u-button>

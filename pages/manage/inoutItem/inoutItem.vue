@@ -7,6 +7,7 @@
 				<u-icon name='search' @click="popupShow = true" color="#ffffff" size="48rpx" label-pos="right"></u-icon>
 			</view>
 		</u-navbar>
+		<u-toast ref="uToastRef" />
 		<scroll-view class="scrollviewpadding">
 			<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="14">
 				<view class="popup-title">
@@ -24,41 +25,44 @@
 					</u-form>
 				</view>
 			</u-popup>
-			<view v-for="(item, index) in InOutItemList" :key="item.id || index">
-				<view class="good-item" style="min-height: 80rpx;">
-					<u-row gutter="10">
-						<u-col span="12">
-							<u-collapse :head-style="headStyle">
-								<u-collapse-item :title="`名称：${item.name}`">
-									<view class="goods-row">
-										<text class="label">是否启用：</text>
-										<text v-if="item.enabled == '0'"
-											style="color:red; font-size: 32rpx;font-weight: bold">禁用</text>
-										<text v-if="item.enabled == '1'"
-											style="color:green;font-size: 32rpx;font-weight: bold">启用</text>
-										<text class="label">编号：</text>
-										<text class="value">{{ item.id || '-' }}</text>
-									</view>
-									<u-line color="#ffffff"></u-line>
-								</u-collapse-item>
-							</u-collapse>
-						</u-col>
-						<u-col span="12">
-							<view class="goods-row">
-								<text class="label">类型：</text>
-								<text class="value">{{ item.type || '-' }}</text>
-								<text class="label">排序：</text>
-								<text class="value">{{ item.sort || '-' }}</text>
-							</view>
-						</u-col>
-						<u-col span="12">
-							<view class="goods-row">
-								<text class="label">备注：</text>
-								<text class="value">{{item.remark || '-' }}</text>
-							</view>
-						</u-col>
-					</u-row>
-				</view>
+			<view>
+				<u-swipe-action :show="item.show" :index="index" v-for="(item, index) in InOutItemList" :key="item.id"
+					@click="click" @open="open" :options="getSwipeOptions(item)" :btn-width="btnWidth">
+					<view class="good-item" style="min-height: 80rpx;">
+						<u-row gutter="10">
+							<u-col span="12">
+								<view class="goods-row">
+									<text class="label">名称：</text>
+									<text class="value">{{ item.name || '-' }}</text>
+									<u-text v-model="item.id"></u-text>
+									<text v-if="item.enabled == '0'"
+										style="color:red; font-size: 32rpx;font-weight: bold">禁用</text>
+									<text v-if="item.enabled == '1'"
+										style="color:green;font-size: 32rpx;font-weight: bold">启用</text>
+								</view>
+							</u-col>
+							<u-col span="12">
+								<view class="goods-row">
+									<text class="label">类型：</text>
+									<text class="value">{{ item.type || '-' }}</text>
+									<text class="label">排序：</text>
+									<text class="value">{{ item.sort || '-' }}</text>
+
+								</view>
+							</u-col>
+							<u-col span="12">
+								<view class="goods-row">
+									<text class="label">备注：</text>
+									<text class="value">{{item.remark || '-' }}</text>
+								</view>
+							</u-col>
+						</u-row>
+					</view>
+				</u-swipe-action>
+			</view>
+			<view>
+				<u-modal v-model="deleteShow" :content="content" :show-cancel-button="true" cancel-color="#606266"
+					confirm-color="#2979ff" @confirm="confirm" :show-title="false"></u-modal>
 			</view>
 		</scroll-view>
 		<u-empty text="没有搜索结果" mode="search" :show="emptyShow" class="u-empty-fullscreen"></u-empty>
@@ -70,7 +74,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getInOutItem } from '../../../api/api'
+	import { getInOutItem, batchSetStatusInOutItem, deleteInOutItem } from '../../../api/api'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('收支项目')
@@ -80,6 +84,120 @@
 	const updateNavbarBackground = () => {
 		background.backgroundColor = $u.color.primary;
 	};
+	const uToastRef = ref()
+	const showToast = (title : string, type : string) => {
+		uToastRef.value.show({
+			type,
+			title
+		})
+	}
+	// 定义列表项接口
+	interface ListItem {
+		id : number
+		name : string
+		enabled : '0' | '1'
+		show : boolean
+	}
+
+	// 定义选项按钮接口
+	interface OptionButton {
+		text : string
+		style : {
+			backgroundColor : string
+		}
+	}
+	const disabled = ref<boolean>(false)
+	const btnWidth = ref<number>(120)
+	const show = ref<boolean>(false)
+	const selectedId = ref<string>('')
+	const selectedIndex = ref<number>(-1)
+	const getSwipeOptions = (item : ListItem) : OptionButton[] => {
+		return [
+			{
+				text: item.enabled == '1' ? "禁用" : "启用",
+				style: {
+					backgroundColor: "#ff9900",
+				},
+			},
+			{
+				text: "删除",
+				style: {
+					backgroundColor: "#fa3534",
+				},
+			},
+		]
+	}
+	//设置启用，禁用状态
+	const batchSetStatus = async (id : number, targetStatus : boolean) => {
+		try {
+			const requestParams = {
+				status: targetStatus,
+				ids: String(id)
+			};
+			const res = await batchSetStatusInOutItem(requestParams)
+			if (res.code === 200) {
+				const tipText = targetStatus ? '启用成功' : '禁用成功';
+				showToast(tipText, 'success');
+				await loadGetInOutItemList();
+			} else {
+				const tipText = targetStatus ? '启用失败' : '禁用失败';
+				showToast(tipText, 'error');
+			}
+		} catch (error) {
+			console.error('切换启用/禁用失败：', error);
+			showToast('操作失败，请重试', 'error');
+		} finally {
+		}
+	}
+	const deleteShow = ref<boolean>(false)
+	const content = ref<string>('确定要删除所选中的数据吗？')
+
+	// 删除确认
+	const confirm = async () => {
+		InOutItemList.value.splice(selectedIndex.value, 1)
+		try {
+			const res = await deleteInOutItem(selectedId.value)
+			if (res.code === 200) {
+				showToast('删除成功', 'success');
+			} else {
+				showToast('删除失败', 'error');
+			}
+		} catch (error) {
+			console.error('删除失败：', error)
+			showToast('删除失败', 'error');
+		} finally {
+			deleteShow.value = false
+			selectedIndex.value = -1;
+			selectedId.value = 0;
+		}
+	}
+	// 删除取消
+	const cancel = () => {
+		deleteShow.value = false
+	}
+	// 定义点击事件回调函数
+	const click = (index : number, index1 : number) => {
+		selectedId.value = InOutItemList.value[index].id;
+		selectedIndex.value = index;
+		if (index1 == 1) {
+			deleteShow.value = true;
+		} else {
+			// 启用/禁用分支（核心：获取当前状态，传递给batchSetStatus）
+			const currentEnabled = InOutItemList.value[index].enabled;
+			const targetStatus = !currentEnabled; // 目标状态：反转当前状态
+			// 调用修正后的方法，传递id和目标状态
+			batchSetStatus(selectedId.value, targetStatus);
+			InOutItemList.value[index].show = false
+		}
+	}
+
+	// 定义打开事件回调函数
+	const open = (index : number) => {
+		InOutItemList.value[index].show = true
+		InOutItemList.value.map((val, idx) => {
+			if (index != idx) InOutItemList.value[idx].show = false
+		})
+	}
 	watch(
 		[
 			() => currentTheme.value,
@@ -117,7 +235,7 @@
 	function reset() {
 		searchname.value = '';
 		remark.value = '';
-		typeName.value='';
+		typeName.value = '';
 		search();
 	}
 
@@ -129,12 +247,12 @@
 		label : string
 	}
 	const typeList = ref<ListItem[]>([
-		{ label: '收入'}, { label: '支出'}])
+		{ label: '收入' }, { label: '支出' }])
 	// 定义确认回调函数
 	const typeConfirm = (e : any[]) => {
 		typeName.value = e[0].label;
 	}
-	
+
 
 	//加载收支项目列表
 	const InOutItemList = ref<Array>([]);
@@ -242,7 +360,7 @@
 	.scrollviewpadding {
 		padding-bottom: 40px;
 		background: $u-bg-color;
-		height: calc(100% - 120px);
+		min-height: calc(100% - 200rpx);
 	}
 
 	.navbar-right-icon {

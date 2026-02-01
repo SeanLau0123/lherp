@@ -39,11 +39,17 @@ export const findMenuByPNumber = (params, config = {}) => http.post('/function/f
  */
 //获取商品信息
 export const getMaterialList = (params, config = {}) => http.get('/material/list', params, config)
+//根据条码获取商品信息
+export const getMaterialByBarCode = (params, config = {}) => http.get('/material/getMaterialByBarCode', params, config)
 
+//选择商品信息
+export const getMaterialBySelect = (params, config = {}) => http.get('/material/findBySelect', params, config)
 //获取商品类型
 export const getMaterialCategory = (params, config = {}) => http.get('/materialCategory/getMaterialCategoryTree', params, config)
 //根据ID获取商品类型
 export const getMaterialCategoryById = (params, config = {}) => http.get('/materialCategory/findById', params, config)
+
+
 //商品类型更新
 export const updateCategory = (params, config = {}) => http.put('/materialCategory/update', params, config)
 //商品类型删除
@@ -54,15 +60,27 @@ export const addCategory = (params, config = {}) => http.post('/materialCategory
 
 //获取供应商，客户，会员信息
 export const getPartnerlList = (params, config = {}) => http.get('/supplier/list', params, config)
+//往来单位选择器
+export const getAllListBySelect = (params, config = {}) => http.post('/supplier/findBySelect_cus', params, config)
 
 //获取仓库信息
 export const getWareHouselList = (params, config = {}) => http.get('/depot/list', params, config)
+//获取仓库信息
+export const getDepotInfo = (params, config = {}) => http.get('/depot/findDepotByCurrentUser', params, config)
+
+
 //获取收支面目列表
 export const getInOutItem = (params, config = {}) => http.get('/inOutItem/list', params, config)
 //获取结算账户列表
 export const getAccounts = (params, config = {}) => http.get('/account/list', params, config)
+//获取结算账户列表
+export const getAllAccount = (params, config = {}) => http.get('/account/getAccount', params, config)
+getAllAccount
 //获取经手人列表
 export const getHandler = (params, config = {}) => http.get('/person/list', params, config)
+//获取销售员
+export const getSalePerson = (params, config = {}) => http.get('/person/getPersonByNumType', params, config)
+
 /*
 *系统管理
 */
@@ -73,8 +91,10 @@ export const getLogs = (params, config = {}) => http.get('/log/list', params, co
  */
 //获取采购统计信息
 export const getbuyInList = (params, config = {}) => http.get('/depotItem/buyIn', params, config)
+//获取销售统计信息
+export const getSaleOutList = (params, config = {}) => http.get('/depotItem/saleOut', params, config)
 //获取供应商对账信息
-export const getsupplierAccountList = (params, config = {}) => http.get('/depotHead/getStatementAccount', params, config)
+export const getStatementAccountList = (params, config = {}) => http.get('/depotHead/getStatementAccount', params, config)
 
 //获取账户信息余额
 export const getAccountList = (params, config = {}) => http.get('/account/listWithBalance', params, config)
@@ -84,13 +104,17 @@ export const getAccountListStatistics = (params, config = {}) => http.get('/acco
 
 //获取入库明细,出库明细
 export const getInOutDetail = (params, config = {}) => http.get('/depotHead/findInOutDetail', params, config)
+
 /*
 *采购入库详情
 */
-//根据单号获取采购入库主表明细,销售出库详情
+//根据单号获取采购入库主表明细
 export const getInDetailById = (number, config = {}) => http.get(`/depotHead/getDetailByNumber?number=${number}`, config)
 //根据单号获取付款单
 export const getFinancialBillNoByBillId = (billId, config = {}) => http.get(`/accountHead/getFinancialBillNoByBillId?billId=${billId}`, config)
 
 //获取采购入库单商品明细，销售出库单商品明细
 export const getGoodsDetailByNumber = (params, config = {}) => http.get('depotItem/getDetailList', params, config)
+
+//获取单据号后缀
+export const getOrderNumber = (data = {}) => http.get('/sequence/buildNumber', { data })

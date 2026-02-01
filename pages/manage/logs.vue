@@ -264,7 +264,7 @@
 		min-width: calc(40% - 240rpx);
 		word-break: break-all;
 		font-size: 28rpx;
-		color: $uni-text-color;
+		color: $u-content-color;
 	}
 
 	.name {

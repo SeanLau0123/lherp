@@ -101,7 +101,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getsupplierAccountList, getPartnerlList } from '@/api/api.js'
+	import { getStatementAccountList, getPartnerlList } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('供应商对账')
@@ -147,7 +147,7 @@
 
 	function search() {
 		popupShow.value = false;
-		loadgetsupplierAccountList();
+		loadgetStatementAccountList();
 	}
 	function reset() {
 		searchname.value = '';
@@ -234,7 +234,7 @@
 
 	const supplierAccountList = ref<Array>([]);
 	const searchname = ref<string>('');
-	const loadgetsupplierAccountList = async () => {
+	const loadgetStatementAccountList = async () => {
 		let params = {
 			currentPage: current.value,
 			pageSize: pageSize.value,
@@ -250,7 +250,7 @@
 		// if (depotId.value) {
 		// 	params.depotId = depotId.value;
 		// }
-		const res = await getsupplierAccountList(params)
+		const res = await getStatementAccountList(params)
 		if (res && res.code === 200) {
 			listTotal.value = res.data.total
 			supplierAccountList.value = res.data.rows
@@ -279,13 +279,13 @@
 		else {
 			current.value = current.value
 		}
-		loadgetsupplierAccountList();
+		loadgetStatementAccountList();
 	}
 
 	onMounted(async () => {
 		initDefaultDates();
 		loadGetSupplierlList();
-		loadgetsupplierAccountList();
+		loadgetStatementAccountList();
 
 
 	})

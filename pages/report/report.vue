@@ -60,7 +60,7 @@
 			},
 			{
 				url: "/report/sale_out_report",
-				page: "saleout",
+				page: "Saleout",
 				icon: "saleout",
 				title: "销售统计"
 			},
@@ -102,7 +102,7 @@
 			},
 			{
 				url: "/report/customer_account",
-				page: "customeraccount",
+				page: "CustomerAccount",
 				icon: "customeraccount",
 				title: "客户对账"
 			},
@@ -173,6 +173,9 @@
 			case 'buyin':
 				targetRoute = `/pages/report/${page}`;
 				break;
+			case 'Saleout':
+				targetRoute = `/pages/report/${page}`;
+				break;
 			case 'InDetail':
 				targetRoute = `/pages/report/${page}`;
 				break;
@@ -182,14 +185,11 @@
 			case 'supplierAccount':
 				targetRoute = `/pages/report/${page}`;
 				break;
-			case 'account':
+			case 'CustomerAccount':
 				targetRoute = `/pages/report/${page}`;
 				break;
-			case 'supplier':
-				targetRoute = '/pages/manage/supplier/supplier'
-				break;
-			case 'customers':
-				targetRoute = '/pages/manage/customers/customers'
+			case 'account':
+				targetRoute = `/pages/report/${page}`;
 				break;
 			case 'depot':
 				targetRoute = '/pages/manage/warehouse/warehouse'

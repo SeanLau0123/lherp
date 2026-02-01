@@ -14,8 +14,8 @@
 			<u-grid :border="true" col="4">
 				<u-grid-item :customStyle="{ height: 200 + 'rpx' }" v-for="(listItem, listIndex) in usList"
 					:key="listIndex">
-					<u-image :showLoading="true" :src="listItem.icon" width="30px" height="30px" :lazy-load="true"
-						@click="goPage(listItem.page, listItem.url)"></u-image>
+						<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="62" :color="$u.color.primary"
+							@click="goPage(listItem.page, listItem.url)"></u-icon>
 					<text class="grid-text">{{ listItem.title }}</text>
 				</u-grid-item>
 			</u-grid>
@@ -61,14 +61,14 @@
 
 		// 重构：用数组直接定义物料列表，避免重复创建单个对象的冗余写法
 		const operOrderList = [
-			{ url: "/bill/retail_out", page: "retailOut", title: "零售管理" },
+			{ url: "/bill/retail_out", page: "retailOut", title: "零售管理", },
 			{ url: "/bill/retail_back", page: "retailBackOut", title: "零售退货" },
 			{ url: "/bill/purchase_order", page: "purchaseOrder", title: "采购订单" },
 			{ url: "/bill/purchase_in", page: "purchaseIn", title: "采购入库" },
 			{ url: "/bill/purchase_back", page: "purchaseInBack", title: "采购退货" },
 			{ url: "/bill/sale_order", page: "saleOrder", title: "销售订单" },
-			{ url: "/bill/sale_out", page: "saleOut", title: "销售出库" },
-			{ url: "/bill/sale_back", page: "saleBack", title: "销售退货" },
+			{ url: "/bill/sale_out", page: "saleOut", title: "销售出库",icon: "saleOutOrder" },
+			{ url: "/bill/sale_back", page: "saleBack", title: "销售退货",icon: "saleBackOrder"  },
 			{ url: "/bill/other_in", page: "otherIn", title: "其它入库" },
 			{ url: "/bill/other_out", page: "otherOut", title: "其它出库" },
 			{ url: "/bill/allocation_out", page: "allocationOut", title: "调拨订单" },
@@ -77,14 +77,13 @@
 			{ url: "/financial/money_in", page: "moneyIn",type: 'financial', title: "收款单" },
 			{ url: "/financial/money_out", page: "moneyOut",type: 'financial', title: "付款单" },
 			{ url: "/financial/giro", page: "giro",type: 'financial', title: "转账单" },
-			{ url: "/financial/advance_in", page: "advanceIn",type: 'financial', title: "收预付款" },
+			{ url: "/financial/advance_in", page: "AdvanceIn",type: 'financial', title: "收预付款" },
 		]
 
 		// 3. 权限匹配核心逻辑（重构后）
 		if (permissionList?.length) { // 可选链+长度判断，简化健壮性校验
 			// 步骤1：将报表列表转为 URL -> 报表信息的Map，实现O(1)高效查找
 			const reportUrlMap = new Map(operOrderList.map(item => [item.url, item]));
-
 			// 步骤2：扁平化遍历权限列表子项，替代多层嵌套for循环
 			permissionList.forEach(permissionItem => {
 				// 可选链校验子项存在性，避免空值报错
@@ -117,14 +116,14 @@
 	const goPage = (page : string, url : string) => {
 		// 根据实际需求实现点击逻辑
 		console.log('点击了宫格:', page + "--" + url)
-		// let targetRoute = ''
-		// switch (page) {
-		// 	case 'material':
-		// 		targetRoute = `/pages/manage${url}`;
-		// 		break;
-		// 	case 'categorys':
-		// 		targetRoute = '商品类别'
-		// 		break;
+		 let targetRoute = ''
+		 switch (page) {
+			case 'AdvanceIn':
+				targetRoute = `/pages/openorder/Financial/AdvanceIn/${page}`;
+				break;
+			case 'saleOut':
+				targetRoute = `/pages/openorder/OutboundOrder/OutboundOrder`;
+				break;
 		// 	case 'unites':
 		// 		targetRoute = '多单位'
 		// 		break;
@@ -163,8 +162,14 @@
 		// 		break;
 		// 	default:
 		// 		break;
-		// }
-		// uni.$u.route(targetRoute);
+		}
+		if (targetRoute === ''){
+			uni.showToast({
+				icon: 'error',
+				title: "开发中"
+			})
+		}
+		uni.$u.route(targetRoute);
 	}
 	watch(
 		[

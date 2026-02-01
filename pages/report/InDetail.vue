@@ -20,8 +20,8 @@
 			<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="14">
 				<view class="popup-title">
 					<u-form label-width="160rpx">
-						<u-form-item label-align="right" label="供应商：">
-							<u-input v-model="supplierName" :type="type" placeholder="请选择供应商"
+						<u-form-item label-align="right" label="往来单位：">
+							<u-input v-model="supplierName" :type="type" placeholder="请选择往来单位"
 								@click="supplierShow = true" /></u-form-item>
 						<u-select v-model="supplierShow" :list="supplierList" :default-value='supplierId'
 							@confirm="supplierConfirm"></u-select>
@@ -123,7 +123,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getInOutDetail } from '@/api/api.js'
+	import { getInOutDetail, getAllListBySelect } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('入库明细')
@@ -161,8 +161,16 @@
 		fontWeight: 'bold'
 	})
 	function lookNumberDetail(number) {
-		uni.$u.route('pages/openorder/InboundOrder/InboundOrderDetail',
-			{number: number});
+
+		const billtype = number.substring(0, 4).toUpperCase();
+		if (billtype === 'CGRK') {
+			uni.$u.route('pages/openorder/InboundOrder/InboundOrderDetail',
+				{ number: number });
+		}
+		else {
+			uni.$u.route('pages/openorder/SalesReturn/SalesReturnDetail',
+				{ number: number });
+		}
 	}
 
 	const uFormRef = ref();
@@ -231,24 +239,24 @@
 		debtselected.value = [e[0].value];
 	}
 
-	//加载供应商列表
+	//加载往来单位列表
 	const supplierShow = ref<boolean>(false)
 	const supplierName = ref<string>('');
 	const supplierId = ref<string[]>([]);
 	const supplierList = ref<ListItem[]>([]);
 	const loadGetSupplierlList = async () => {
 		let params = {
-			search: '{"supplier":"","type":"供应商"}'
+			limit: 1
 		}
-		const res = await getPartnerlList(params)
-		if (res && res.code === 200) {
-			supplierList.value = res.data.rows.map(item => ({
+		const res = await getAllListBySelect(params)
+		if (res) {
+			supplierList.value = res.map(item => ({
 				value: item.id.toString(),
 				label: item.supplier
 			}));
 		}
 		else {
-			uni.showToast({ title: '供应商加载失败', icon: 'none' });
+			uni.showToast({ title: '往来单位加载失败', icon: 'none' });
 		}
 	}
 	// 定义确认回调函数

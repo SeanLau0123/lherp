@@ -1,3 +1,4 @@
+<!-- 销售管理-销售出库-详情 -->
 <template>
 	<view style="min-height: 100vh;">
 		<u-navbar :is-back="true" :title="title" title-color='#ffffff' back-icon-color='#ffffff'
@@ -41,15 +42,15 @@
 								<template v-if="good.id">
 									<view class="good-item" style="min-height: 80rpx;">
 										<u-row gutter="10">
-											<u-col span="10">
+											<u-col span="1">
+												<view class="goods-row">
+													<text class="value">{{ index + 1 }}</text>
+												</view>
+											</u-col>
+											<u-col span="11">
 												<view class="goods-row">
 													<text class="label">仓库名称：</text>
 													<text class="value">{{ good.depotName }}</text>
-												</view>
-											</u-col>
-											<u-col span="2">
-												<view class="goods-row">
-													<text class="value">#{{ index + 1 }}</text>
 												</view>
 											</u-col>
 											<u-col span="12">
@@ -176,12 +177,6 @@
 				</u-col>
 				<u-col span="12">
 					<view class="goods-row">
-
-					</view>
-				</u-col>
-				<u-col span="12">
-					<view class="goods-row">
-
 						<text class="label">销售人员：</text>
 						<u-text :text="InDetailList.salesManStr"></u-text>
 					</view>
@@ -286,7 +281,6 @@
 	onLoad((options) => {
 		if (options && options.number) {
 			number.value = options.number;
-			console.warn(number.value);
 			loadInDetailById();
 		} else {
 			console.warn("未接收到单号参数");

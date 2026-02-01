@@ -22,7 +22,12 @@
 			<view v-for="(supplier, index) in supplierlList" :key="supplier.id || index">
 				<view class="good-item" style="min-height: 80rpx;">
 					<u-row gutter="10">
-						<u-col span="12">
+						<u-col span="1">
+							<view class="goods-row">
+								<text class="number">{{ index + 1 }}</text>
+							</view>
+						</u-col>
+						<u-col span="11">
 							<u-collapse :head-style="headStyle">
 								<u-collapse-item :title="supplier.supplier">
 									<view class="goods-row">
@@ -220,7 +225,16 @@
 		font-size: 28rpx;
 		color: $u-content-color;
 	}
-
+	.number {
+		width: 35rpx;
+		height: 35rpx;
+		border-radius: 50%;
+		background-color: $u-type-primary;
+		color: #ffffff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 	.name {
 		font-weight: bold;
 		font-size: 30rpx;

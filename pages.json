@@ -52,6 +52,24 @@
 				"navigationBarTitleText": ""
 			}
 		},
+		{
+			"path": "pages/report/InDetail",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/report/Saleout",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/report/CustomerAccount",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
 		/*
 		 *个人中心
 		 */
@@ -186,35 +204,42 @@
 				"navigationStyle": "custom"
 			}
 		},
-		/*
-		*组件
-		*/
 		{
-			"path": "common/zlUpdate/zlUpdate",
-			"style": {
-				"navigationStyle": "custom",
-				"app-plus": {
-					"animationType": "fade-in", //动画效果
-					"background": "transparent", //背景透明
-					"backgroundColor": "rgba(0,0,0,0)", //背景透明
-					"popGesture": "none" //禁止苹果侧滑返回 
-				},
-				"disableScroll": true
-			}
-		},
-		{
-			"path": "components/tki-tree/tki-tree",
+			"path": "pages/openorder/SalesReturn/SalesReturn",
 			"style": {
 				"navigationBarTitleText": ""
 			}
 		},
 		{
-			"path": "pages/report/InDetail",
+			"path": "pages/openorder/SalesReturn/SalesReturnDetail",
 			"style": {
 				"navigationBarTitleText": ""
 			}
 		},
 		{
+			"path": "pages/openorder/PurchaseReturn/PurchaseReturn",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/Financial/AdvanceIn/AdvanceIn",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/OutboundOrder/AddSaleOut",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/MaterialSelect",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},		{
 			"path": "pages/openorder/InboundOrder/InboundOrder",
 			"style": {
 				"navigationBarTitleText": ""
@@ -234,6 +259,28 @@
 		},
 		{
 			"path": "pages/openorder/OutboundOrder/OutboundOrderDetail",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		/*
+		*组件
+		*/
+		{
+			"path": "common/zlUpdate/zlUpdate",
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					"animationType": "fade-in", //动画效果
+					"background": "transparent", //背景透明
+					"backgroundColor": "rgba(0,0,0,0)", //背景透明
+					"popGesture": "none" //禁止苹果侧滑返回 
+				},
+				"disableScroll": true
+			}
+		},
+		{
+			"path": "components/tki-tree/tki-tree",
 			"style": {
 				"navigationBarTitleText": ""
 			}
