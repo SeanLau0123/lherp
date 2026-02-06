@@ -69,8 +69,12 @@ export const getWareHouselList = (params, config = {}) => http.get('/depot/list'
 export const getDepotInfo = (params, config = {}) => http.get('/depot/findDepotByCurrentUser', params, config)
 
 
-//获取收支面目列表
+//获取收支项目列表
 export const getInOutItem = (params, config = {}) => http.get('/inOutItem/list', params, config)
+//收支项目列表状态变更
+export const batchSetStatusInOutItem = (params, config = {}) => http.post('/inOutItem/batchSetStatus', params, config)
+//收支项目删除
+export const deleteInOutItem = (id, config = {}) => http.delete(`/inOutItem/delete?id=${id}`, config)
 //获取结算账户列表
 export const getAccounts = (params, config = {}) => http.get('/account/list', params, config)
 //获取结算账户列表
@@ -109,12 +113,27 @@ export const getInOutDetail = (params, config = {}) => http.get('/depotHead/find
 *采购入库详情
 */
 //根据单号获取采购入库主表明细
-export const getInDetailById = (number, config = {}) => http.get(`/depotHead/getDetailByNumber?number=${number}`, config)
+export const getInOutDetailById = (number, config = {}) => http.get(`/depotHead/getDetailByNumber?number=${number}`, config)
 //根据单号获取付款单
 export const getFinancialBillNoByBillId = (billId, config = {}) => http.get(`/accountHead/getFinancialBillNoByBillId?billId=${billId}`, config)
 
 //获取采购入库单商品明细，销售出库单商品明细
-export const getGoodsDetailByNumber = (params, config = {}) => http.get('depotItem/getDetailList', params, config)
+export const getMaterialListByNumber = (params, config = {}) => http.get('depotItem/getDetailList', params, config)
 
 //获取单据号后缀
 export const getOrderNumber = (data = {}) => http.get('/sequence/buildNumber', { data })
+
+/*
+*获取单据信息
+**/
+export const getOrderList = (params, config = {}) => http.get('/depotHead/list', params, config)
+
+/*
+*销售出库
+*/
+//新增单据保存
+export const addSaveSaleOut = (params, config = {}) => http.post('depotHead/addDepotHeadAndDetail', params, config)
+//单据删除
+export const deleteSaleOut = (id, config = {}) => http.delete(`/depotHead/delete?id=${id}`, config)
+//单据审核
+export const batchSetStatusSaleOut = (params, config = {}) => http.post('/depotHead/batchSetStatus', params, config)

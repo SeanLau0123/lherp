@@ -7,6 +7,7 @@
 				<u-icon name='search' @click="popupShow = true" color="#ffffff" size="48rpx" label-pos="right"></u-icon>
 			</view>
 		</u-navbar>
+		<u-toast ref="uToastRef" />
 		<u-empty text="没有搜索结果" mode="search" :show="emptyShow" class="u-empty-fullscreen"></u-empty>
 		<scroll-view class="scrollviewpadding">
 			<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="8">
@@ -32,7 +33,8 @@
 					</u-form>
 				</view>
 			</u-popup>
-			<view v-for="(saleOut, index) in saleOutList" :key="saleOut.id || index">
+			<u-swipe-action :show="saleOut.show" :index="index" v-for="(saleOut, index) in saleOutList"
+				:key="saleOut.id" @click="click" @open="open" :options="getSwipeOptions(saleOut)" :btn-width="btnWidth">
 				<view class="good-item">
 					<u-row gutter="10">
 						<u-col span="12">
@@ -43,7 +45,7 @@
 											<text class="label">单据编号：</text>
 											<u-text type="primary" decoration="underline"
 												:text="(saleOut.number || '') + (saleOut.linkNumber ? '[订]' : '') + (saleOut.hasBackFlag ? '[退]' : '')"
-												@click="lookNumberDetail(saleOut.number)" </u-text>
+												@click="lookNumberDetail(saleOut.number)"></u-text>
 										</view>
 									</u-col>
 									<u-col span="12">
@@ -55,7 +57,8 @@
 									<u-col span="12">
 										<view class="goods-row">
 											<text class="label">单据日期：</text>
-											<u-text>{{ $u.timeFormat(saleOut.billTime, 'yyyy-mm-dd hh:MM:ss') }}</u-text>
+											<u-text>{{ $u.timeFormat(saleOut.billTime, 'yyyy-mm-dd hh:MM:ss')
+												}}</u-text>
 										</view>
 									</u-col>
 									<u-line :color="$u.color.primary"></u-line>
@@ -96,15 +99,20 @@
 						<u-col span="3">
 							<view class="goods-row status-right-align">
 								<text v-if="saleOut.status == '0'"
-									:style="{color: $u.color.warning,fontSize: '32rpx',fontWeight: 'bold'}">未审核</text>
+									:style="{ color: $u.color.warning, fontSize: '32rpx', fontWeight: 'bold' }">未审核</text>
 								<text v-if="saleOut.status == '1'"
-									:style="{color: $u.color.success,fontSize: '32rpx',fontWeight: 'bold'}">已审核</text>
+									:style="{ color: $u.color.success, fontSize: '32rpx', fontWeight: 'bold' }">已审核</text>
 							</view>
 						</u-col>
 					</u-row>
 				</view>
+			</u-swipe-action>
+			<view>
+				<u-modal v-model="deleteShow" :content="content" :show-cancel-button="true" cancel-color="#606266"
+					confirm-color="#2979ff" @confirm="confirm" :show-title="false"></u-modal>
 			</view>
 		</scroll-view>
+
 		<u-fab :position="'right-bottom'" :gap="{ top: 20, right: 20, bottom: 50, left: 20 }" :draggable="true"
 			@trigger="onBtnClick">
 		</u-fab>
@@ -116,7 +124,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getDepotInfo } from '@/api/api.js'
+	import { getDepotInfo, getOrderList, deleteSaleOut, batchSetStatusSaleOut } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('销售出库')
@@ -126,6 +134,13 @@
 	const updateNavbarBackground = () => {
 		background.backgroundColor = $u.color.primary;
 	};
+	const uToastRef = ref()
+	const showToast = (title : string, type : string) => {
+		uToastRef.value.show({
+			type,
+			title
+		})
+	}
 	watch(
 		[
 			() => currentTheme.value,
@@ -143,10 +158,6 @@
 		}
 	);
 
-	function lookNumberDetail(number) {
-		uni.$u.route('pages/openorder/OutboundOrder/OutboundOrderDetail',
-			{ number: number });
-	}
 	const popupShow = ref<boolean>(false)
 	const emptyShow = ref<boolean>(false)
 	const pickBeginDateShow = ref<boolean>(false)
@@ -175,6 +186,128 @@
 		search();
 	}
 
+	// 定义列表项接口
+	interface ListItem {
+		id : number
+		number : string
+		status : '0' | '1'
+		show : boolean
+	}
+
+	// 定义选项按钮接口
+	interface OptionButton {
+		text : string
+		style : {
+			backgroundColor : string,
+			fontSize : "42rpx"
+		}
+	}
+	const disabled = ref<boolean>(false)
+	const btnWidth = ref<number>(120)
+	const show = ref<boolean>(false)
+	const selectedId = ref<string>('')
+	const selectedIndex = ref<number>(-1)
+	const getSwipeOptions = (saleOut : ListItem) : OptionButton[] => {
+		return [
+			{
+				text: saleOut.status === '1' ? "反审核" : "审核",
+				style: {
+					backgroundColor: $u.color.warning
+				},
+			},
+			{
+				text: "编辑",
+				style: {
+					backgroundColor: $u.color.info
+				},
+			},
+			{
+				text: "删除",
+				style: {
+					backgroundColor: $u.color.error
+				},
+			},
+		]
+	}
+	//设置审核状态
+	const batchSetStatus = async (id : number, targetStatus : number) => {
+		try {
+			const requestParams = {
+				status: targetStatus,
+				ids: `${id},`
+			};
+			const res = await batchSetStatusSaleOut(requestParams)
+			if (res.code === 200) {
+				const tipText = targetStatus === 1 ? '审核成功' : '反审核成功';
+				showToast(tipText, 'success');
+				loadSaleOutList();
+			} else {
+				const tipText = targetStatus === 1 ? '审核失败' : '反审核失败';
+				showToast(tipText, 'error');
+			}
+		} catch (error) {
+			showToast('操作失败，请重试', 'error');
+		} finally {
+		}
+	}
+	const deleteShow = ref<boolean>(false)
+	const content = ref<string>('确定要删除吗？')
+	// 删除确认
+	const confirm = async () => {
+		saleOutList.value.splice(selectedIndex.value, 1)
+		try {
+			const res = await deleteSaleOut(selectedId.value)
+			if (res.code === 200) {
+				showToast('删除成功', 'success');
+			} else {
+				showToast('删除失败', 'error');
+			}
+		} catch (error) {
+			console.error('删除失败：', error)
+		} finally {
+			deleteShow.value = false
+			selectedIndex.value = -1;
+			selectedId.value = 0;
+		}
+	}
+	// 删除取消
+	const cancel = () => {
+		deleteShow.value = false
+	}
+	// 定义打开事件回调函数
+	const open = (index : number) => {
+		saleOutList.value[index].show = true
+		saleOutList.value.map((val, idx) => {
+			if (index != idx) saleOutList.value[idx].show = false
+		})
+	}
+	// 定义点击事件回调函数
+	const click = (index : number, index1 : number) => {
+		const curItem = saleOutList.value[index]; // 缓存当前项，避免多次取值
+		selectedId.value = curItem.id;
+		selectedIndex.value = index;
+		curItem.show = false;
+		if (index1 === 2) {
+			if (curItem.status === '1') {
+				showToast('只有未审核的单据才能删除，请先进行反审核！', 'warning');
+				return;
+			}
+			deleteShow.value = true;
+		} else if (index1 === 1) {
+			if (curItem.status === '1') {
+				showToast('只有未审核的单据才能编辑，请先进行反审核！', 'warning');
+				return;
+			}
+			goSaleOutDetail(curItem); // 调用已有编辑方法，传递当前单据数据
+		} else {
+			// 启用/禁用分支（核心：获取当前状态，传递给batchSetStatus）
+			const currentEnabled = curItem.status;
+			const targetStatus = currentEnabled === '0' ? 1 : 0;
+			// 调用修正后的方法，传递id和目标状态
+			batchSetStatus(selectedId.value, targetStatus);
+
+		}
+	}
 
 	//商品分类选择器
 	const selectShow = ref<boolean>(false)
@@ -190,12 +323,12 @@
 	const beginTime = ref("");
 	const endTime = ref("");
 	const formatLocalDate = (date) => {
-		const year = date.getFullYear(); 
-		const month = String(date.getMonth() + 1).padStart(2, '0'); 
-		const day = String(date.getDate()).padStart(2, '0'); 
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
 		return `${year}-${month}-${day}`;
 	}
-	
+
 	const initDefaultDates = () => {
 		const today = new Date();
 		const threeMonthsAgo = new Date(today);
@@ -243,13 +376,12 @@
 		// if (status.value) {
 		// 	params.search = status.value;
 		// }
-		const res = await getDepotInfo(params)
+		const res = await getOrderList(params)
 		if (res && res.code === 200) {
 			listTotal.value = res.data.total
 			saleOutList.value = res.data.rows
 			realityPriceTotal.value = res.data.realityPriceTotal
 			if (listTotal.value == 0) {
-
 				emptyShow.value = true
 				listTotal.value = 1
 
@@ -261,9 +393,20 @@
 		}
 	}
 
+	//查看
+	function lookNumberDetail(number : string) {
+		uni.$u.route('pages/openorder/OutboundOrder/OutboundOrderDetail',
+			{ number: number });
+	}
+	//新增
 	function onBtnClick() {
 		uni.$u.route('pages/openorder/OutboundOrder/AddSaleOut');
 	}
+	//编辑
+	function goSaleOutDetail(item) {
+		uni.$u.route('/pages/openorder/OutboundOrder/AddSaleOut?item=' + encodeURIComponent(JSON.stringify(item)) + '&action=edit')
+	}
+
 	//分页切换
 	const current = ref<number>(1);
 	const pageSize = ref<number>(20);

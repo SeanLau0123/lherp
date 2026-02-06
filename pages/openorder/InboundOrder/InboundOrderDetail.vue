@@ -203,7 +203,7 @@
 	import { ref, reactive, onMounted, watch } from 'vue'
 	import { onLoad } from '@dcloudio/uni-app';
 	import { $u, useTheme } from 'uview-pro'
-	import { getInDetailById, getFinancialBillNoByBillId, getGoodsDetailByNumber } from '@/api/api.js'
+	import { getInOutDetailById, getFinancialBillNoByBillId, getMaterialListByNumber } from '@/api/api.js'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('采购入库-详情')
 	const background = reactive({
@@ -239,7 +239,7 @@
 	const number = ref<string>('')
 	const InDetailList = ref<any>('');
 	const loadInDetailById = async () => {
-		const res = await getInDetailById(number.value)
+		const res = await getInOutDetailById(number.value)
 		if (res && res.code === 200) {
 			InDetailList.value = res.data
 			billId.value = res.data.id
@@ -261,7 +261,7 @@
 			linkType: 'basic',
 			isReadOnly: '1',
 		}
-		const res = await getGoodsDetailByNumber(params)
+		const res = await getMaterialListByNumber(params)
 		if (res && res.code === 200) {
 			GoodsDetail.value = res.data.rows
 			listTotal.value = res.data.total

@@ -143,6 +143,14 @@
 		<!-- 订单表尾 -->
 		<view class="good-item">
 			<u-row gutter="10">
+				<template v-if="InDetailList.remark">
+				<u-col span="12">
+					<view class="goods-row">
+						<text class="label">备注：</text>
+						<u-text :text="InDetailList.remark"></u-text>
+					</view>
+				</u-col>
+				</template>
 				<u-col span="6">
 					<view class="goods-row">
 						<text class="label">收款折扣：</text>
@@ -198,7 +206,7 @@
 	import { ref, reactive, onMounted, watch } from 'vue'
 	import { onLoad } from '@dcloudio/uni-app';
 	import { $u, useTheme } from 'uview-pro'
-	import { getInDetailById, getFinancialBillNoByBillId, getGoodsDetailByNumber } from '@/api/api.js'
+	import { getInOutDetailById, getFinancialBillNoByBillId, getMaterialListByNumber } from '@/api/api.js'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('销售出库-详情')
 	const background = reactive({
@@ -234,7 +242,7 @@
 	const number = ref<string>('')
 	const InDetailList = ref<any>('');
 	const loadInDetailById = async () => {
-		const res = await getInDetailById(number.value)
+		const res = await getInOutDetailById(number.value)
 		if (res && res.code === 200) {
 			InDetailList.value = res.data
 			billId.value = res.data.id
@@ -256,7 +264,7 @@
 			linkType: 'basic',
 			isReadOnly: '1',
 		}
-		const res = await getGoodsDetailByNumber(params)
+		const res = await getMaterialListByNumber(params)
 		if (res && res.code === 200) {
 			GoodsDetail.value = res.data.rows
 			listTotal.value = res.data.total
@@ -283,7 +291,7 @@
 			number.value = options.number;
 			loadInDetailById();
 		} else {
-			console.warn("未接收到单号参数");
+			uni.showToast({ title: '未接收到单号参数', icon: 'none' });
 		}
 	});
 </script>

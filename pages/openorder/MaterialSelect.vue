@@ -31,11 +31,6 @@
 			<view v-for="(item, index) in materialList" :key="item.id || index" @click="goMaterialDetail(item)">
 				<view class="good-item" style="min-height: 80rpx;">
 					<u-row gutter="5">
-						<!-- 						<u-col span="4">
-							<view class="goods-row">
-								<u-text :text="item.id"></u-text>
-							</view>
-						</u-col> -->
 						<u-col span="12">
 							<view class="goods-row">
 								<text class="label">名称：</text>
@@ -107,23 +102,9 @@
 								<u-input v-model="materialDetail.total" placeholder="金额"
 									:disabled="true" /></u-form-item>
 						</u-col>
-						<!-- 					<u-col span="6">
-						<u-form-item label-align="right" label="其它费用：">
-							<u-input v-model="otherMoney" placeholder="请输入其它费用" /></u-form-item>
-					</u-col>
-					<u-col span="12">
-						<u-form-item label-align="right" label="*结算账户：">
-							<u-input v-model="accountName" placeholder="请选择结算账户" @click="accountShow = true" />
-							<u-select v-model="accountShow" :list="accountList" @confirm="accountConfirm"></u-select>
-						</u-form-item>
-					</u-col>
-					<u-col span="6">
-						<u-form-item label-align="right" label="本次收款：">
-							<u-input v-model="changeAmount" placeholder="请输入本次收款" /></u-form-item>
-					</u-col> -->
 						<u-col span="12">
 							<u-form-item label-align="right" label="备注：">
-								<u-input v-model="materialDetail.remark" /></u-form-item>
+								<u-input v-model="materialDetail.remark"/></u-form-item>
 						</u-col>
 					</u-row>
 				</u-form>
@@ -285,10 +266,8 @@
 		getMaterialList();
 	}
 	function materialDetailSubmit() {
-		const materialDetailStr = encodeURIComponent(JSON.stringify(materialDetail.value));
-		uni.$u.route('/pages/openorder/OutboundOrder/AddSaleOut',
-			{ materialDetail: materialDetailStr });
-		nextTick(); 
+		uni.$emit('addMaterialDetail', materialDetail.value);
+		uni.navigateBack();
 	}
 	//数量变更
 	const InputChangeNum = (val : string) => {

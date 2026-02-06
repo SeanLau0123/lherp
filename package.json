@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "echarts": "^6.0.0",
-    "uview-pro": "^0.5.3"
+    "uview-pro": "^0.5.5"
   },
   "devDependencies": {
     "@uni-ku/root": "^1.4.1"
