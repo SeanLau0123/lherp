@@ -77,8 +77,15 @@
 			</view>
 		</scroll-view>
 		<!-- 明细行 数量金额-->
-		<u-popup v-model="popupStock" mode="bottom" height="800rpx" border-radius="8">
-			<view>
+		<u-popup v-model="popupStock" mode="bottom" height="700rpx" border-radius="8">
+			<view style="padding: 10rpx 10rpx;" >
+				<view>
+					<u-row gutter="10" justify="between">
+						<view class="u-btn-picker u-btn-picker--tips" @click="materialDetailClose">取消</view>
+						<view class="u-btn-picker u-btn-picker--primary" @click="materialDetailSubmit">确认</view>
+					</u-row>
+					<u-line></u-line>
+				</view>
 				<u-form label-width="120rpx">
 					<u-form-item label-align="right" label="仓库：">
 						<u-input v-model="depotName" :type="type" placeholder="请选择仓库"
@@ -104,17 +111,10 @@
 						</u-col>
 						<u-col span="12">
 							<u-form-item label-align="right" label="备注：">
-								<u-input v-model="materialDetail.remark"/></u-form-item>
+								<u-input v-model="materialDetail.remark" /></u-form-item>
 						</u-col>
 					</u-row>
 				</u-form>
-				<u-gap></u-gap>
-			</view>
-			<view>
-				<u-row gutter="10">
-					<u-button type="warning" @click="materialDetailClose">取消</u-button>
-					<u-button type="primary" @click="materialDetailSubmit">确定</u-button>
-				</u-row>
 			</view>
 		</u-popup>
 
@@ -216,8 +216,8 @@
 
 			const defaultDepot = res.data.find(item => item.isDefault === true);
 			if (defaultDepot) {
-				depotName.value = defaultDepot.depotName; // 默认显示的仓库名称
-				depotId.value = defaultDepot.id.toString(); // 默认仓库的ID（转为字符串，和列表的value格式一致）
+				depotName.value = defaultDepot.depotName;
+				depotId.value = defaultDepot.id.toString(); 
 			}
 		}
 		else {
@@ -427,5 +427,20 @@
 		padding-top: var(--u-navbar-height, 88rpx);
 		/* 扣除分页栏高度，避免内容被分页遮挡 */
 		padding-bottom: 40px;
+	}
+	
+	.u-btn-picker {
+	    min-width: 150rpx;
+	    padding: 20rpx 30rpx;
+	    box-sizing: border-box;
+	    text-align: center;
+	    text-decoration: none;
+		font-size: 28rpx;
+	}
+	.u-btn-picker--primary {
+	    color: $u-type-primary;
+	}
+	.u-btn-picker--tips {
+	    color: $u-tips-color;
 	}
 </style>

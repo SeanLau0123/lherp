@@ -18,75 +18,87 @@
 						:params="timeparams" @confirm="orderTimeConfirm"></u-picker>
 				</u-form-item>
 				<u-form-item label-align="right" label="单据编号：">
-					<u-input v-model="billno" placeholder="" :disabled="isEdit" /></u-form-item>
-				<u-form-item label-align="right" placeholder="请选择关联订单" label="关联订单：">
-					<u-input v-model="linknumber" /></u-form-item>
+					<u-input v-model="billno" placeholder="" :disabled="isEdit" />
+					<text>{{orderId}}</text>
+				</u-form-item>
+				<u-form-item label-align="right" label="关联订单：">
+					<u-input v-model="linknumber" placeholder="请选择关联订单" /></u-form-item>
+				<u-form-item label-align="right" label="备注：">
+					<u-input v-model="myform.remark" placeholder="请输入备注" /></u-form-item>
 				<u-gap></u-gap>
+				<!-- 订单明细 -->
 				<view class="rowinfo">
 					<u-row gutter="10">
+						<u-checkbox v-model="selectAll" @change="handleSelectAll">全选</u-checkbox>
 						<u-button type="primary" size="mini" @click="materialSelect()">插入行</u-button>
 						<u-button type="primary" size="mini" @click="materialDelete()">删除行</u-button>
 						<u-button type="primary" size="mini" @click="">扫码录入</u-button>
 					</u-row>
 					<scroll-view class="scrollviewpadding">
-						<view v-for="(item, index) in materialDetailList" :key="item.id || index" @click="">
-							<view class="good-item" style="min-height: 80rpx;">
-								<u-row gutter="5">
-									<u-col span="12">
-										<view class="goods-row">
-											<text class="label">名称：</text>
-											<text class="">{{ item.name }}</text>
-											<u-text
-												type="warning">{{item.enableSerialNumber === '1' ? '【序】' : ''}}</u-text>
-										</view>
-									</u-col>
-									<u-col span="12">
-										<view class="goods-row">
-											<text class="label">条码：</text>
-											<text class="value">{{ item.mBarCode || '-' }}</text>
-										</view>
-									</u-col>
-									<u-col span="12">
-										<view class="goods-row">
-											<text class="label">规格：</text>
-											<text class="value">{{ item.standard || '-' }}</text>
-											<text class="label">型号：</text>
-											<text class="value">{{ item.model || '-' }}</text>
-										</view>
-									</u-col>
-									<u-col span="12">
-										<view class="goods-row">
-											<text class="label">品牌：</text>
-											<text class="value">{{ item.brand || '-' }}</text>
-											<text class="label">库存：</text>
-											<text class="value">{{item.stock || '0' }}（{{item.unit || '-' }})</text>
-										</view>
-									</u-col>
-									<u-col span="12">
-										<view class="goods-row">
-											<text class="label">数量：</text>
-											<text class="value">{{ item.expiryNum || '-' }}</text>
-											<text class="label">单价：</text>
-											<text class="value">{{item.billPrice || '0' }}</text>
-										</view>
-									</u-col>
-									<u-col span="12">
-										<view class="goods-row">
-											<text class="label">金额：</text>
-											<text class="value">{{item.total || '0' }}</text>
-										</view>
-									</u-col>
-									<u-col span="12">
-										<view class="goods-row">
-											<text class="label">备注：</text>
-											<text class="value">{{item.remark}}</text>
-										</view>
-									</u-col>
-								</u-row>
-							</view>
+						<view v-for="(item, index) in materialDetailList" :key="item.id || index">
+							<u-row gutter="5">
+								<u-col span="1">
+									<u-checkbox v-model="item.checked" @change="checkboxChange"
+										:name="item.id"></u-checkbox>
+								</u-col>
+								<u-col span="11">
+									<view class="good-item" style="min-height: 80rpx;"
+										@click="goMaterialDetail(item,index)">
+										<u-col span="12">
+											<view class="goods-row">
+												<text class="label">名称：</text>
+												<text>{{ item.name }}</text>
+												<u-text
+													type="warning">{{item.enableSerialNumber === '1' ? '【序】' : ''}}</u-text>
+											</view>
+										</u-col>
+										<u-col span="12">
+											<view class="goods-row">
+												<text class="label">条码：</text>
+												<text class="value">{{ item.mBarCode || '-' }}</text>
+											</view>
+										</u-col>
+										<u-col span="12">
+											<view class="goods-row">
+												<text class="label">规格：</text>
+												<text class="value">{{ item.standard || '-' }}</text>
+												<text class="label">型号：</text>
+												<text class="value">{{ item.model || '-' }}</text>
+											</view>
+										</u-col>
+										<u-col span="12">
+											<view class="goods-row">
+												<text class="label">品牌：</text>
+												<text class="value">{{ item.brand || '-' }}</text>
+												<text class="label">库存：</text>
+												<text class="value">{{item.stock || '0' }}（{{item.unit || '-' }})</text>
+											</view>
+										</u-col>
+										<u-col span="12">
+											<view class="goods-row">
+												<text class="label">数量：</text>
+												<text class="value">{{ item.expiryNum || '-' }}</text>
+												<text class="label">单价：</text>
+												<text class="value">{{item.billPrice || '0' }}</text>
+											</view>
+										</u-col>
+										<u-col span="12">
+											<view class="goods-row">
+												<text class="label">金额：</text>
+												<text class="value">{{item.total || '0' }}</text>
+											</view>
+										</u-col>
+										<u-col span="12">
+											<view class="goods-row">
+												<text class="label">备注：</text>
+												<text class="value">{{item.remark}}</text>
+											</view>
+										</u-col>
+									</view>
+								</u-col></u-row>
 						</view>
 						<view class="good-item">
-							<u-row gutter="10">
+							<u-row gutter="5">
 								<u-col span="6">
 									<view class="goods-row">
 										<text class="label">总数量：</text>
@@ -125,7 +137,7 @@
 					<u-col span="12">
 						<u-form-item label-align="right" label="*结算账户：">
 							<u-input v-model="accountName" placeholder="请选择结算账户" @click="accountShow = true"
-								:disabled="true" />
+								:type="type" :disabled="true" />
 							<u-select v-model="accountShow" :list="accountList" @confirm="accountConfirm"></u-select>
 						</u-form-item>
 					</u-col>
@@ -139,15 +151,15 @@
 					</u-col>
 					<u-col span="12">
 						<u-form-item label-align="right" label="销售人员：">
-							<u-input v-model="salePersonName" placeholder="请选择销售人员"
-								@click="salePersonShow = true" /></u-form-item>
+							<u-input v-model="salePersonName" placeholder="请选择销售人员" @click="salePersonShow = true"
+								:type="type" /></u-form-item>
 						<u-select v-model="salePersonShow" :list="salePersonList"
 							@confirm="salePersonConfirm"></u-select>
 					</u-col>
 				</u-row>
 			</u-form>
 			<u-gap></u-gap>
-			<view>
+			<view style="padding-bottom: 10rpx;">
 				<u-row gutter="10">
 					<u-button type="error" size="default" @click="">取消</u-button>
 					<u-button type="warning" size="default" @click="">保存并审核</u-button>
@@ -155,6 +167,47 @@
 				</u-row>
 			</view>
 		</view>
+		<!-- 明细行 数量金额-->
+		<u-popup v-model="popupStock" mode="bottom" height="700rpx" border-radius="8">
+			<view style="padding: 10rpx 10rpx;">
+				<view>
+					<u-row gutter="10" justify="between">
+						<view class="u-btn-picker u-btn-picker--tips" @click="materialDetailClose">取消</view>
+						<view class="u-btn-picker u-btn-picker--primary" @click="materialDetailSubmit">确认</view>
+					</u-row>
+					<u-line></u-line>
+				</view>
+				<u-form label-width="120rpx">
+					<u-form-item label-align="right" label="仓库：">
+						<u-input v-model="depotName" :type="type" placeholder="请选择仓库"
+							@click="depotShow = true" /></u-form-item>
+					<u-select v-model="depotShow" :list="depotList" @confirm="depotConfirm"></u-select>
+					<u-form-item label-align="right" label="名称：">
+						<u-input v-model="materialDetail.name" placeholder="请输入名称" :disabled="true" /></u-form-item>
+					<u-row gutter="10">
+						<u-col span="6">
+							<u-form-item label-align="right" label="数量：">
+								<u-input v-model="materialDetail.expiryNum" placeholder="请输入数量"
+									@input="InputChangeNum" /></u-form-item>
+						</u-col>
+						<u-col span="6">
+							<u-form-item label-align="right" label="单价：">
+								<u-input v-model="materialDetail.billPrice" placeholder="请输入单价"
+									@input="InputChangePrice" /></u-form-item>
+						</u-col>
+						<u-col span="12">
+							<u-form-item label-align="right" label="金额：">
+								<u-input v-model="materialDetail.total" placeholder="金额"
+									:disabled="true" /></u-form-item>
+						</u-col>
+						<u-col span="12">
+							<u-form-item label-align="right" label="备注：">
+								<u-input v-model="materialDetail.remark" /></u-form-item>
+						</u-col>
+					</u-row>
+				</u-form>
+			</view>
+		</u-popup>
 	</view>
 </template>
 
@@ -164,10 +217,8 @@
 	import { $u, useTheme } from 'uview-pro'
 	import type { FormRules } from 'uview-pro/types/global';
 	import {
-
-		getAllListBySelect, getOrderNumber, getAllAccount, getSalePerson,
-		addSaveSaleOut, getInOutDetailById, getMaterialListByNumber
-
+		getAllListBySelect, getOrderNumber, getAllAccount, getSalePerson, getDepotInfo,
+		addSaveSaleOut, getInOutDetailById, getMaterialListByNumber, updateSaleOut, getMaterialByBarCode
 	} from '@/api/api.js'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('新增')
@@ -267,6 +318,34 @@
 		accountId.value = e[0].value;
 	}
 
+	//加载仓库列表
+	const depotShow = ref<boolean>(false)
+	const depotName = ref<string>('');
+	const depotId = ref<string>('');
+	const depotList = ref<ListItem[]>([]);
+	const getdepotlList = async () => {
+		const res = await getDepotInfo()
+		if (res && res.code === 200) {
+			depotList.value = res.data.map(item => ({
+				value: item.id.toString() || '',
+				label: item.depotName || ''
+			}));
+
+			const defaultDepot = res.data.find(item => item.isDefault === true);
+			if (defaultDepot) {
+				depotName.value = defaultDepot.depotName;
+				depotId.value = defaultDepot.id.toString();
+			}
+		}
+		else {
+			uni.showToast({ title: '仓库加载失败', icon: 'none' });
+		}
+	}
+	// 仓库列表确认
+	const depotConfirm = (e : any[]) => {
+		depotName.value = e[0].label;
+		depotId.value = e[0].value;
+	}
 	//加载销售员列表
 	const salePersonShow = ref<boolean>(false)
 	const salePersonName = ref<string>('');
@@ -295,17 +374,35 @@
 	function materialSelect() {
 		uni.$u.route('pages/openorder/MaterialSelect');
 	}
-	//删除明细行
-	function materialDelete() {
-		let index = 0;
-		if (null != index) {
-			materialDetailList.value.splice(index, 1);
-			materialDetailList.value = [...materialDetailList.value];
+
+	const selectAll = ref<boolean>(false)
+	// 全选
+	const handleSelectAll = (value : boolean) => {
+		materialDetailList.value.forEach(item => {
+			item.checked = value;
+		});
+	}
+
+	const checkboxChange = (e : boolean, name : string) => {
+		const item = materialDetailList.value.find(item => item.id === name);
+		if (item) {
+			item.checked = e;
+			// 同步全选状态
+			const allChecked = materialDetailList.value.every(item => item.checked);
+			selectAll.value = allChecked;
 		}
 	}
-	const materialDetailList = ref<MaterialItem[]>([]);
 
-
+	//删除明细行
+	function materialDelete() {
+		// 过滤掉选中的行
+		materialDetailList.value = materialDetailList.value.filter(item => !item.checked);
+		// 重新计算汇总
+		calculateMaterialSummary();
+		calculateAmounts(false);
+		// 重置全选
+		selectAll.value = false;
+	}
 	// const materialDetail = ref({
 	// 	id: '',
 	// 	name: '',
@@ -321,21 +418,30 @@
 	// 	total: '',
 	// 	remark: ''
 	// });
+	const materialDetailList = ref<MaterialItem[]>([]);
 
 	function addMaterialToList(newMaterialData) {
 		if (!newMaterialData.name) {
 			uni.showToast({ title: '商品数据无效', icon: 'none' });
 			return;
 		}
+		// 给新行添加checked属性
+		const newItem = {
+			...newMaterialData,
+			checked: false
+		};
 		materialDetailList.value.push(newMaterialData);
 		materialDetailList.value = [...materialDetailList.value];
 		calculateMaterialSummary();
 		calculateAmounts(false);
 	}
+	const popupStock = ref<boolean>(false)
+	// 核心修改3：新增当前编辑行的索引变量
+	const currentEditIndex = ref<number>(-1);
 	//获取单据行明细
 	const loadMaterialList = async () => {
 		let params = {
-			headerId: saleOutId.value,
+			headerId: orderId.value,
 			mpList: '扩展1,扩展2',
 			linkType: 'basic',
 		}
@@ -366,9 +472,83 @@
 			uni.showToast({ title: '供应商加载失败', icon: 'none' });
 		}
 	}
+
+	const materialDetail = ref({
+		name: '',
+		expiryNum: '1',
+		billPrice: '',
+		total: '',
+		remark: ''
+	})
+	//编辑单据行信息
+	function goMaterialDetail(item : any, index : number) {
+		popupStock.value = true;
+		currentEditIndex.value = index;
+		getdepotlList();
+		getMaterialByCode(item)
+	}
+	const getMaterialByCode = async (item : any) => {
+		let params = {
+			barCode: item.mBarCode,
+			depotId: depotId.value,
+			mpList: "制造商,自定义1,自定义2,自定义3",
+			prefixNo: 'XSCK',
+		}
+		const res = await getMaterialByBarCode(params);
+		if (res && res.code === 200) {
+			materialDetail.value = res.data[0]
+			materialDetail.value.expiryNum = res.data[0].expiryNum || '1'
+			materialDetail.value.total = res.data[0].billPrice
+		}
+		else {
+			uni.showToast({ title: '商品详情加载失败', icon: 'none' });
+		}
+	}
+	function materialDetailClose() {
+		popupStock.value = false;
+		currentEditIndex.value = -1;
+	}
+	function materialDetailSubmit() {
+		if (currentEditIndex.value === -1 || currentEditIndex.value >= materialDetailList.value.length) {
+			uni.showToast({ title: '编辑行不存在', icon: 'none' });
+			return;
+		}
+
+		// 更新原列表中的对应行数据
+		materialDetailList.value[currentEditIndex.value] = {
+			...materialDetailList.value[currentEditIndex.value],
+			expiryNum: materialDetail.value.expiryNum,
+			billPrice: materialDetail.value.billPrice,
+			total: materialDetail.value.total,
+			remark: materialDetail.value.remark,
+			depotId: depotId.value
+		};
+
+		materialDetailList.value = [...materialDetailList.value];
+
+		// 重新计算汇总和金额
+		calculateMaterialSummary();
+		calculateAmounts(false);
+
+		// 关闭弹窗并重置索引
+		popupStock.value = false;
+		currentEditIndex.value = -1;
+	}
+	//数量变更
+	const InputChangeNum = (val : string) => {
+		const num = Number(val) || 0;
+		const price = Number(materialDetail.value.billPrice || 0);
+		materialDetail.value.total = num * price;
+	};
+	//单价变更
+	const InputChangePrice = (val : string) => {
+		const price = Number(val) || 0;
+		materialDetail.value.total = materialDetail.value.expiryNum * price;
+	};
+
 	// 新增：编辑模式相关变量
 	const isEdit = ref<boolean>(false); // 是否为编辑模式
-	const saleOutId = ref<string>(''); // 编辑的单据ID（后端主键）
+	const orderId = ref<string>(''); // 编辑的单据ID（后端主键）
 	const editBillNo = ref<string>(''); // 编辑的单据编号（前端展示用）
 
 	const getSaleOutDetailData = async (billNumber : string) => {
@@ -376,7 +556,7 @@
 		if (res && res.code === 200) {
 			const detail = res.data;
 
-			saleOutId.value = detail.id || '';
+			orderId.value = detail.id || '';
 			customerId.value = detail.organId;
 			customerName.value = detail.organName;
 			linknumber.value = detail.linkNumber || '';
@@ -386,7 +566,7 @@
 			salePersonName.value = detail.salesManStr || '';
 			myform.customer = customerName.value;
 			myform.orderTime = detail.operTimeStr;
-
+			myform.remark = detail.remark;
 			await loadMaterialList();
 			// 回显明细后重新计算总金额、欠款等
 			calculateMaterialSummary();
@@ -460,57 +640,58 @@
 			return;
 		}
 		const infoParams = {
+			id: orderId.value,
+			type: "出库",
+			subType: "销售",
 			defaultNumber: billno.value,
-			organId: customerId.value,
-			operTime: myform.orderTime, // 单据日期
 			number: billno.value, // 完整单据编号
+			createTime: myform.orderTime,
+			operTime: myform.orderTime, // 单据日期
+			organId: customerId.value,
+			accountId: Number(accountId.value),
+			salesMan: salePersonId.value || "",
+			remark: myform.remark,
 			discount: Number(myform.discount) || 0, // 转为数字类型，默认0
 			discountMoney: Number(discountMoney.value) || 0, // 转为数字类型，默认0
 			discountLastMoney: Number(myform.discountLastMoney) || 0, // 转为数字类型，默认0
 			otherMoney: Number(myform.otherMoney) || 0,
-			accountId: Number(accountId.value) || 20,
 			changeAmount: Number(myform.changeAmount) || 0, // 本次收款，转为数字类型
 			debt: Number(myform.debt) || 0, // 本次欠款，转为数字类型
-			type: "出库", // 固定值，可根据业务调整
-			subType: "销售",
+
 			totalPrice: Number(myform.discountLastMoney) || 0,
-			accountIdList: "", // 无多账户时留空
-			accountMoneyList: "", // 无多账户时留空
-			fileName: "", // 无附件时留空
-			salesMan: salePersonId.value || "",
 			status: "0" // 保存状态，
 		};
 		const rowsParams = materialDetailList.value.map((item, index) => {
-			const uniqueId = `${Date.now()}${index.toString().padStart(6, '0')}`;
+			const rowId = isEdit ? (item.id || "") : `${Date.now()}${index.toString().padStart(6, '0')}`;
 			return {
-				id: uniqueId,
+				id: rowId,
 				name: item.name || "",
 				standard: item.standard || "",
 				model: item.model || "",
-				color: null, // 页面未收集该字段，留空
+				color: "",
 				brand: item.brand || "",
-				mfrs: null, // 页面未收集该字段，留空
-				otherField1: null, // 页面未收集该字段，留空
-				otherField2: null, // 页面未收集该字段，留空
-				otherField3: null, // 页面未收集该字段，留空
-				stock: Number(item.stock) || 0,
-				unit: item.unit || "",
-				snList: "", // 无序列号时留空
-				batchNumber: "", // 页面未收集该字段，留空
-				expirationDate: "", // 页面未收集该字段，留空
-				sku: "", // 页面未收集该字段，留空
-				preNumber: "", // 页面未收集该字段，留空
-				finishNumber: "", // 页面未收集该字段，留空
-				operNumber: Number(item.expiryNum) || 1, // 操作数量（对应页面的数量）
-				unitPrice: Number(item.billPrice) || 0, // 单价（对应页面的单价）
-				allPrice: Number(item.total) || 0, // 行总金额（对应页面的金额）
-				taxRate: 0, // 税率，页面未收集，默认0
-				taxMoney: 0, // 税额，默认0
-				taxLastMoney: Number(item.total) || 0, // 行折后金额，与行总金额保持一致
+				mfrs: "",
+				otherField1: "",
+				otherField2: "",
+				otherField3: "",
+				stock: Number(item.stock),
+				unit: item.unit,
+				snList: "",
+				batchNumber: "",
+				expirationDate: "",
+				sku: "",
+				preNumber: "",
+				finishNumber: "",
+				operNumber: Number(item.expiryNum) || 1,
+				unitPrice: Number(item.billPrice) || 0,
+				allPrice: Number(item.total) || 0,
+				taxRate: 0,
+				taxMoney: 0,
+				taxLastMoney: Number(item.total) || 0,
 				remark: item.remark || "",
-				linkId: "", // 无关联ID时留空
-				depotId: item.depotId || "16", // 仓库ID，固定值16（可替换为动态值）
-				barCode: item.mBarCode || "" // 商品条码
+				linkId: "",
+				depotId: item.depotId,
+				barCode: item.mBarCode || ""
 			};
 		});
 
@@ -519,12 +700,24 @@
 			info: JSON.stringify(infoParams), // 主表参数转为JSON字符串
 			rows: JSON.stringify(rowsParams) // 明细参数转为JSON字符串
 		};
-		const res = await addSaveSaleOut(requestParams)
-		if (res.code === 200) {
-			uni.showToast({ title: '保存成功', icon: 'none' });
-			uni.$u.route('pages/openorder/OutboundOrder/OutboundOrder');
-		} else {
-			uni.showToast({ title: '保存失败', icon: 'none' });
+
+		if (isEdit.value === true) {
+			const res = await updateSaleOut(requestParams)
+			if (res.code === 200) {
+				uni.showToast({ title: '更新成功', icon: 'none' });
+				uni.$u.route('pages/openorder/OutboundOrder/OutboundOrder');
+			} else {
+				uni.showToast({ title: '保存失败', icon: 'none' });
+			}
+		}
+		else {
+			const res = await addSaveSaleOut(requestParams)
+			if (res.code === 200) {
+				uni.showToast({ title: '保存成功', icon: 'none' });
+				uni.$u.route('pages/openorder/OutboundOrder/OutboundOrder');
+			} else {
+				uni.showToast({ title: '保存失败', icon: 'none' });
+			}
 		}
 	}
 
@@ -577,7 +770,10 @@
 		const finalDebt = Math.max(calcChangeAmount - changeAmountNum, 0);
 		myform.debt = finalDebt.toFixed(2)
 	};
-
+	// 复选框变化事件
+	const handleCheckboxChange = () => {
+		// 可添加全选/反选逻辑
+	};
 	onMounted(() => {
 		//监听全局事件，接收新商品数据
 		uni.$on('addMaterialDetail', (newMaterialData) => {
@@ -598,6 +794,8 @@
 
 		}
 		else {
+			isEdit.value = false;
+			title.value = '新增';
 			const materialDetailStr = option.materialDetail || '';
 			if (materialDetailStr) {
 				const materialDetailObj = JSON.parse(decodeURIComponent(materialDetailStr));
@@ -654,6 +852,7 @@
 
 	.popup-title {
 		padding: 0rpx 10rpx;
+		margin-bottom: 20rpx;
 	}
 
 	.good-item {
@@ -661,7 +860,7 @@
 		border: 1px solid rgba(var(--u-type-primary-rgb), 0.2);
 		border-radius: 8rpx;
 		width: calc(100% - 30rpx);
-		margin: 10rpx 10rpx 20rpx;
+		margin: 10rpx 0rpx;
 	}
 
 	.rowinfo {
@@ -679,7 +878,7 @@
 	.label {
 		font-size: 28rpx;
 		color: $u-type-primary;
-		width: 160rpx;
+		width: 130rpx;
 		text-align: right;
 		padding-right: 10rpx;
 		//border: solid 1px #ffffff;
@@ -691,5 +890,19 @@
 		word-break: break-all;
 		font-size: 28rpx;
 		color: $u-content-color;
+	}
+	.u-btn-picker {
+	    min-width: 150rpx;
+	    padding: 20rpx 30rpx;
+	    box-sizing: border-box;
+	    text-align: center;
+	    text-decoration: none;
+		font-size: 28rpx;
+	}
+	.u-btn-picker--primary {
+	    color: $u-type-primary;
+	}
+	.u-btn-picker--tips {
+	    color: $u-tips-color;
 	}
 </style>

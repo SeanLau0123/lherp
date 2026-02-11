@@ -32,7 +32,7 @@ export function createApp() {
       theme: {
           themes: themes,
           defaultTheme: 'green', // 默认主题名称
-          defaultDarkMode: 'auto' // 默认暗黑模式：auto、light、dark
+          defaultDarkMode: 'light' // 默认暗黑模式：auto、light、dark
       }
   });
 	app.use(httpPlugin, {

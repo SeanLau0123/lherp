@@ -118,7 +118,7 @@ export const getInOutDetailById = (number, config = {}) => http.get(`/depotHead/
 export const getFinancialBillNoByBillId = (billId, config = {}) => http.get(`/accountHead/getFinancialBillNoByBillId?billId=${billId}`, config)
 
 //获取采购入库单商品明细，销售出库单商品明细
-export const getMaterialListByNumber = (params, config = {}) => http.get('depotItem/getDetailList', params, config)
+export const getMaterialListByNumber = (params, config = {}) => http.get('/depotItem/getDetailList', params, config)
 
 //获取单据号后缀
 export const getOrderNumber = (data = {}) => http.get('/sequence/buildNumber', { data })
@@ -132,8 +132,17 @@ export const getOrderList = (params, config = {}) => http.get('/depotHead/list',
 *销售出库
 */
 //新增单据保存
-export const addSaveSaleOut = (params, config = {}) => http.post('depotHead/addDepotHeadAndDetail', params, config)
+export const addSaveSaleOut = (params, config = {}) => http.post('/depotHead/addDepotHeadAndDetail', params, config)
 //单据删除
 export const deleteSaleOut = (id, config = {}) => http.delete(`/depotHead/delete?id=${id}`, config)
 //单据审核
 export const batchSetStatusSaleOut = (params, config = {}) => http.post('/depotHead/batchSetStatus', params, config)
+//单据更新
+export const updateSaleOut = (params, config = {}) => http.put('depotHead/updateDepotHeadAndDetail', params, config)
+
+/*
+*财务管理
+*/
+//获取财务表数据
+export const getFinancialDetail = (params, config = {}) => http.get('/accountHead/list', params, config)
+
