@@ -124,7 +124,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getDepotInfo, getOrderList, deleteSaleOut, batchSetStatusSaleOut } from '@/api/api.js'
+	import { getDepotInfo, getOrderList, deleteOrder, batchSetStatusOrder } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('销售出库')
@@ -236,7 +236,7 @@
 				status: targetStatus,
 				ids: `${id},`
 			};
-			const res = await batchSetStatusSaleOut(requestParams)
+			const res = await batchSetStatusOrder(requestParams)
 			if (res.code === 200) {
 				const tipText = targetStatus === 1 ? '审核成功' : '反审核成功';
 				showToast(tipText, 'success');
@@ -256,7 +256,7 @@
 	const confirm = async () => {
 		saleOutList.value.splice(selectedIndex.value, 1)
 		try {
-			const res = await deleteSaleOut(selectedId.value)
+			const res = await deleteOrder(selectedId.value)
 			if (res.code === 200) {
 				showToast('删除成功', 'success');
 			} else {

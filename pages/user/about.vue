@@ -3,31 +3,46 @@
 		<u-toast ref="uToastRef" />
 		<u-navbar :is-back="true" :background="background" :title="title" back-icon-color="#ffffff"
 			title-color="#ffffff"></u-navbar>
-			<view class="content">
-				  <u-image width="200rpx" height="200rpx" :src="src" shape="circle">
-				    <template #loading>
-				      <u-loading></u-loading>
-				    </template>
-				  </u-image>
-				<view class="text-center">{{version}}</view>
-			</view>
-			<u-cell-group class="cell">
-				<u-cell-item title="检查更新" :value-style="versionStyle" :value="versionValue"
-					@click="appUpdate()"></u-cell-item>
-			</u-cell-group>
+		<view class="content">
+			<u-image width="200rpx" height="200rpx" :src="src" shape="circle">
+				<template #loading>
+					<u-loading></u-loading>
+				</template>
+			</u-image>
+			<view class="text-center">{{version}}</view>
+		</view>
+		<u-cell-group class="cell">
+			<u-cell-item title="检查更新" :value-style="versionStyle" :value="versionValue"
+				@click="appUpdate()"></u-cell-item>
+			<u-cell-item title="玲涵商城" :arrow="false" @click="goToMiniProgram">
+				<template #icon>
+					<u-icon size="32" name="weixin-circle-fill"></u-icon>
+				</template>
+				<template #right-icon>
+					<u-icon name="arrow-right" size="24"></u-icon>
+				</template>
+			</u-cell-item>
+		</u-cell-group>
 	</view>
 </template>
 
 <script setup lang="ts">
 	import { ref, onMounted, reactive, watch } from 'vue'
 	import { color, $u, useTheme } from 'uview-pro'
-	const { currentTheme, themes, darkMode } = useTheme();	
+	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('关于我们')
 	const versionValue = ref('')
 	const version = ref('')
 	const src = ref<string>("https://linghanshop.cn/uploads/attach/2025/11/20251128/c9840ae740abc19c00b3bda853b1abe8.png")
 	const uToastRef = ref()
-	const versionStyle = ref({});
+	const versionStyle = ref({}); 0
+
+	// 小程序配置常量（集中管理，方便维护）
+	const MINI_PROGRAM_CONFIG = {
+		appId: 'wxa95da9bdd04c3eda',
+		path: 'pages/index/index'
+	}
+
 	const showToast = (title : string) => {
 		uToastRef.value.show({
 			type: 'default',
@@ -39,6 +54,32 @@
 	})
 	const updateNavbarBackground = () => {
 		background.backgroundColor = $u.color.primary;
+	};
+
+	function goToMiniProgram() {
+		// 获取当前运行环境
+		const isApp = 'APP';
+		if (isApp) {
+			// 拼接微信唤起链接
+			const weChatUrl = `weixin://dl/business/?appid=${MINI_PROGRAM_CONFIG.appId}&path=${MINI_PROGRAM_CONFIG.path}`;
+
+			// 判断plus是否存在（App端必存在，做兜底）
+			if (typeof plus !== 'undefined') {
+				plus.runtime.openURL(
+					weChatUrl,
+					() => {
+						console.log('App唤起微信成功');
+					},
+					(err) => {
+						console.error('App唤起微信失败：', err);
+						// 唤起失败，提示安装微信
+						showToast('未检测到微信，请先安装微信后重试');
+					}
+				);
+			} else {
+				showToast('当前环境不支持跳转');
+			}
+		}
 	};
 	watch(
 		[

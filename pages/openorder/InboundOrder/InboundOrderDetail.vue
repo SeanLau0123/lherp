@@ -143,6 +143,14 @@
 		<!-- 订单表尾 -->
 		<view class="good-item">
 			<u-row gutter="10">
+				<template v-if="InDetailList.remark">
+				<u-col span="12">
+					<view class="goods-row">
+						<text class="label">备注：</text>
+						<u-text :text="InDetailList.remark"></u-text>
+					</view>
+				</u-col>
+				</template>
 				<u-col span="6">
 					<view class="goods-row">
 						<text class="label">付款折扣：</text>

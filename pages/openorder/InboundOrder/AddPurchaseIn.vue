@@ -1,4 +1,4 @@
-<!-- 销售管理-销售出库-新增 -->
+<!-- 采购管理-采购入库 - 新增-->
 <template>
 	<view style="min-height: 100vh;">
 		<u-navbar :is-back="true" :title="title" title-color='#ffffff' back-icon-color='#ffffff'
@@ -8,10 +8,10 @@
 		<view class="popup-title">
 			<u-form :model="myform" label-width="165rpx" :rules="rules" ref="uFormRef" label-align="right"
 				:error-type="errorType">
-				<u-form-item label-align="right" label="客户：" prop="customer">
-					<u-input v-model="myform.customer" :type="type" placeholder="请选择客户"
-						@click="customerShow = true" /></u-form-item>
-				<u-select v-model="customerShow" :list="customerList" @confirm="customerConfirm"></u-select>
+				<u-form-item label-align="right" label="供应商：" prop="supplier">
+					<u-input v-model="myform.supplier" :type="type" placeholder="请选择供应商"
+						@click="supplierShow = true" /></u-form-item>
+				<u-select v-model="supplierShow" :list="supplierList" @confirm="supplierConfirm"></u-select>
 				<u-form-item label-align="right" label="单据日期：" prop="orderTime">
 					<u-input v-model="myform.orderTime" :type="type" @click="pickorderDateShow = true" />
 					<u-picker v-model="pickorderDateShow" mode="time" :default-time="myform.orderTime"
@@ -149,13 +149,6 @@
 						<u-form-item label-align="right" label="*本次欠款：">
 							<u-input v-model="myform.debt" :disabled="true" /></u-form-item>
 					</u-col>
-					<u-col span="12">
-						<u-form-item label-align="right" label="销售人员：">
-							<u-input v-model="salePersonName" placeholder="请选择销售人员" @click="salePersonShow = true"
-								:type="type" /></u-form-item>
-						<u-select v-model="salePersonShow" :list="salePersonList"
-							@confirm="salePersonConfirm"></u-select>
-					</u-col>
 				</u-row>
 			</u-form>
 			<u-gap></u-gap>
@@ -163,7 +156,7 @@
 				<u-row gutter="10">
 					<u-button type="error" size="default" @click="Cancel()">取消</u-button>
 					<u-button type="warning" size="default" @click="">保存并审核</u-button>
-					<u-button type="primary" size="default" @click="SaveSaleOut()">保存</u-button>
+					<u-button type="primary" size="default" @click="SavePurchaseIn()">保存</u-button>
 				</u-row>
 			</view>
 		</view>
@@ -216,10 +209,11 @@
 	import { onLoad, onShow } from '@dcloudio/uni-app';
 	import { $u, useTheme } from 'uview-pro'
 	import type { FormRules } from 'uview-pro/types/global';
-	import { USER_INFO } from "@/common/util/constants";
+	import {USER_INFO} from "@/common/util/constants";
 	import {
-		getAllListBySelect, getOrderNumber, getAllAccount, getSalePerson, getDepotInfo,
-		addSaveSaleOut, getInOutDetailById, getMaterialListByNumber, updateSaleOut, getMaterialByBarCode
+		getAllListBySelect, getOrderNumber, getAllAccount, getDepotInfo,
+		addSaveOrder, getInOutDetailById, getMaterialListByNumber, updateSaleOut, getMaterialByBarCode,
+		getSupplierBySelect
 	} from '@/api/api.js'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('新增')
@@ -264,34 +258,34 @@
 	const getOrderNo = async () => {
 		const res = await getOrderNumber()
 		if (res && res.code === 200) {
-			billno.value = "XSCK" + res.data.defaultNumber;
+			billno.value = "CGRK" + res.data.defaultNumber;
 		}
 	}
 
-	//加载客户列表
+	//加载供应商列表
 	const type = ref<string>('select')
-	const customerShow = ref<boolean>(false)
-	const customerName = ref<string>('');
-	const customerId = ref<string>('');
-	const customerList = ref<ListItem[]>([]);
-	const loadGetCustomerlList = async () => {
+	const supplierShow = ref<boolean>(false)
+	const supplierName = ref<string>('');
+	const supplierId = ref<string>('');
+	const supplierList = ref<ListItem[]>([]);
+	const loadGetSupplierList = async () => {
 		let params = { limit: 1 }
-		const res = await getAllListBySelect(params)
+		const res = await getSupplierBySelect(params)
 		if (res) {
-			customerList.value = res.map(item => ({
+			supplierList.value = res.map(item => ({
 				value: item.id.toString() || '',
 				label: item.supplier || ''
 			}));
 		}
 		else {
-			uni.showToast({ title: '客户加载失败', icon: 'none' });
+			uni.showToast({ title: '供应商加载失败', icon: 'none' });
 		}
 	}
-	// 客户列表确认回调函数
-	const customerConfirm = (e : any[]) => {
-		customerName.value = e[0].label;
-		customerId.value = e[0].value;
-		myform.customer = customerName.value;
+	// 供应商列表确认回调函数
+	const supplierConfirm = (e : any[]) => {
+		supplierName.value = e[0].label;
+		supplierId.value = e[0].value;
+		myform.supplier = supplierName.value;
 	}
 
 	//加载账户列表
@@ -346,29 +340,6 @@
 	const depotConfirm = (e : any[]) => {
 		depotName.value = e[0].label;
 		depotId.value = e[0].value;
-	}
-	//加载销售员列表
-	const salePersonShow = ref<boolean>(false)
-	const salePersonName = ref<string>('');
-	const salePersonId = ref<string>('');
-	const salePersonList = ref<ListItem[]>([]);
-	const GetsalePersonList = async () => {
-		let params = { type: 1 }
-		const res = await getSalePerson(params)
-		if (res) {
-			salePersonList.value = res.map(item => ({
-				value: item.value.toString() || '',
-				label: item.text || ''
-			}));
-		}
-		else {
-			uni.showToast({ title: '销售员加载失败', icon: 'none' });
-		}
-	}
-	// 销售员确认回调函数
-	const salePersonConfirm = (e : any[]) => {
-		salePersonName.value = e[0].label;
-		salePersonId.value = e[0].value;
 	}
 
 	//新增明细行
@@ -558,14 +529,12 @@
 			const detail = res.data;
 
 			orderId.value = detail.id || '';
-			customerId.value = detail.organId;
-			customerName.value = detail.organName;
+			supplierId.value = detail.organId;
+			supplierName.value = detail.organName;
 			linknumber.value = detail.linkNumber || '';
 			accountId.value = detail.accountId || '';
 			accountName.value = detail.accountName || '';
-			salePersonId.value = detail.salesMan || '';
-			salePersonName.value = detail.salesManStr || '';
-			myform.customer = customerName.value;
+			myform.supplier = supplierName.value;
 			myform.orderTime = detail.operTimeStr;
 			myform.remark = detail.remark;
 			await loadMaterialList();
@@ -585,7 +554,7 @@
 	const uFormRef = ref();
 	const errorType = ref(['message', 'toast']);
 	const myform = reactive({
-		customer: '',
+		supplier: '',
 		orderTime: '',
 		discount: '0',
 		otherMoney: '0',
@@ -593,10 +562,10 @@
 		debt: '0'
 	});
 	const rules : FormRules = {
-		customer: [
+		supplier: [
 			{
 				required: true,
-				message: '请选择客户',
+				message: '请选择供应商',
 				trigger: 'change'
 			}
 		],
@@ -631,11 +600,10 @@
 	};
 	//新增取消
 	function Cancel() {
-		uni.$u.route('pages/openorder/OutboundOrder/OutboundOrder');
+		uni.$u.route('pages/openorder/InboundOrder/InboundOrder');
 	}
-
 	//新增保存
-	const SaveSaleOut = async () => {
+	const SavePurchaseIn = async () => {
 		const valid = await uFormRef.value?.validate() as boolean;
 		if (!valid) {
 			return;
@@ -647,16 +615,15 @@
 		let userInfo = uni.getStorageSync(USER_INFO);
 		const infoParams = {
 			id: orderId.value,
-			type: "出库",
-			subType: "销售",
+			type: "入库",
+			subType: "采购",
 			defaultNumber: billno.value,
 			number: billno.value, // 完整单据编号
 			createTime: myform.orderTime,
 			operTime: myform.orderTime, // 单据日期
-			organId: customerId.value,
-			creator: userInfo.id,
+			organId: supplierId.value,
+			creator:userInfo.id,
 			accountId: Number(accountId.value),
-			salesMan: salePersonId.value || "",
 			remark: myform.remark,
 			discount: Number(myform.discount) || 0, // 转为数字类型，默认0
 			discountMoney: Number(discountMoney.value) || 0, // 转为数字类型，默认0
@@ -712,16 +679,16 @@
 			const res = await updateSaleOut(requestParams)
 			if (res.code === 200) {
 				uni.showToast({ title: '更新成功', icon: 'none' });
-				uni.$u.route('pages/openorder/OutboundOrder/OutboundOrder');
+				uni.$u.route('pages/openorder/InboundOrder/InboundOrder');
 			} else {
 				uni.showToast({ title: '保存失败', icon: 'none' });
 			}
 		}
 		else {
-			const res = await addSaveSaleOut(requestParams)
+			const res = await addSaveOrder(requestParams)
 			if (res.code === 200) {
 				uni.showToast({ title: '保存成功', icon: 'none' });
-				uni.$u.route('pages/openorder/OutboundOrder/OutboundOrder');
+				uni.$u.route('pages/openorder/InboundOrder/InboundOrder');
 			} else {
 				uni.showToast({ title: '保存失败', icon: 'none' });
 			}
@@ -811,9 +778,8 @@
 			initDefaultDates();
 			getOrderNo();
 		}
-		loadGetCustomerlList();
+		loadGetSupplierList();
 		loadGetAccountList();
-		GetsalePersonList();
 		calculateAmounts(false);
 	});
 	watch(
@@ -898,21 +864,18 @@
 		font-size: 28rpx;
 		color: $u-content-color;
 	}
-
 	.u-btn-picker {
-		min-width: 150rpx;
-		padding: 20rpx 30rpx;
-		box-sizing: border-box;
-		text-align: center;
-		text-decoration: none;
+	    min-width: 150rpx;
+	    padding: 20rpx 30rpx;
+	    box-sizing: border-box;
+	    text-align: center;
+	    text-decoration: none;
 		font-size: 28rpx;
 	}
-
 	.u-btn-picker--primary {
-		color: $u-type-primary;
+	    color: $u-type-primary;
 	}
-
 	.u-btn-picker--tips {
-		color: $u-tips-color;
+	    color: $u-tips-color;
 	}
 </style>

@@ -246,6 +246,12 @@
 			}
 		},
 		{
+			"path": "pages/openorder/InboundOrder/AddPurchaseIn",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
 			"path": "pages/openorder/InboundOrder/InboundOrderDetail",
 			"style": {
 				"navigationBarTitleText": ""

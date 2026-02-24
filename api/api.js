@@ -60,9 +60,10 @@ export const addCategory = (params, config = {}) => http.post('/materialCategory
 
 //获取供应商，客户，会员信息
 export const getPartnerlList = (params, config = {}) => http.get('/supplier/list', params, config)
-//往来单位选择器
+//客户选择器
 export const getAllListBySelect = (params, config = {}) => http.post('/supplier/findBySelect_cus', params, config)
-
+//供应商选择器
+export const getSupplierBySelect = (params, config = {}) => http.post('/supplier/findBySelect_sup', params, config)
 //获取仓库信息
 export const getWareHouselList = (params, config = {}) => http.get('/depot/list', params, config)
 //获取仓库信息
@@ -132,11 +133,11 @@ export const getOrderList = (params, config = {}) => http.get('/depotHead/list',
 *销售出库
 */
 //新增单据保存
-export const addSaveSaleOut = (params, config = {}) => http.post('/depotHead/addDepotHeadAndDetail', params, config)
+export const addSaveOrder = (params, config = {}) => http.post('/depotHead/addDepotHeadAndDetail', params, config)
 //单据删除
-export const deleteSaleOut = (id, config = {}) => http.delete(`/depotHead/delete?id=${id}`, config)
+export const deleteOrder = (id, config = {}) => http.delete(`/depotHead/delete?id=${id}`, config)
 //单据审核
-export const batchSetStatusSaleOut = (params, config = {}) => http.post('/depotHead/batchSetStatus', params, config)
+export const batchSetStatusOrder = (params, config = {}) => http.post('/depotHead/batchSetStatus', params, config)
 //单据更新
 export const updateSaleOut = (params, config = {}) => http.put('depotHead/updateDepotHeadAndDetail', params, config)
 

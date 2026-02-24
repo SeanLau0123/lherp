@@ -14,8 +14,8 @@
 			<u-grid :border="true" col="4">
 				<u-grid-item :customStyle="{ height: 200 + 'rpx' }" v-for="(listItem, listIndex) in usList"
 					:key="listIndex">
-						<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="62" :color="$u.color.primary"
-							@click="goPage(listItem.page, listItem.url)"></u-icon>
+					<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="62" :color="$u.color.primary"
+						@click="goPage(listItem.page, listItem.url)"></u-icon>
 					<text class="grid-text">{{ listItem.title }}</text>
 				</u-grid-item>
 			</u-grid>
@@ -57,27 +57,27 @@
 		const permissionList = uni.getStorageSync("permissionList");
 		const data = []
 		const financialdata = []
-		
+
 
 		// 重构：用数组直接定义物料列表，避免重复创建单个对象的冗余写法
 		const operOrderList = [
 			{ url: "/bill/retail_out", page: "retailOut", title: "零售管理", },
 			{ url: "/bill/retail_back", page: "retailBackOut", title: "零售退货" },
-			{ url: "/bill/purchase_order", page: "purchaseOrder", title: "采购订单" },
-			{ url: "/bill/purchase_in", page: "purchaseIn", title: "采购入库" },
-			{ url: "/bill/purchase_back", page: "purchaseInBack", title: "采购退货" },
+			{ url: "/bill/purchase_order", page: "purchaseOrder", title: "采购订单",icon: "PurchaseOrder" },
+			{ url: "/bill/purchase_in", page: "PurchaseIn", title: "采购入库",icon: "PurchaseIn" },
+			{ url: "/bill/purchase_back", page: "purchaseInBack", title: "采购退货", icon: "PurchaseInBack" },
 			{ url: "/bill/sale_order", page: "saleOrder", title: "销售订单" },
-			{ url: "/bill/sale_out", page: "saleOut", title: "销售出库",icon: "saleOutOrder" },
-			{ url: "/bill/sale_back", page: "saleBack", title: "销售退货",icon: "saleBackOrder"  },
+			{ url: "/bill/sale_out", page: "saleOut", title: "销售出库", icon: "saleOutOrder" },
+			{ url: "/bill/sale_back", page: "saleBack", title: "销售退货", icon: "saleBackOrder" },
 			{ url: "/bill/other_in", page: "otherIn", title: "其它入库" },
 			{ url: "/bill/other_out", page: "otherOut", title: "其它出库" },
 			{ url: "/bill/allocation_out", page: "allocationOut", title: "调拨订单" },
-			{ url: "/financial/item_in", page: "itemIn",  type: 'financial',title: "收入单" },
-			{ url: "/financial/item_out", page: "itemOut",type: 'financial', title: "支出单" },
-			{ url: "/financial/money_in", page: "moneyIn",type: 'financial', title: "收款单" },
-			{ url: "/financial/money_out", page: "moneyOut",type: 'financial', title: "付款单" },
-			{ url: "/financial/giro", page: "giro",type: 'financial', title: "转账单" },
-			{ url: "/financial/advance_in", page: "AdvanceIn",type: 'financial', title: "收预付款" },
+			{ url: "/financial/item_in", page: "itemIn", type: 'financial', title: "收入单" },
+			{ url: "/financial/item_out", page: "itemOut", type: 'financial', title: "支出单" },
+			{ url: "/financial/money_in", page: "moneyIn", type: 'financial', title: "收款单" },
+			{ url: "/financial/money_out", page: "moneyOut", type: 'financial', title: "付款单" },
+			{ url: "/financial/giro", page: "giro", type: 'financial', title: "转账单" },
+			{ url: "/financial/advance_in", page: "AdvanceIn", type: 'financial', title: "收预付款" },
 		]
 
 		// 3. 权限匹配核心逻辑（重构后）
@@ -116,54 +116,57 @@
 	const goPage = (page : string, url : string) => {
 		// 根据实际需求实现点击逻辑
 		console.log('点击了宫格:', page + "--" + url)
-		 let targetRoute = ''
-		 switch (page) {
+		let targetRoute = ''
+		switch (page) {
 			case 'AdvanceIn':
 				targetRoute = `/pages/openorder/Financial/AdvanceIn/${page}`;
 				break;
 			case 'saleOut':
 				targetRoute = `/pages/openorder/OutboundOrder/OutboundOrder`;
 				break;
-		// 	case 'unites':
-		// 		targetRoute = '多单位'
-		// 		break;
-		// 	case 'multiAttribute':
-		// 		targetRoute = '多属性'
-		// 		break;
-		// 	case 'supplier':
-		// 		targetRoute = '/pages/manage/supplier/supplier'
-		// 		break;
-		// 	case 'customers':
-		// 		targetRoute = '/pages/manage/customers/customers'
-		// 		break;
-		// 	case 'members':
-		// 		targetRoute = '会员信息'
-		// 		break;
-		// 	case 'depot':
-		// 		targetRoute = '/pages/manage/warehouse/warehouse'
-		// 		break;
-		// 	case 'inOutItemList':
-		// 		targetRoute = '收支项目'
-		// 		break;
-		// 	case 'accounts':
-		// 		targetRoute = '账户管理'
-		// 		break;
-		// 	case 'person':
-		// 		targetRoute = '经手人管理'
-		// 		break;
-		// 	case 'role':
-		// 		targetRoute = '角色管理'
-		// 		break;
-		// 	case 'log':
-		// 		targetRoute = '日志管理'
-		// 		break;
-		// 	case 'user':
-		// 		targetRoute = '用户管理'
-		// 		break;
-		// 	default:
-		// 		break;
+			case 'PurchaseIn':
+				targetRoute = `/pages/openorder/InboundOrder/InboundOrder`;
+				break;
+			// 	case 'unites':
+			// 		targetRoute = '多单位'
+			// 		break;
+			// 	case 'multiAttribute':
+			// 		targetRoute = '多属性'
+			// 		break;
+			// 	case 'supplier':
+			// 		targetRoute = '/pages/manage/supplier/supplier'
+			// 		break;
+			// 	case 'customers':
+			// 		targetRoute = '/pages/manage/customers/customers'
+			// 		break;
+			// 	case 'members':
+			// 		targetRoute = '会员信息'
+			// 		break;
+			// 	case 'depot':
+			// 		targetRoute = '/pages/manage/warehouse/warehouse'
+			// 		break;
+			// 	case 'inOutItemList':
+			// 		targetRoute = '收支项目'
+			// 		break;
+			// 	case 'accounts':
+			// 		targetRoute = '账户管理'
+			// 		break;
+			// 	case 'person':
+			// 		targetRoute = '经手人管理'
+			// 		break;
+			// 	case 'role':
+			// 		targetRoute = '角色管理'
+			// 		break;
+			// 	case 'log':
+			// 		targetRoute = '日志管理'
+			// 		break;
+			// 	case 'user':
+			// 		targetRoute = '用户管理'
+			// 		break;
+			// 	default:
+			// 		break;
 		}
-		if (targetRoute === ''){
+		if (targetRoute === '') {
 			uni.showToast({
 				icon: 'error',
 				title: "开发中"
