@@ -64,6 +64,8 @@ export const getPartnerlList = (params, config = {}) => http.get('/supplier/list
 export const getAllListBySelect = (params, config = {}) => http.post('/supplier/findBySelect_cus', params, config)
 //供应商选择器
 export const getSupplierBySelect = (params, config = {}) => http.post('/supplier/findBySelect_sup', params, config)
+//会员选择器
+export const getMemberBySelect = (params, config = {}) => http.post('/supplier/findBySelect_retail', params, config)
 //获取仓库信息
 export const getWareHouselList = (params, config = {}) => http.get('/depot/list', params, config)
 //获取仓库信息
@@ -80,12 +82,12 @@ export const deleteInOutItem = (id, config = {}) => http.delete(`/inOutItem/dele
 export const getAccounts = (params, config = {}) => http.get('/account/list', params, config)
 //获取结算账户列表
 export const getAllAccount = (params, config = {}) => http.get('/account/getAccount', params, config)
-getAllAccount
 //获取经手人列表
 export const getHandler = (params, config = {}) => http.get('/person/list', params, config)
 //获取销售员
 export const getSalePerson = (params, config = {}) => http.get('/person/getPersonByNumType', params, config)
-
+//获取财务人员
+export const getFinancialPerson = (params, config = {}) => http.get('/person/getPersonByType', params, config)
 /*
 *系统管理
 */
@@ -146,4 +148,16 @@ export const updateSaleOut = (params, config = {}) => http.put('depotHead/update
 */
 //获取财务表数据
 export const getFinancialDetail = (params, config = {}) => http.get('/accountHead/list', params, config)
+//根据单号获取财务主表明细
+export const getFinancialDetailByNumber = (number, config = {}) => http.get(`/accountHead/getDetailByNumber?billNo=${number}`, config)
 
+//根据财务主表ID获取付款明细
+export const getAccountListById = (billId, config = {}) => http.get(`/accountItem/getDetailList?headerId=${billId}`, config)
+//财务审核
+export const batchSetStatusFinancial = (params, config = {}) => http.post('/accountHead/batchSetStatus', params, config)
+//新增财务表数据保存
+export const addSaveFinancial = (params, config = {}) => http.post('/accountHead/addAccountHeadAndDetail', params, config)
+//财务单据删除
+export const deleteFinancial = (id, config = {}) => http.delete(`/accountHead/delete?id=${id}`, config)
+//财务单据删除更新
+export const updateFinancial = (params, config = {}) => http.put('accountHead/updateAccountHeadAndDetail', params, config)

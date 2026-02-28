@@ -26,8 +26,8 @@
 			<u-grid :border="true" col="4">
 				<u-grid-item :customStyle="{ height: 200 + 'rpx' }" v-for="(listItem, listIndex) in financialList"
 					:key="listIndex">
-					<u-image :showLoading="true" :src="listItem.icon" width="30px" height="30px" :lazy-load="true"
-						@click="goPage(listItem.page, listItem.url)"></u-image>
+						<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="62" :color="$u.color.primary"
+							@click="goPage(listItem.page, listItem.url)"></u-icon>
 					<text class="grid-text">{{ listItem.title }}</text>
 				</u-grid-item>
 			</u-grid>
@@ -65,19 +65,19 @@
 			{ url: "/bill/retail_back", page: "retailBackOut", title: "零售退货" },
 			{ url: "/bill/purchase_order", page: "purchaseOrder", title: "采购订单",icon: "PurchaseOrder" },
 			{ url: "/bill/purchase_in", page: "PurchaseIn", title: "采购入库",icon: "PurchaseIn" },
-			{ url: "/bill/purchase_back", page: "purchaseInBack", title: "采购退货", icon: "PurchaseInBack" },
+			{ url: "/bill/purchase_back", page: "purchaseInBack", title: "采购退货", icon: "Payment" },
 			{ url: "/bill/sale_order", page: "saleOrder", title: "销售订单" },
 			{ url: "/bill/sale_out", page: "saleOut", title: "销售出库", icon: "saleOutOrder" },
 			{ url: "/bill/sale_back", page: "saleBack", title: "销售退货", icon: "saleBackOrder" },
 			{ url: "/bill/other_in", page: "otherIn", title: "其它入库" },
 			{ url: "/bill/other_out", page: "otherOut", title: "其它出库" },
 			{ url: "/bill/allocation_out", page: "allocationOut", title: "调拨订单" },
-			{ url: "/financial/item_in", page: "itemIn", type: 'financial', title: "收入单" },
-			{ url: "/financial/item_out", page: "itemOut", type: 'financial', title: "支出单" },
-			{ url: "/financial/money_in", page: "moneyIn", type: 'financial', title: "收款单" },
-			{ url: "/financial/money_out", page: "moneyOut", type: 'financial', title: "付款单" },
-			{ url: "/financial/giro", page: "giro", type: 'financial', title: "转账单" },
-			{ url: "/financial/advance_in", page: "AdvanceIn", type: 'financial', title: "收预付款" },
+			{ url: "/financial/item_in", page: "Income", type: 'financial', title: "收入单",icon: "Income"},
+			{ url: "/financial/item_out", page: "Expense", type: 'financial', title: "支出单",icon: "Expense" },
+			{ url: "/financial/money_in", page: "Receipt", type: 'financial', title: "收款单",icon: "Receipt" },
+			{ url: "/financial/money_out", page: "Payment", type: 'financial', title: "付款单",icon: "Payment" },
+			{ url: "/financial/giro", page: "Transfer", type: 'financial', title: "转账单",icon: "Transfer" },
+			{ url: "/financial/advance_in", page: "AdvanceIn", type: 'financial', title: "收预付款",icon: "AdvanceIn" },
 		]
 
 		// 3. 权限匹配核心逻辑（重构后）

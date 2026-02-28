@@ -219,7 +219,7 @@
 	import { USER_INFO } from "@/common/util/constants";
 	import {
 		getAllListBySelect, getOrderNumber, getAllAccount, getSalePerson, getDepotInfo,
-		addSaveSaleOut, getInOutDetailById, getMaterialListByNumber, updateSaleOut, getMaterialByBarCode
+		addSaveOrder, getInOutDetailById, getMaterialListByNumber, updateSaleOut, getMaterialByBarCode
 	} from '@/api/api.js'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('新增')
@@ -718,7 +718,7 @@
 			}
 		}
 		else {
-			const res = await addSaveSaleOut(requestParams)
+			const res = await addSaveOrder(requestParams)
 			if (res.code === 200) {
 				uni.showToast({ title: '保存成功', icon: 'none' });
 				uni.$u.route('pages/openorder/OutboundOrder/OutboundOrder');

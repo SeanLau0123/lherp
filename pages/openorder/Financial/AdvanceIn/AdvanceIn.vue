@@ -7,13 +7,14 @@
 				<u-icon name='search' @click="popupShow = true" color="#ffffff" size="48rpx" label-pos="right"></u-icon>
 			</view>
 		</u-navbar>
+		<u-toast ref="uToastRef" />
 		<u-empty text="没有搜索结果" mode="search" :show="emptyShow" class="u-empty-fullscreen"></u-empty>
 		<scroll-view class="scrollviewpadding">
 			<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="8">
 				<view class="popup-title">
 					<u-form label-width="160rpx">
-						<u-form-item label="商品信息：">
-							<u-input v-model="billno" placeholder="请输入名称、条码、助记码查询" /></u-form-item>
+						<u-form-item label="单据编号：">
+							<u-input v-model="billno" placeholder="请输入单据编号" /></u-form-item>
 						<u-form-item label="开始时间：">
 							<u-input v-model="beginTime" :type="type" placeholder="请选择开始时间"
 								@click="pickBeginDateShow = true" />
@@ -25,6 +26,16 @@
 								@click="pickEndDateShow = true" />
 							<u-picker v-model="pickEndDateShow" mode="time" :default-time="endTime"
 								@confirm="endTimeConfirm"></u-picker></u-form-item>
+						<u-form-item label="付款会员：">
+							<u-input v-model="billno" placeholder="请输入单据编号" /></u-form-item>
+						<u-form-item label="操作员：">
+							<u-input v-model="billno" placeholder="请输入单据编号" /></u-form-item>
+						<u-form-item label="财务人员：">
+							<u-input v-model="billno" placeholder="请输入单据编号" /></u-form-item>
+						<u-form-item label="单据状态：">
+							<u-input v-model="billno" placeholder="请输入单据编号" /></u-form-item>
+						<u-form-item label="单据备注：">
+							<u-input v-model="billno" placeholder="请输入单据编号" /></u-form-item>
 						<u-gap></u-gap>
 						<u-button type="primary" @click="search()">搜索</u-button>
 						<u-gap></u-gap>
@@ -32,7 +43,9 @@
 					</u-form>
 				</view>
 			</u-popup>
-			<view v-for="(advanceIn, index) in advanceInList" :key="advanceIn.id || index">
+			<u-swipe-action :show="advanceIn.show" v-for="(advanceIn, index) in advanceInList"
+				:key="advanceIn.id || index" :index="index" @click="click" @open="open"
+				:options="getSwipeOptions(advanceIn)" :btn-width="btnWidth">
 				<view class="good-item">
 					<u-row gutter="10">
 						<u-col span="12">
@@ -42,7 +55,7 @@
 										<view class="goods-row">
 											<text class="label">单据编号：</text>
 											<u-text type="primary" decoration="underline"
-												:text="advanceIn.billNo"></u-text>
+												:text="advanceIn.billNo" @click="lookNumberDetail(advanceIn.billNo)"></u-text>
 										</view>
 									</u-col>
 									<u-col span="12">
@@ -91,32 +104,14 @@
 						</u-col>
 					</u-row>
 				</view>
+			</u-swipe-action>
+			<view>
+				<u-modal v-model="deleteShow" :content="content" :show-cancel-button="true" cancel-color="#606266"
+					confirm-color="#2979ff" @confirm="confirm" :show-title="false"></u-modal>
 			</view>
 		</scroll-view>
-		<u-popup v-model="addShow" mode="bottom" border-radius="8" width="500rpx" height="600rpx">
-				<view>
-					<u-form label-width="160rpx">
-						<u-form-item label="付款会员：">
-							<u-input v-model="billno" placeholder="请选择付款会员" /></u-form-item>
-						<u-form-item label="单据日期：">
-							<u-input v-model="beginTime" :type="type" @click="pickBeginDateShow = true" />
-							<u-picker v-model="pickBeginDateShow" mode="time" :default-time="beginTime"
-								@confirm="beginTimeConfirm"></u-picker>
-						</u-form-item>
-						<u-form-item label="单据编号：">
-							<u-input v-model="billno" placeholder="" /></u-form-item>
-						<u-form-item label="财务人员：">
-							<u-input v-model="billno" placeholder="请选择财务人员" /></u-form-item>
-						
-						<u-gap></u-gap>
-						<u-button type="primary" @click="search()">搜索</u-button>
-						<u-gap></u-gap>
-						<u-button @click="reset()">重置</u-button>
-					</u-form>
-				</view>
-		</u-popup>
 		<u-fab :position="'right-bottom'" :gap="{ top: 20, right: 20, bottom: 50, left: 20 }" :draggable="true"
-		@trigger="onBtnClick">
+			@trigger="onBtnClick">
 		</u-fab>
 		<view class="pagination-fixed">
 			<u-pagination v-model="current" :total="listTotal" :pageSize="pageSize"
@@ -126,7 +121,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getFinancialDetail } from '@/api/api.js'
+	import { getFinancialDetail, batchSetStatusFinancial, deleteFinancial } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('收预付款')
@@ -136,6 +131,13 @@
 	const updateNavbarBackground = () => {
 		background.backgroundColor = $u.color.primary;
 	};
+	const uToastRef = ref()
+	const showToast = (title : string, type : string) => {
+		uToastRef.value.show({
+			type,
+			title
+		})
+	}
 	watch(
 		[
 			() => currentTheme.value,
@@ -181,6 +183,127 @@
 		search();
 	}
 
+	// 定义列表项接口
+	interface ListItem {
+		id : number
+		number : string
+		status : '0' | '1'
+		show : boolean
+	}
+
+	// 定义选项按钮接口
+	interface OptionButton {
+		text : string
+		style : {
+			backgroundColor : string,
+			fontSize : "42rpx"
+		}
+	}
+	const disabled = ref<boolean>(false)
+	const btnWidth = ref<number>(120)
+	const show = ref<boolean>(false)
+	const selectedId = ref<string>('')
+	const selectedIndex = ref<number>(-1)
+	const getSwipeOptions = (advanceIn : ListItem) : OptionButton[] => {
+		return [
+			{
+				text: advanceIn.status === '1' ? "反审核" : "审核",
+				style: {
+					backgroundColor: $u.color.warning
+				},
+			},
+			{
+				text: "编辑",
+				style: {
+					backgroundColor: $u.color.info
+				},
+			},
+			{
+				text: "删除",
+				style: {
+					backgroundColor: $u.color.error
+				},
+			},
+		]
+	}
+	//设置审核状态
+	const batchSetStatus = async (id : number, targetStatus : number) => {
+		try {
+			const requestParams = {
+				status: targetStatus,
+				ids: `${id},`
+			};
+			const res = await batchSetStatusFinancial(requestParams)
+			if (res.code === 200) {
+				const tipText = targetStatus === 1 ? '审核成功' : '反审核成功';
+				showToast(tipText, 'success');
+				loadGetadvanceInList();
+			} else {
+				const tipText = targetStatus === 1 ? '审核失败' : '反审核失败';
+				showToast(tipText, 'error');
+			}
+		} catch (error) {
+			showToast('操作失败，请重试', 'error');
+		} finally {
+		}
+	}
+	const deleteShow = ref<boolean>(false)
+	const content = ref<string>('确定要删除吗？')
+	// 删除确认
+	const confirm = async () => {
+		advanceInList.value.splice(selectedIndex.value, 1)
+		try {
+			const res = await deleteFinancial(selectedId.value)
+			if (res.code === 200) {
+				showToast('删除成功', 'success');
+			} else {
+				showToast('删除失败', 'error');
+			}
+		} catch (error) {
+			console.error('删除失败：', error)
+		} finally {
+			deleteShow.value = false
+			selectedIndex.value = -1;
+			selectedId.value = 0;
+		}
+	}
+	// 删除取消
+	const cancel = () => {
+		deleteShow.value = false
+	}
+	// 定义打开事件回调函数
+	const open = (index : number) => {
+		advanceInList.value[index].show = true
+		advanceInList.value.map((val, idx) => {
+			if (index != idx) advanceInList.value[idx].show = false
+		})
+	}
+	// 定义点击事件回调函数
+	const click = (index : number, index1 : number) => {
+		const curItem = advanceInList.value[index]; // 缓存当前项，避免多次取值
+		selectedId.value = curItem.id;
+		selectedIndex.value = index;
+		curItem.show = false;
+		if (index1 === 2) {
+			if (curItem.status === '1') {
+				showToast('只有未审核的单据才能删除，请先进行反审核！', 'warning');
+				return;
+			}
+			deleteShow.value = true;
+		} else if (index1 === 1) {
+			if (curItem.status === '1') {
+				showToast('只有未审核的单据才能编辑，请先进行反审核！', 'warning');
+				return;
+			}
+			goAdvanceInDetail(curItem); // 调用已有编辑方法，传递当前单据数据
+		} else {
+			// 启用/禁用分支（核心：获取当前状态，传递给batchSetStatus）
+			const currentEnabled = curItem.status;
+			const targetStatus = currentEnabled === '0' ? 1 : 0;
+			// 调用修正后的方法，传递id和目标状态
+			batchSetStatus(selectedId.value, targetStatus);
+		}
+	}
 
 	//商品分类选择器
 	const selectShow = ref<boolean>(false)
@@ -258,9 +381,18 @@
 			uni.showToast({ title: '数据加载失败', icon: 'none' });
 		}
 	}
-	const addShow = ref<boolean>(false)
+	//查看
+	function lookNumberDetail(number : string) {
+		uni.$u.route('pages/openorder/Financial/AdvanceIn/AdvanceInDetail',
+			{ number: number });
+	}
+	//新增
 	function onBtnClick() {
-		addShow.value=true;
+		uni.$u.route('pages/openorder/Financial/AdvanceIn/AddAdvanceIn');
+	}
+	//编辑
+	function goAdvanceInDetail(item) {
+		uni.$u.route('/pages/openorder/Financial/AdvanceIn/AddAdvanceIn?item=' + encodeURIComponent(JSON.stringify(item)) + '&action=edit')
 	}
 	//分页切换
 	const current = ref<number>(1);

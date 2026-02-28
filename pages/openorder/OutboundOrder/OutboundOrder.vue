@@ -124,7 +124,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getDepotInfo, getOrderList, deleteOrder, batchSetStatusOrder } from '@/api/api.js'
+	import { getOrderList, deleteOrder, batchSetStatusOrder } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('销售出库')
