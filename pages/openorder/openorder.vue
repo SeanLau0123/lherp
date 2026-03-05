@@ -26,8 +26,8 @@
 			<u-grid :border="true" col="4">
 				<u-grid-item :customStyle="{ height: 200 + 'rpx' }" v-for="(listItem, listIndex) in financialList"
 					:key="listIndex">
-						<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="62" :color="$u.color.primary"
-							@click="goPage(listItem.page, listItem.url)"></u-icon>
+					<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="62" :color="$u.color.primary"
+						@click="goPage(listItem.page, listItem.url)"></u-icon>
 					<text class="grid-text">{{ listItem.title }}</text>
 				</u-grid-item>
 			</u-grid>
@@ -63,8 +63,8 @@
 		const operOrderList = [
 			{ url: "/bill/retail_out", page: "retailOut", title: "零售管理", },
 			{ url: "/bill/retail_back", page: "retailBackOut", title: "零售退货" },
-			{ url: "/bill/purchase_order", page: "purchaseOrder", title: "采购订单",icon: "PurchaseOrder" },
-			{ url: "/bill/purchase_in", page: "PurchaseIn", title: "采购入库",icon: "PurchaseIn" },
+			{ url: "/bill/purchase_order", page: "purchaseOrder", title: "采购订单", icon: "PurchaseOrder" },
+			{ url: "/bill/purchase_in", page: "PurchaseIn", title: "采购入库", icon: "PurchaseIn" },
 			{ url: "/bill/purchase_back", page: "purchaseInBack", title: "采购退货", icon: "Payment" },
 			{ url: "/bill/sale_order", page: "saleOrder", title: "销售订单" },
 			{ url: "/bill/sale_out", page: "saleOut", title: "销售出库", icon: "saleOutOrder" },
@@ -72,12 +72,12 @@
 			{ url: "/bill/other_in", page: "otherIn", title: "其它入库" },
 			{ url: "/bill/other_out", page: "otherOut", title: "其它出库" },
 			{ url: "/bill/allocation_out", page: "allocationOut", title: "调拨订单" },
-			{ url: "/financial/item_in", page: "Income", type: 'financial', title: "收入单",icon: "Income"},
-			{ url: "/financial/item_out", page: "Expense", type: 'financial', title: "支出单",icon: "Expense" },
-			{ url: "/financial/money_in", page: "Receipt", type: 'financial', title: "收款单",icon: "Receipt" },
-			{ url: "/financial/money_out", page: "Payment", type: 'financial', title: "付款单",icon: "Payment" },
-			{ url: "/financial/giro", page: "Transfer", type: 'financial', title: "转账单",icon: "Transfer" },
-			{ url: "/financial/advance_in", page: "AdvanceIn", type: 'financial', title: "收预付款",icon: "AdvanceIn" },
+			{ url: "/financial/item_in", page: "Income", type: 'financial', title: "收入单", icon: "Income" },
+			{ url: "/financial/item_out", page: "Expense", type: 'financial', title: "支出单", icon: "Expense" },
+			{ url: "/financial/money_in", page: "Receipt", type: 'financial', title: "收款单", icon: "Receipt" },
+			{ url: "/financial/money_out", page: "Payment", type: 'financial', title: "付款单", icon: "Payment" },
+			{ url: "/financial/giro", page: "Transfer", type: 'financial', title: "转账单", icon: "Transfer" },
+			{ url: "/financial/advance_in", page: "AdvanceIn", type: 'financial', title: "收预付款", icon: "AdvanceIn" },
 		]
 
 		// 3. 权限匹配核心逻辑（重构后）
@@ -127,7 +127,16 @@
 			case 'PurchaseIn':
 				targetRoute = `/pages/openorder/InboundOrder/InboundOrder`;
 				break;
-			// 	case 'unites':
+			case 'Transfer':
+				targetRoute = `/pages/openorder/Financial/Transfer/Transfer`;
+				break;
+			case 'Income':
+				targetRoute = `/pages/openorder/Financial/Income/Income`;
+				break;
+			case 'Expense':
+				targetRoute = `/pages/openorder/Financial/Expense/Expense`;
+				break;
+			// 	case 'Expense':
 			// 		targetRoute = '多单位'
 			// 		break;
 			// 	case 'multiAttribute':

@@ -182,7 +182,7 @@
 			"style": {
 				"navigationBarTitleText": ""
 			}
-		},		{
+		}, {
 			"path": "pages/manage/members/members",
 			"style": {
 				"navigationBarTitleText": ""
@@ -229,6 +229,72 @@
 			}
 		},
 		{
+			"path": "pages/openorder/Financial/AdvanceIn/AddAdvanceIn",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/Financial/AdvanceIn/AdvanceInDetail",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/Financial/Transfer/Transfer",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/Financial/Transfer/AddTransfer",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/Financial/Transfer/TransferDetail",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/Financial/Expense/Expense",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/Financial/Expense/AddExpense",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/Financial/Expense/ExpenseDetail",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/Financial/Income/Income",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/Financial/Income/AddIncome",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/Financial/Income/IncomeDetail",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
 			"path": "pages/openorder/OutboundOrder/AddSaleOut",
 			"style": {
 				"navigationBarTitleText": ""
@@ -239,7 +305,7 @@
 			"style": {
 				"navigationBarTitleText": ""
 			}
-		},		{
+		}, {
 			"path": "pages/openorder/InboundOrder/InboundOrder",
 			"style": {
 				"navigationBarTitleText": ""
@@ -270,8 +336,8 @@
 			}
 		},
 		/*
-		*组件
-		*/
+		 *组件
+		 */
 		{
 			"path": "common/zlUpdate/zlUpdate",
 			"style": {
@@ -287,18 +353,6 @@
 		},
 		{
 			"path": "components/tki-tree/tki-tree",
-			"style": {
-				"navigationBarTitleText": ""
-			}
-		},
-		{
-			"path": "pages/openorder/Financial/AdvanceIn/AddAdvanceIn",
-			"style": {
-				"navigationBarTitleText": ""
-			}
-		},
-		{
-			"path": "pages/openorder/Financial/AdvanceIn/AdvanceInDetail",
 			"style": {
 				"navigationBarTitleText": ""
 			}
@@ -326,8 +380,7 @@
 		"backgroundColor": "#ffffff",
 		"borderStyle": "false",
 		"custom": true,
-		"list": [
-			{
+		"list": [{
 				"pagePath": "pages/index/index",
 				"text": "首页"
 			},

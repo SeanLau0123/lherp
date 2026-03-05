@@ -66,6 +66,9 @@ export const getAllListBySelect = (params, config = {}) => http.post('/supplier/
 export const getSupplierBySelect = (params, config = {}) => http.post('/supplier/findBySelect_sup', params, config)
 //会员选择器
 export const getMemberBySelect = (params, config = {}) => http.post('/supplier/findBySelect_retail', params, config)
+//往来单位选择器
+export const getPartnerBySelect = (params, config = {}) => http.post('/supplier/findBySelect_organ', params, config)
+
 //获取仓库信息
 export const getWareHouselList = (params, config = {}) => http.get('/depot/list', params, config)
 //获取仓库信息
@@ -78,6 +81,8 @@ export const getInOutItem = (params, config = {}) => http.get('/inOutItem/list',
 export const batchSetStatusInOutItem = (params, config = {}) => http.post('/inOutItem/batchSetStatus', params, config)
 //收支项目删除
 export const deleteInOutItem = (id, config = {}) => http.delete(`/inOutItem/delete?id=${id}`, config)
+//收入项目选择器
+export const getInOutItemBySelect = (params, config = {}) => http.get('/inOutItem/findBySelect?type=in', params, config)
 //获取结算账户列表
 export const getAccounts = (params, config = {}) => http.get('/account/list', params, config)
 //获取结算账户列表
