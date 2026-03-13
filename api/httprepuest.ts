@@ -1,5 +1,7 @@
 import type { RequestConfig, RequestInterceptor, RequestMeta, RequestOptions } from 'uview-pro'
 import { ACCESS_TOKEN } from '@/common/util/constants.js'
+import { ref } from 'vue'
+const uToastRef = ref()
 
 const baseUrl = 'https://erp.linghanshop.cn/jshERP-boot'
 
@@ -49,15 +51,15 @@ export const httpInterceptor: RequestInterceptor = {
 		if (meta.loading) {
 			uni.hideLoading()
 		}
-		const code = response.data?.code
+		const code = response.data.code
 		if (code !== undefined && code !== 200 && code !== 0) {
-			if (meta.toast) {
-				uni.showToast({
-					title: response.data?.msg || '请求失败',
-					icon: 'none',
-					duration: 2000
-				})
-			}
+			// if (meta.toast) {
+			// 	uni.showToast({
+			// 		title: response.data.data.message || '请求失败',
+			// 		icon: 'none',
+			// 		duration: 2000
+			// 	})
+			// }
 			return Promise.reject(response.data)
 		}
 		return response.data

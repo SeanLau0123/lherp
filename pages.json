@@ -53,13 +53,31 @@
 			}
 		},
 		{
+			"path": "pages/report/OutSummary",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
 			"path": "pages/report/InDetail",
 			"style": {
 				"navigationBarTitleText": ""
 			}
 		},
 		{
+			"path": "pages/report/InSummary",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
 			"path": "pages/report/Saleout",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/report/RetailOut",
 			"style": {
 				"navigationBarTitleText": ""
 			}
@@ -205,6 +223,50 @@
 			}
 		},
 		{
+			"path": "pages/openorder/RetailOut/AddRetailOut",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/RetailOut/RetailOut",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom" // 隐藏系统导航栏
+			}
+		},
+		{
+			"path": "pages/openorder/RetailOut/RetailOutDetail",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/RetailReturn/AddRetailReturn",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/RetailReturn/RetailReturn",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom" // 隐藏系统导航栏
+			}
+		},
+		{
+			"path": "pages/openorder/RetailReturn/RetailReturnDetail",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/SalesReturn/AddSalesReturn",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
 			"path": "pages/openorder/SalesReturn/SalesReturn",
 			"style": {
 				"navigationBarTitleText": ""
@@ -218,6 +280,18 @@
 		},
 		{
 			"path": "pages/openorder/PurchaseReturn/PurchaseReturn",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		}, 
+		{
+			"path": "pages/openorder/PurchaseReturn/PurchaseReturnDetail",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/openorder/PurchaseReturn/AddPurchaseReturn",
 			"style": {
 				"navigationBarTitleText": ""
 			}

@@ -13,9 +13,9 @@
 		<view>
 			<u-grid :border="true" col="4">
 				<u-grid-item :customStyle="{ height: 200 + 'rpx' }" v-for="(listItem, listIndex) in usList"
-					:key="listIndex">
-					<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="64" :color="$u.color.primary"
-						@click="goPage(listItem.page, listItem.url)"></u-icon>
+					:key="listIndex" @click="goPage(listItem.page, listItem.url)">
+					<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="64"
+						:color="$u.color.primary"></u-icon>
 					<text class="grid-text">{{ listItem.title }}</text>
 				</u-grid-item>
 			</u-grid>
@@ -84,13 +84,13 @@
 			},
 			{
 				url: "/report/in_material_count",
-				page: "inmaterialcount",
+				page: "InSummary",
 				icon: "inmaterialcount",
 				title: "入库汇总"
 			},
 			{
 				url: "/report/out_material_count",
-				page: "outmaterialcount",
+				page: "OutSummary",
 				icon: "outmaterialcount",
 				title: "出库汇总"
 			},
@@ -120,7 +120,7 @@
 			},
 			{
 				url: "/report/retail_out_report",
-				page: "retailout",
+				page: "RetailOut",
 				icon: "retailout",
 				title: "零售统计"
 			},
@@ -167,7 +167,6 @@
 	}
 	const goPage = (page : string, url : string) => {
 		// 根据实际需求实现点击逻辑
-		console.log('点击了宫格:', page + "--" + url)
 		let targetRoute = ''
 		switch (page) {
 			case 'buyin':
@@ -191,17 +190,14 @@
 			case 'account':
 				targetRoute = `/pages/report/${page}`;
 				break;
-			case 'depot':
-				targetRoute = '/pages/manage/warehouse/warehouse'
+			case 'RetailOut':
+				targetRoute = `/pages/report/${page}`;
 				break;
-			case 'inOutItemList':
-				targetRoute = '收支项目'
+			case 'InSummary':
+				targetRoute = `/pages/report/${page}`;
 				break;
-			case 'accounts':
-				targetRoute = '账户管理'
-				break;
-			case 'person':
-				targetRoute = '经手人管理'
+			case 'OutSummary':
+				targetRoute = `/pages/report/${page}`;
 				break;
 			case 'role':
 				targetRoute = '角色管理'
@@ -213,15 +209,16 @@
 				targetRoute = `/pages/report/${page}`;
 				break;
 			default:
+				uni.showToast({
+					icon: 'error',
+					title: "开发中"
+				})
 				break;
 		}
-		if (targetRoute === '') {
-			uni.showToast({
-				icon: 'error',
-				title: "开发中"
-			})
+		if (targetRoute) {
+			uni.$u.route(targetRoute);
 		}
-		uni.$u.route(targetRoute);
+
 	}
 	watch(
 		[

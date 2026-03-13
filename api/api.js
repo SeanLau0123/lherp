@@ -105,6 +105,8 @@ export const getLogs = (params, config = {}) => http.get('/log/list', params, co
 export const getbuyInList = (params, config = {}) => http.get('/depotItem/buyIn', params, config)
 //获取销售统计信息
 export const getSaleOutList = (params, config = {}) => http.get('/depotItem/saleOut', params, config)
+//获取零售统计信息
+export const getRetailOutList = (params, config = {}) => http.get('/depotItem/retailOut', params, config)
 //获取供应商对账信息
 export const getStatementAccountList = (params, config = {}) => http.get('/depotHead/getStatementAccount', params, config)
 
@@ -116,7 +118,8 @@ export const getAccountListStatistics = (params, config = {}) => http.get('/acco
 
 //获取入库明细,出库明细
 export const getInOutDetail = (params, config = {}) => http.get('/depotHead/findInOutDetail', params, config)
-
+//获取入库汇总,出库汇总
+export const getInOutSummary = (params, config = {}) => http.get('/depotHead/findInOutMaterialCount', params, config)
 /*
 *采购入库详情
 */

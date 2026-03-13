@@ -12,7 +12,7 @@
 		<scroll-view scroll-y="true">
 			<!-- 常用服务 -->
 			<u-cell-group>
-				<u-cell-item icon="heart-fill" title="常用服务" :arrow="false"></u-cell-item>
+				<u-cell-item icon="star" title="常用服务" :arrow="false"></u-cell-item>
 			</u-cell-group>
 			<u-grid :border="true" col="3">
 				<u-grid-item :customStyle="{ height: 160 + 'rpx' }" v-for="(listItem, listIndex) in gridList"

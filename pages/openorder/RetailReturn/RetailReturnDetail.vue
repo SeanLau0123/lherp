@@ -1,4 +1,4 @@
-<!-- 报表-销售退货入库-详情 -->
+<!-- 零售管理-零售退货-详情 -->
 <template>
 	<view style="min-height: 100vh;">
 		<u-navbar :is-back="true" :title="title" title-color='#ffffff' back-icon-color='#ffffff'
@@ -10,25 +10,26 @@
 				<u-col span="12">
 					<view class="goods-row">
 						<text class="label">客户：</text>
-						<u-text :text="InDetailList.organName"></u-text>
+						<u-text :text="RetailReturnList.organName"></u-text>
 					</view>
 				</u-col>
 				<u-col span="12">
 					<view class="goods-row">
 						<text class="label">单据日期：</text>
-						<u-text>{{ $u.timeFormat(InDetailList.operTime, 'yyyy-mm-dd hh:MM:ss') }}</u-text>
+						<u-text>{{ $u.timeFormat(RetailReturnList.operTime, 'yyyy-mm-dd hh:MM:ss') }}</u-text>
 					</view>
 				</u-col>
 				<u-col span="12">
 					<view class="goods-row">
 						<text class="label">单据编号：</text>
-						<u-text :text="InDetailList.number"></u-text>
+						<u-text :text="RetailReturnList.number"></u-text>
 					</view>
 				</u-col>
 				<u-col span="12">
 					<view class="goods-row">
 						<text class="label">关联订单：</text>
-						<u-text :text="InDetailList.linkNumber"></u-text>
+						<u-text type="primary" decoration="underline" :text="RetailReturnList.linkNumber"
+						@click="lookNumberDetail(RetailReturnList.linkNumber)"></u-text>
 					</view>
 				</u-col>
 			</u-row>
@@ -87,14 +88,14 @@
 													<text class="value">{{good.allPrice || '-' }}</text>
 												</view>
 											</u-col>
-											<u-col span="12">
+											<!-- 											<u-col span="12">
 												<view class="goods-row">
 													<text class="label">税额：</text>
 													<text class="value">{{good.taxMoney || '-' }}</text>
 													<text class="label">价税合计：</text>
 													<text class="value">{{good.taxLastMoney || '-' }}</text>
 												</view>
-											</u-col>
+											</u-col> -->
 											<u-col span="12">
 												<view class="goods-row">
 													<text class="label">备注：</text>
@@ -109,7 +110,7 @@
 										<u-row gutter="10">
 											<u-col span="6">
 												<view class="goods-row">
-													<text class="label">总数：</text>
+													<text class="label">总数量：</text>
 													<text class="value">{{ good.operNumber }}</text>
 												</view>
 											</u-col>
@@ -117,18 +118,6 @@
 												<view class="goods-row">
 													<text class="label">总金额：</text>
 													<text class="value">{{ good.allPrice }}</text>
-												</view>
-											</u-col>
-											<u-col span="6">
-												<view class="goods-row">
-													<text class="label">税额：</text>
-													<text class="value">{{ good.taxMoney || '0' }}</text>
-												</view>
-											</u-col>
-											<u-col span="6">
-												<view class="goods-row">
-													<text class="label">价税合计：</text>
-													<text class="value">{{ good.taxLastMoney || '0' }}</text>
 												</view>
 											</u-col>
 										</u-row>
@@ -143,44 +132,35 @@
 		<!-- 订单表尾 -->
 		<view class="good-item">
 			<u-row gutter="10">
-				<u-col span="6">
+				<template v-if="RetailReturnList.remark">
+					<u-col span="12">
+						<view class="goods-row">
+							<text class="label">备注：</text>
+							<u-text :text="RetailReturnList.remark"></u-text>
+						</view>
+					</u-col>
+				</template>
+				<u-col span="12">
 					<view class="goods-row">
-						<text class="label">退款折扣：</text>
-						<u-text :text="InDetailList.discountMoney"></u-text>
-					</view>
-				</u-col>
-				<u-col span="6">
-					<view class="goods-row">
-						<text class="label">折后金额：</text>
-						<u-text :text="InDetailList.discountLastMoney"></u-text>
+						<text class="label">单据金额：</text>
+						<u-text mode="price" :text="RetailReturnList.totalPrice"></u-text>
 					</view>
 				</u-col>
 				<u-col span="12">
 					<view class="goods-row">
-						<text class="label">其它费用：</text>
-						<u-text :text="InDetailList.otherMoney"></u-text>
+						<text class="label">付款金额：</text>
+						<u-text mode="price" :text="RetailReturnList.changeAmount+RetailReturnList.backAmount"></u-text>
+						<text class="label">找零：</text>
+						<u-text mode="price" :text="RetailReturnList.backAmount"></u-text>
 					</view>
 				</u-col>
 				<u-col span="12">
 					<view class="goods-row">
-						<text class="label">结算账户：</text>
-						<u-text :text="InDetailList.accountName"></u-text>
+						<text class="label">付款账户：</text>
+						<u-text :text="RetailReturnList.accountName"></u-text>
 					</view>
 				</u-col>
-				<u-col span="12">
-					<view class="goods-row">
-						<text class="label">本次退款：</text>
-						<u-text :text="InDetailList.changeAmount"></u-text>
-						<text class="label">本次欠款：</text>
-						<u-text :text="InDetailList.debt"></u-text>
-					</view>
-				</u-col>
-				<u-col span="12">
-					<view class="goods-row">
-						<text class="label">销售人员：</text>
-						<u-text :text="InDetailList.salesManStr"></u-text>
-					</view>
-				</u-col>
+
 			</u-row>
 		</view>
 		<u-col span="12">
@@ -198,9 +178,9 @@
 	import { ref, reactive, onMounted, watch } from 'vue'
 	import { onLoad } from '@dcloudio/uni-app';
 	import { $u, useTheme } from 'uview-pro'
-	import { getInOutDetailById, getFinancialBillNoByBillId,getMaterialListByNumber } from '@/api/api.js'
+	import { getInOutDetailById, getFinancialBillNoByBillId, getMaterialListByNumber } from '@/api/api.js'
 	const { currentTheme, themes, darkMode } = useTheme();
-	const title = ref<string>('销退入库-详情')
+	const title = ref<string>('零售退货-详情')
 	const background = reactive({
 		backgroundColor: ""
 	})
@@ -232,11 +212,11 @@
 
 	//获取采购入库主表
 	const number = ref<string>('')
-	const InDetailList = ref<any>('');
+	const RetailReturnList = ref<any>('');
 	const loadInDetailById = async () => {
 		const res = await getInOutDetailById(number.value)
 		if (res && res.code === 200) {
-			InDetailList.value = res.data
+			RetailReturnList.value = res.data
 			billId.value = res.data.id
 			loadFinancialBillNoByBillId()
 			loadGetGoodsDetail()
@@ -265,7 +245,12 @@
 			uni.showToast({ title: '供应商加载失败', icon: 'none' });
 		}
 	}
-
+	
+	//查看
+	function lookNumberDetail(number : string) {
+		uni.$u.route('pages/openorder/RetailOut/RetailOutDetail',
+			{ number: number });
+	}
 	//获取付款单号
 	const billId = ref<string>('')
 	const billNo = ref<string>('')
@@ -281,10 +266,9 @@
 	onLoad((options) => {
 		if (options && options.number) {
 			number.value = options.number;
-			console.warn(number.value);
 			loadInDetailById();
 		} else {
-			console.warn("未接收到单号参数");
+			uni.showToast({ title: '未接收到单号参数', icon: 'none' });
 		}
 	});
 </script>
@@ -293,6 +277,7 @@
 	.scrollviewpadding {
 		min-height: calc(100% - 200rpx);
 	}
+
 	.good-item {
 		background: rgba(var(--u-type-primary-rgb), 0.05);
 		border: 1px solid rgba(var(--u-type-primary-rgb), 0.2);

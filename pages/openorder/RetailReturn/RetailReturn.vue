@@ -1,11 +1,15 @@
-<!-- 采购管理-采购退货 -->
+<!-- 销售管理-零售退货 -->
 <template>
 	<view style="height: 100vh;">
 		<u-navbar :is-back="true" :title="title" title-color='#ffffff' back-icon-color='#ffffff'
 			:background="background">
-			<view class="navbar-right-icon">
-				<u-icon name='search' @click="popupShow = true" color="#ffffff" size="48rpx" label-pos="right"></u-icon>
+			<view class="map-wrap">
+				<u-icon name="home" @click="backOpenorder" color="#ffffff" size="42rpx" />
 			</view>
+			<view class="navbar-right-icon">
+				<u-icon name='search' @click="popupShow = true" color="#ffffff" size="42rpx" label-pos="right"></u-icon>
+			</view>
+
 		</u-navbar>
 		<u-toast ref="uToastRef" />
 		<u-empty text="没有搜索结果" mode="search" :show="emptyShow" class="u-empty-fullscreen"></u-empty>
@@ -33,32 +37,32 @@
 					</u-form>
 				</view>
 			</u-popup>
-			<u-swipe-action :show="PurchaseIn.show" :index="index" v-for="(PurchaseIn, index) in purchaseInList"
-				:key="PurchaseIn.id" @click="click" @open="open" :options="getSwipeOptions(PurchaseIn)"
+			<u-swipe-action :show="RetailReturn.show" :index="index" v-for="(RetailReturn, index) in RetailReturnList"
+				:key="RetailReturn.id" @click="click" @open="open" :options="getSwipeOptions(RetailReturn)"
 				:btn-width="btnWidth">
 				<view class="good-item">
 					<u-row gutter="10">
 						<u-col span="12">
 							<u-collapse :head-style="headStyle">
-								<u-collapse-item :title="`供应商：${PurchaseIn.organName}`">
+								<u-collapse-item :title="`会员：${RetailReturn.organName}`">
 									<u-col span="12">
 										<view class="goods-row">
 											<text class="label">单据编号：</text>
 											<u-text type="primary" decoration="underline"
-												:text="(PurchaseIn.number || '') + (PurchaseIn.linkNumber ? '[转]' : '')"
-												@click="lookNumberDetail(PurchaseIn.number)"></u-text>
+												:text="(RetailReturn.number || '')+(RetailReturn.linkNumber ? '[转]' : '')"
+												@click="lookNumberDetail(RetailReturn.number)"></u-text>
 										</view>
 									</u-col>
 									<u-col span="12">
 										<view class="goods-row">
 											<text class="label">商品信息：</text>
-											<u-text :text="PurchaseIn.materialsList"></u-text>
+											<u-text :text="RetailReturn.materialsList"></u-text>
 										</view>
 									</u-col>
 									<u-col span="12">
 										<view class="goods-row">
 											<text class="label">单据日期：</text>
-											<u-text>{{ $u.timeFormat(PurchaseIn.operTime, 'yyyy-mm-dd hh:MM:ss')
+											<u-text>{{ $u.timeFormat(RetailReturn.billTime, 'yyyy-mm-dd hh:MM:ss')
 												}}</u-text>
 										</view>
 									</u-col>
@@ -69,39 +73,36 @@
 						<u-col span="12">
 							<view class="goods-row">
 								<text class="label">操作员：</text>
-								<u-text :text="PurchaseIn.userName"></u-text>
+								<u-text :text="RetailReturn.userName"></u-text>
 								<text class="label">数量：</text>
-								<u-text :text="PurchaseIn.materialCount"></u-text>
+								<u-text :text="RetailReturn.materialCount"></u-text>
 							</view>
 						</u-col>
 						<u-col span="12">
 							<view class="goods-row">
-								<text class="label">金额合计：</text>
-								<u-text mode="price" :text="PurchaseIn.totalPrice"></u-text>
-								<text class="label">含税合计：</text>
-								<u-text mode="price" :text="PurchaseIn.discountLastMoney"></u-text>
+								<text class="label">付款金额：</text>
+								<u-text mode="price" :text="RetailReturn.changeAmount + RetailReturn.backAmount"></u-text>
+								<text class="label">找零：</text>
+								<u-text mode="price" :text="RetailReturn.backAmount"></u-text>
 							</view>
 						</u-col>
 						<u-col span="12">
 							<view class="goods-row">
-								<text class="label">待收金额：</text>
-								<u-text mode="price"
-									:text="PurchaseIn.discountLastMoney + PurchaseIn.otherMoney - PurchaseIn.deposit"></u-text>
-								<text class="label">本次收款：</text>
-								<u-text mode="price" :text="PurchaseIn.changeAmount"></u-text>
+								<text class="label">付款账户：</text>
+								<u-text :text="RetailReturn.accountName"></u-text>
 							</view>
 						</u-col>
 						<u-col span="9">
 							<view class="goods-row">
-								<text class="label">本次欠款：</text>
-								<u-text mode="price" :text="PurchaseIn.debt"></u-text>
+								<text class="label">金额合计：</text>
+								<u-text mode="price" :text="RetailReturn.totalPrice"></u-text>
 							</view>
 						</u-col>
 						<u-col span="3">
 							<view class="goods-row status-right-align">
-								<text v-if="PurchaseIn.status == '0'"
+								<text v-if="RetailReturn.status == '0'"
 									:style="{ color: $u.color.warning, fontSize: '32rpx', fontWeight: 'bold' }">未审核</text>
-								<text v-if="PurchaseIn.status == '1'"
+								<text v-if="RetailReturn.status == '1'"
 									:style="{ color: $u.color.success, fontSize: '32rpx', fontWeight: 'bold' }">已审核</text>
 							</view>
 						</u-col>
@@ -123,13 +124,12 @@
 		</view>
 	</view>
 </template>
-
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getOrderList, batchSetStatusOrder,deleteOrder } from '@/api/api.js'
+	import { getOrderList, deleteOrder, batchSetStatusOrder } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
-	const title = ref<string>('采购退货')
+	const title = ref<string>('零售退货')
 	const background = reactive({
 		backgroundColor: ""
 	})
@@ -159,7 +159,7 @@
 			deep: false
 		}
 	);
-	
+
 	const popupShow = ref<boolean>(false)
 	const emptyShow = ref<boolean>(false)
 	const pickBeginDateShow = ref<boolean>(false)
@@ -171,16 +171,27 @@
 		lineHeight: '32rpx',
 		fontWeight: 'bold'
 	})
+
 	const uFormRef = ref();
+	const form = reactive({
+		name: '',
+		category: ''
+	});
+	function backOpenorder() {
+		uni.switchTab({
+			url: '/pages/openorder/openorder'
+		});
+	}
 	function search() {
 		popupShow.value = false;
-		loadPurchaseReturnList();
+		loadRetailReturnList();
 	}
 	function reset() {
 		billno.value = '';
 		initDefaultDates();
 		search();
 	}
+
 	// 定义列表项接口
 	interface ListItem {
 		id : number
@@ -202,10 +213,10 @@
 	const show = ref<boolean>(false)
 	const selectedId = ref<string>('')
 	const selectedIndex = ref<number>(-1)
-	const getSwipeOptions = (saleOut : ListItem) : OptionButton[] => {
+	const getSwipeOptions = (RetailReturn : ListItem) : OptionButton[] => {
 		return [
 			{
-				text: saleOut.status === '1' ? "反审核" : "审核",
+				text: RetailReturn.status === '1' ? "反审核" : "审核",
 				style: {
 					backgroundColor: $u.color.warning
 				},
@@ -235,7 +246,7 @@
 			if (res.code === 200) {
 				const tipText = targetStatus === 1 ? '审核成功' : '反审核成功';
 				showToast(tipText, 'success');
-				loadPurchaseReturnList();
+				loadRetailReturnList();
 			} else {
 				const tipText = targetStatus === 1 ? '审核失败' : '反审核失败';
 				showToast(tipText, 'error');
@@ -249,7 +260,7 @@
 	const content = ref<string>('确定要删除吗？')
 	// 删除确认
 	const confirm = async () => {
-		PurchaseInList.value.splice(selectedIndex.value, 1)
+		RetailReturnList.value.splice(selectedIndex.value, 1)
 		try {
 			const res = await deleteOrder(selectedId.value)
 			if (res.code === 200) {
@@ -271,14 +282,14 @@
 	}
 	// 定义打开事件回调函数
 	const open = (index : number) => {
-		purchaseInList.value[index].show = true
-		purchaseInList.value.map((val, idx) => {
-			if (index != idx) purchaseInList.value[idx].show = false
+		RetailReturnList.value[index].show = true
+		RetailReturnList.value.map((val, idx) => {
+			if (index != idx) RetailReturnList.value[idx].show = false
 		})
 	}
 	// 定义点击事件回调函数
 	const click = (index : number, index1 : number) => {
-		const curItem = purchaseInList.value[index]; // 缓存当前项，避免多次取值
+		const curItem = RetailReturnList.value[index]; // 缓存当前项，避免多次取值
 		selectedId.value = curItem.id;
 		selectedIndex.value = index;
 		curItem.show = false;
@@ -293,7 +304,7 @@
 				showToast('只有未审核的单据才能编辑，请先进行反审核！', 'warning');
 				return;
 			}
-			goPurchaseReturnDetail(curItem); // 调用已有编辑方法，传递当前单据数据
+			goRetailReturnDetail(curItem); // 调用已有编辑方法，传递当前单据数据
 		} else {
 			// 启用/禁用分支（核心：获取当前状态，传递给batchSetStatus）
 			const currentEnabled = curItem.status;
@@ -303,6 +314,7 @@
 
 		}
 	}
+
 	//商品分类选择器
 	const selectShow = ref<boolean>(false)
 	const categoryName = ref<string>('')
@@ -312,7 +324,7 @@
 	const handsPersonId = ref("");
 	const status = ref("");
 	const remark = ref("");
-	//const realityPriceTotal = ref(0);
+	const realityPriceTotal = ref(0);
 
 	const beginTime = ref("");
 	const endTime = ref("");
@@ -322,6 +334,7 @@
 		const day = String(date.getDate()).padStart(2, '0');
 		return `${year}-${month}-${day}`;
 	}
+
 	const initDefaultDates = () => {
 		const today = new Date();
 		const threeMonthsAgo = new Date(today);
@@ -329,17 +342,29 @@
 		beginTime.value = formatLocalDate(threeMonthsAgo);
 		endTime.value = formatLocalDate(today);
 	};
-	//获取采购退货信息
-	const purchaseInList = ref<Array>([]);
+	// 定义确认回调函数
+	const beginTimeConfirm = (e : any[]) => {
+		// 注意返回值为一个数组，单列时取数组的第一个元素即可(只有一个元素)
+		const formattedDate = `${e.year}-${e.month}-${e.day}`;
+		beginTime.value = formattedDate
+	}
+	// 定义确认回调函数
+	const endTimeConfirm = (e : any[]) => {
+		// 注意返回值为一个数组，单列时取数组的第一个元素即可(只有一个元素)
+		const formattedDate = `${e.year}-${e.month}-${e.day}`;
+		endTime.value = formattedDate
+	}
+
+	const RetailReturnList = ref<Array>([]);
 	const billno = ref<string>('');
-	const loadPurchaseReturnList = async () => {
+	const loadRetailReturnList = async () => {
 		let params = {
 			currentPage: current.value,
 			pageSize: pageSize.value,
 			search: JSON.stringify({
 				number: billno.value,
-				type: '出库',
-				subType: '采购退货',
+				type: '入库',
+				subType: '零售退货',
 				beginTime: beginTime.value,
 				endTime: endTime.value,
 				remark: remark.value
@@ -347,9 +372,6 @@
 		}
 		if (materialParam.value) {
 			params.search = materialParam.value;
-		}
-		if (linkNumber.value) {
-			params.search = linkNumber.value;
 		}
 		// if (handsPersonId.value) {
 		// 	params.search = handsPersonId.value;
@@ -360,7 +382,8 @@
 		const res = await getOrderList(params)
 		if (res && res.code === 200) {
 			listTotal.value = res.data.total
-			purchaseInList.value = res.data.rows
+			RetailReturnList.value = res.data.rows
+			realityPriceTotal.value = res.data.realityPriceTotal
 			if (listTotal.value == 0) {
 				emptyShow.value = true
 				listTotal.value = 1
@@ -372,19 +395,21 @@
 			uni.showToast({ title: '数据加载失败', icon: 'none' });
 		}
 	}
+
 	//查看
 	function lookNumberDetail(number : string) {
-		uni.$u.route('pages/openorder/PurchaseReturn/PurchaseReturnDetail',
+		uni.$u.route('pages/openorder/RetailReturn/RetailReturnDetail',
 			{ number: number });
 	}
 	//新增
 	function onBtnClick() {
-		uni.$u.route('pages/openorder/PurchaseReturn/AddPurchaseReturn');
+		uni.$u.route('pages/openorder/RetailReturn/AddRetailReturn');
 	}
 	//编辑
-	function goPurchaseReturnDetail(item) {
-		uni.$u.route('/pages/openorder/PurchaseReturn/AddPurchaseReturn?item=' + encodeURIComponent(JSON.stringify(item)) + '&action=edit')
+	function goRetailReturnDetail(item) {
+		uni.$u.route('/pages/openorder/RetailReturn/AddRetailReturn?item=' + encodeURIComponent(JSON.stringify(item)) + '&action=edit')
 	}
+
 	//分页切换
 	const current = ref<number>(1);
 	const pageSize = ref<number>(20);
@@ -396,12 +421,11 @@
 		else {
 			current.value = current.value
 		}
-		loadPurchaseReturnList();
+		loadRetailReturnList();
 	}
-
 	onMounted(async () => {
 		initDefaultDates();
-		loadPurchaseReturnList();
+		loadRetailReturnList();
 	})
 </script>
 
@@ -500,5 +524,20 @@
 		z-index: 1;
 		padding-top: var(--u-navbar-height, 88rpx);
 		padding-bottom: 40px;
+	}
+
+	.map-wrap {
+		display: flex;
+		align-items: center;
+		padding: 4px 6px;
+		//background-color: rgba(240, 240, 240, 0.35);
+		color: #fff;
+		font-size: 22rpx;
+		border-radius: 100rpx;
+		margin-left: 10rpx;
+	}
+
+	.map-wrap-text {
+		padding: 0 6rpx;
 	}
 </style>

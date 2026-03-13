@@ -1,4 +1,4 @@
-<!-- 报表-销售退货入库-详情 -->
+<!-- 报表-采购退货-详情 -->
 <template>
 	<view style="min-height: 100vh;">
 		<u-navbar :is-back="true" :title="title" title-color='#ffffff' back-icon-color='#ffffff'
@@ -9,7 +9,7 @@
 			<u-row gutter="10">
 				<u-col span="12">
 					<view class="goods-row">
-						<text class="label">客户：</text>
+						<text class="label">供应商：</text>
 						<u-text :text="InDetailList.organName"></u-text>
 					</view>
 				</u-col>
@@ -28,7 +28,8 @@
 				<u-col span="12">
 					<view class="goods-row">
 						<text class="label">关联订单：</text>
-						<u-text :text="InDetailList.linkNumber"></u-text>
+						<u-text type="primary" decoration="underline" :text="InDetailList.linkNumber"
+							@click="lookNumberDetail(InDetailList.linkNumber)"></u-text>
 					</view>
 				</u-col>
 			</u-row>
@@ -143,9 +144,17 @@
 		<!-- 订单表尾 -->
 		<view class="good-item">
 			<u-row gutter="10">
+				<template v-if="InDetailList.remark">
+					<u-col span="12">
+						<view class="goods-row">
+							<text class="label">备注：</text>
+							<u-text :text="InDetailList.remark"></u-text>
+						</view>
+					</u-col>
+				</template>
 				<u-col span="6">
 					<view class="goods-row">
-						<text class="label">退款折扣：</text>
+						<text class="label">付款折扣：</text>
 						<u-text :text="InDetailList.discountMoney"></u-text>
 					</view>
 				</u-col>
@@ -169,16 +178,21 @@
 				</u-col>
 				<u-col span="12">
 					<view class="goods-row">
-						<text class="label">本次退款：</text>
+						<text class="label">扣除订单：</text>
+						<u-text :text="InDetailList.deposit"></u-text>
+						<text class="label">本次付款：</text>
 						<u-text :text="InDetailList.changeAmount"></u-text>
-						<text class="label">本次欠款：</text>
-						<u-text :text="InDetailList.debt"></u-text>
 					</view>
 				</u-col>
 				<u-col span="12">
 					<view class="goods-row">
-						<text class="label">销售人员：</text>
-						<u-text :text="InDetailList.salesManStr"></u-text>
+
+					</view>
+				</u-col>
+				<u-col span="12">
+					<view class="goods-row">
+						<text class="label">本次欠款：</text>
+						<u-text :text="InDetailList.debt"></u-text>
 					</view>
 				</u-col>
 			</u-row>
@@ -198,9 +212,9 @@
 	import { ref, reactive, onMounted, watch } from 'vue'
 	import { onLoad } from '@dcloudio/uni-app';
 	import { $u, useTheme } from 'uview-pro'
-	import { getInOutDetailById, getFinancialBillNoByBillId,getMaterialListByNumber } from '@/api/api.js'
+	import { getInOutDetailById, getFinancialBillNoByBillId, getMaterialListByNumber } from '@/api/api.js'
 	const { currentTheme, themes, darkMode } = useTheme();
-	const title = ref<string>('销退入库-详情')
+	const title = ref<string>('采购退货-详情')
 	const background = reactive({
 		backgroundColor: ""
 	})
@@ -230,7 +244,7 @@
 		}
 	);
 
-	//获取采购入库主表
+	//获取采购退货主表
 	const number = ref<string>('')
 	const InDetailList = ref<any>('');
 	const loadInDetailById = async () => {
@@ -265,7 +279,11 @@
 			uni.showToast({ title: '供应商加载失败', icon: 'none' });
 		}
 	}
-
+	//查看关联订单详细
+	function lookNumberDetail(number : string) {
+		uni.$u.route('pages/openorder/InboundOrder/InboundOrderDetail',
+			{ number: number });
+	}
 	//获取付款单号
 	const billId = ref<string>('')
 	const billNo = ref<string>('')
@@ -281,10 +299,9 @@
 	onLoad((options) => {
 		if (options && options.number) {
 			number.value = options.number;
-			console.warn(number.value);
 			loadInDetailById();
 		} else {
-			console.warn("未接收到单号参数");
+			console.log("未接收到单号参数");
 		}
 	});
 </script>
@@ -293,6 +310,7 @@
 	.scrollviewpadding {
 		min-height: calc(100% - 200rpx);
 	}
+
 	.good-item {
 		background: rgba(var(--u-type-primary-rgb), 0.05);
 		border: 1px solid rgba(var(--u-type-primary-rgb), 0.2);

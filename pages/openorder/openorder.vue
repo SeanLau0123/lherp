@@ -7,27 +7,27 @@
 		</view>
 		<!-- 常用服务 -->
 		<u-cell-group>
-			<u-cell-item icon="setting" icon-size="42" title="出入库管理" :arrow="false">
+			<u-cell-item icon="shopping-cart" icon-size="42" title="出入库管理" :arrow="false">
 			</u-cell-item>
 		</u-cell-group>
 		<view>
 			<u-grid :border="true" col="4">
 				<u-grid-item :customStyle="{ height: 200 + 'rpx' }" v-for="(listItem, listIndex) in usList"
-					:key="listIndex">
-					<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="62" :color="$u.color.primary"
-						@click="goPage(listItem.page, listItem.url)"></u-icon>
+					:key="listIndex" @click="goPage(listItem.page, listItem.url)">
+					<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="62"
+						:color="$u.color.primary"></u-icon>
 					<text class="grid-text">{{ listItem.title }}</text>
 				</u-grid-item>
 			</u-grid>
 			<u-cell-group>
-				<u-cell-item icon="setting" icon-size="42" title="财务管理" :arrow="false">
+				<u-cell-item icon="rmb-circle" icon-size="42" title="财务管理" :arrow="false">
 				</u-cell-item>
 			</u-cell-group>
 			<u-grid :border="true" col="4">
 				<u-grid-item :customStyle="{ height: 200 + 'rpx' }" v-for="(listItem, listIndex) in financialList"
-					:key="listIndex">
-					<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="62" :color="$u.color.primary"
-						@click="goPage(listItem.page, listItem.url)"></u-icon>
+					:key="listIndex" @click="goPage(listItem.page, listItem.url)">
+					<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="62"
+						:color="$u.color.primary"></u-icon>
 					<text class="grid-text">{{ listItem.title }}</text>
 				</u-grid-item>
 			</u-grid>
@@ -48,9 +48,17 @@
 	const updateNavbarBackground = () => {
 		background.backgroundColor = $u.color.primary;
 	};
+
+	interface GridItem {
+		title : string
+		icon : string
+		description : string
+		useCount : number
+		page : string
+	}
 	const currentTab = ref<number>(3)
-	const usList = ref<string>([])
-	const financialList = ref<string>([])
+	const usList = ref<GridItem[]>([])
+	const financialList = ref<GridItem[]>([])
 	// 初始化报表菜单列表
 	const initOpenorderList = () => {
 		// 从本地缓存获取权限列表
@@ -61,26 +69,26 @@
 
 		// 重构：用数组直接定义物料列表，避免重复创建单个对象的冗余写法
 		const operOrderList = [
-			{ url: "/bill/retail_out", page: "retailOut", title: "零售管理", },
-			{ url: "/bill/retail_back", page: "retailBackOut", title: "零售退货" },
-			{ url: "/bill/purchase_order", page: "purchaseOrder", title: "采购订单", icon: "PurchaseOrder" },
-			{ url: "/bill/purchase_in", page: "PurchaseIn", title: "采购入库", icon: "PurchaseIn" },
-			{ url: "/bill/purchase_back", page: "purchaseInBack", title: "采购退货", icon: "Payment" },
-			{ url: "/bill/sale_order", page: "saleOrder", title: "销售订单" },
+			{ url: "/bill/retail_out", page: "retailOut", title: "零售出库", icon: "retailOutbound" },
+			{ url: "/bill/retail_back", page: "retailBackOut", title: "零售退货", icon: "retailReturn" },
+			{ url: "/bill/purchase_order", page: "purchaseOrder", title: "采购订单", icon: "purchaseOrder" },
+			{ url: "/bill/purchase_in", page: "PurchaseIn", title: "采购入库", icon: "purchaseIn" },
+			{ url: "/bill/purchase_back", page: "PurchaseReturn", title: "采购退货", icon: "purchaseReturn" },
+			{ url: "/bill/sale_order", page: "saleOrder", title: "销售订单", icon: "saleOrder" },
 			{ url: "/bill/sale_out", page: "saleOut", title: "销售出库", icon: "saleOutOrder" },
 			{ url: "/bill/sale_back", page: "saleBack", title: "销售退货", icon: "saleBackOrder" },
-			{ url: "/bill/other_in", page: "otherIn", title: "其它入库" },
-			{ url: "/bill/other_out", page: "otherOut", title: "其它出库" },
-			{ url: "/bill/allocation_out", page: "allocationOut", title: "调拨订单" },
-			{ url: "/financial/item_in", page: "Income", type: 'financial', title: "收入单", icon: "Income" },
-			{ url: "/financial/item_out", page: "Expense", type: 'financial', title: "支出单", icon: "Expense" },
-			{ url: "/financial/money_in", page: "Receipt", type: 'financial', title: "收款单", icon: "Receipt" },
-			{ url: "/financial/money_out", page: "Payment", type: 'financial', title: "付款单", icon: "Payment" },
-			{ url: "/financial/giro", page: "Transfer", type: 'financial', title: "转账单", icon: "Transfer" },
-			{ url: "/financial/advance_in", page: "AdvanceIn", type: 'financial', title: "收预付款", icon: "AdvanceIn" },
+			{ url: "/bill/other_in", page: "otherIn", title: "其它入库", icon: "otherIn" },
+			{ url: "/bill/other_out", page: "otherOut", title: "其它出库", icon: "otherOut" },
+			{ url: "/bill/allocation_out", page: "allocation", title: "调拨订单", icon: "allocation" },
+			{ url: "/financial/item_in", page: "Income", type: 'financial', title: "收入单", icon: "income" },
+			{ url: "/financial/item_out", page: "Expense", type: 'financial', title: "支出单", icon: "expense" },
+			{ url: "/financial/money_in", page: "Receipt", type: 'financial', title: "收款单", icon: "receipt" },
+			{ url: "/financial/money_out", page: "Payment", type: 'financial', title: "付款单", icon: "payment" },
+			{ url: "/financial/giro", page: "Transfer", type: 'financial', title: "转账单", icon: "transfer" },
+			{ url: "/financial/advance_in", page: "AdvanceIn", type: 'financial', title: "收预付款", icon: "advanceIn" },
 		]
 
-		// 3. 权限匹配核心逻辑（重构后）
+		// 3. 权限匹配核心逻辑（重构后） 
 		if (permissionList?.length) { // 可选链+长度判断，简化健壮性校验
 			// 步骤1：将报表列表转为 URL -> 报表信息的Map，实现O(1)高效查找
 			const reportUrlMap = new Map(operOrderList.map(item => [item.url, item]));
@@ -114,19 +122,8 @@
 		financialList.value = financialdata
 	}
 	const goPage = (page : string, url : string) => {
-		// 根据实际需求实现点击逻辑
-		console.log('点击了宫格:', page + "--" + url)
 		let targetRoute = ''
 		switch (page) {
-			case 'AdvanceIn':
-				targetRoute = `/pages/openorder/Financial/AdvanceIn/${page}`;
-				break;
-			case 'saleOut':
-				targetRoute = `/pages/openorder/OutboundOrder/OutboundOrder`;
-				break;
-			case 'PurchaseIn':
-				targetRoute = `/pages/openorder/InboundOrder/InboundOrder`;
-				break;
 			case 'Transfer':
 				targetRoute = `/pages/openorder/Financial/Transfer/Transfer`;
 				break;
@@ -136,24 +133,28 @@
 			case 'Expense':
 				targetRoute = `/pages/openorder/Financial/Expense/Expense`;
 				break;
-			// 	case 'Expense':
-			// 		targetRoute = '多单位'
-			// 		break;
-			// 	case 'multiAttribute':
-			// 		targetRoute = '多属性'
-			// 		break;
-			// 	case 'supplier':
-			// 		targetRoute = '/pages/manage/supplier/supplier'
-			// 		break;
-			// 	case 'customers':
-			// 		targetRoute = '/pages/manage/customers/customers'
-			// 		break;
-			// 	case 'members':
-			// 		targetRoute = '会员信息'
-			// 		break;
-			// 	case 'depot':
-			// 		targetRoute = '/pages/manage/warehouse/warehouse'
-			// 		break;
+			case 'AdvanceIn':
+				targetRoute = `/pages/openorder/Financial/AdvanceIn/${page}`;
+				break;
+			case 'saleOut':
+				targetRoute = `/pages/openorder/OutboundOrder/OutboundOrder`;
+				break;
+			case 'saleBack':
+				targetRoute = `/pages/openorder/SalesReturn/SalesReturn`;
+				break;
+			case 'PurchaseIn':
+				targetRoute = `/pages/openorder/InboundOrder/InboundOrder`;
+				break;
+			case 'PurchaseReturn':
+				targetRoute = `/pages/openorder/PurchaseReturn/PurchaseReturn`;
+				break;
+			case 'retailOut':
+				targetRoute = `/pages/openorder/RetailOut/RetailOut`;
+				break;
+			case 'retailBackOut':
+				targetRoute = `/pages/openorder/RetailReturn/RetailReturn`;
+				break;
+
 			// 	case 'inOutItemList':
 			// 		targetRoute = '收支项目'
 			// 		break;
@@ -172,16 +173,16 @@
 			// 	case 'user':
 			// 		targetRoute = '用户管理'
 			// 		break;
-			// 	default:
-			// 		break;
+			default:
+				uni.showToast({
+					icon: 'error',
+					title: "开发中"
+				})
+				break;
 		}
-		if (targetRoute === '') {
-			uni.showToast({
-				icon: 'error',
-				title: "开发中"
-			})
+		if (targetRoute) {
+			uni.$u.route(targetRoute);
 		}
-		uni.$u.route(targetRoute);
 	}
 	watch(
 		[

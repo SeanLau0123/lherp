@@ -7,15 +7,15 @@
 		</view>
 		<!-- 常用服务 -->
 		<u-cell-group>
-			<u-cell-item icon="star" icon-size="42" title="基础资料" :arrow="false">
+			<u-cell-item icon="grid" icon-size="42" title="基础资料" :arrow="false">
 			</u-cell-item>
 		</u-cell-group>
 		<view>
 			<u-grid :border="true" col="4">
 				<u-grid-item :customStyle="{ height: 200 + 'rpx' }" v-for="(listItem, listIndex) in usList"
-					:key="listIndex">
+					:key="listIndex" @click="goPage(listItem.page, listItem.url)">
 					<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="62" :color="$u.color.primary"
-						@click="goPage(listItem.page, listItem.url)"></u-icon>
+						></u-icon>
 					<text class="grid-text">{{ listItem.title }}</text>
 				</u-grid-item>
 			</u-grid>
@@ -25,9 +25,9 @@
 			</u-cell-group>
 			<u-grid :border="true" col="4">
 				<u-grid-item :customStyle="{ height: 200 + 'rpx' }" v-for="(listItem, listIndex) in systemList"
-					:key="listIndex">
+					:key="listIndex" @click="goPage(listItem.page, listItem.url)">
 					<u-icon :name="listItem.icon" custom-prefix="custom-icon" size="62" :color="$u.color.primary"
-						@click="goPage(listItem.page, listItem.url)"></u-icon>
+						></u-icon>
 					<text class="grid-text">{{ listItem.title }}</text>
 				</u-grid-item>
 			</u-grid>
@@ -116,7 +116,6 @@
 
 	const goPage = (page : string, url : string) => {
 		// 根据实际需求实现点击逻辑
-		console.log('点击了宫格:', page + "--" + url)
 		let targetRoute = ''
 		switch (page) {
 			case 'material':
@@ -162,15 +161,15 @@
 				targetRoute = ''
 				break;
 			default:
+				uni.showToast({
+					icon: 'error',
+					title: "开发中"
+				})
 				break;
 		}
-		if (targetRoute === ''){
-			uni.showToast({
-				icon: 'error',
-				title: "开发中"
-			})
+		if (targetRoute) {
+			uni.$u.route(targetRoute);
 		}
-		uni.$u.route(targetRoute);
 	}
 
 	watch(
