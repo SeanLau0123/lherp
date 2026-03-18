@@ -48,7 +48,7 @@
 		const reportList = [
 			{
 				url: "/report/material_stock",
-				page: "material_stock",
+				page: "MaterialStock",
 				icon: "material_stock",
 				title: "商品库存"
 			},
@@ -96,7 +96,7 @@
 			},
 			{
 				url: "/report/in_out_stock_report",
-				page: "inoutstockreport",
+				page: "InOutStock",
 				icon: "inoutstockreport",
 				title: "进销存统计"
 			},
@@ -199,11 +199,11 @@
 			case 'OutSummary':
 				targetRoute = `/pages/report/${page}`;
 				break;
-			case 'role':
-				targetRoute = '角色管理'
+			case 'InOutStock':
+				targetRoute = `/pages/report/${page}`;
 				break;
-			case 'log':
-				targetRoute = '日志管理'
+			case 'MaterialStock':
+				targetRoute = `/pages/report/${page}`;
 				break;
 			case 'stockwarningreport':
 				targetRoute = `/pages/report/${page}`;

@@ -2,7 +2,7 @@
 	<view class="container">
 		<u-toast ref="uToastRef" />
 		<view class="image-container">
-			<u-image duration="200" :src="src" shape="circle" width="200rpx" height="200rpx"></u-image>
+			<u-image duration="500" :src="src" shape="circle" width="200rpx" height="200rpx"></u-image>
 			<text class="platformTitle">{{ platformName }}</text>
 		</view>
 		<u-row style="flex-direction: column;">
@@ -21,7 +21,7 @@
 					maxlength="4" fontSize="34rpx" placeholder="请输入验证码" v-model="code"></u-input>
 			</u-col>
 			<u-col span="4">
-				<u-image duration="200" :src="base64Data" width="160rpx" height="60rpx" @click="onRandomImage"></u-image>
+				<u-image duration="500" :src="base64Data" width="160rpx" height="60rpx" @click="onRandomImage"></u-image>
 			</u-col></u-row>
 		<u-row justify="space-between" style="margin-left: 20rpx;margin-top:48rpx;">
 			<u-col span="8">

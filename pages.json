@@ -88,6 +88,30 @@
 				"navigationBarTitleText": ""
 			}
 		},
+		{
+			"path": "pages/report/MaterialStock",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/report/InOutStock",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/report/InventoryDetail",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/report/InventoryRecord",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
 		/*
 		 *个人中心
 		 */

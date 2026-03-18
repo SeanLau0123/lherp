@@ -109,17 +109,24 @@ export const getSaleOutList = (params, config = {}) => http.get('/depotItem/sale
 export const getRetailOutList = (params, config = {}) => http.get('/depotItem/retailOut', params, config)
 //获取供应商对账信息
 export const getStatementAccountList = (params, config = {}) => http.get('/depotHead/getStatementAccount', params, config)
-
 //获取账户信息余额
 export const getAccountList = (params, config = {}) => http.get('/account/listWithBalance', params, config)
-
 //获取结算账户信息余额的统计
 export const getAccountListStatistics = (params, config = {}) => http.get('/account/getStatistics', params, config)
-
 //获取入库明细,出库明细
 export const getInOutDetail = (params, config = {}) => http.get('/depotHead/findInOutDetail', params, config)
 //获取入库汇总,出库汇总
 export const getInOutSummary = (params, config = {}) => http.get('/depotHead/findInOutMaterialCount', params, config)
+//获取商品库存
+export const getMaterialStock = (params, config = {}) => http.get('/material/getListWithStock', params, config)
+//获取进销存统计
+export const getInOutStock = (params, config = {}) => http.get('/depotItem/getInOutStock', params, config)
+//获取进销存统计总结存，金额
+export const getInOutStockCountMoney = (params, config = {}) => http.get('/depotItem/getInOutStockCountMoney', params, config)
+//获取商品库存分布
+export const getMaterialDepotStockByParam = (params, config = {}) => http.get('/depotItem/getMaterialDepotStockByParam', params, config)
+//获取商品库存流水
+export const getMaterialStockRecord = (params, config = {}) => http.get('/depotItem/findDetailByDepotIdsAndMaterialId', params, config)
 /*
 *采购入库详情
 */
