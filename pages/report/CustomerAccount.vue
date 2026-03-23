@@ -199,7 +199,7 @@
 		label : string
 	}
 	const debtList = ref<ListItem[]>([
-		{ label: '无欠款', value: '0' }, 
+		{ label: '无欠款', value: '0' },
 		{ label: '有欠款', value: '1' }])
 	// 定义确认回调函数
 	const debTypeConfirm = (e : any[]) => {
@@ -213,7 +213,7 @@
 	const customerId = ref<string[]>([]);
 	const customerList = ref<ListItem[]>([]);
 	const loadGetCustomerlList = async () => {
-		let params = {limit: 1}
+		let params = { limit: 1 }
 		const res = await getAllListBySelect(params)
 		if (res) {
 			customerList.value = res.map(item => ({

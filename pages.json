@@ -454,6 +454,12 @@
 			"style": {
 				"navigationBarTitleText": ""
 			}
+		},
+		{
+			"path": "pages/report/StockWarning",
+			"style": {
+				"navigationBarTitleText": ""
+			}
 		}
 	],
 	"easycom": {

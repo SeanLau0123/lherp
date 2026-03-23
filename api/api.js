@@ -127,6 +127,9 @@ export const getInOutStockCountMoney = (params, config = {}) => http.get('/depot
 export const getMaterialDepotStockByParam = (params, config = {}) => http.get('/depotItem/getMaterialDepotStockByParam', params, config)
 //获取商品库存流水
 export const getMaterialStockRecord = (params, config = {}) => http.get('/depotItem/findDetailByDepotIdsAndMaterialId', params, config)
+//获取库存预警
+export const getStockWarning = (params, config = {}) => http.get('/depotItem/findStockWarningCount', params, config)
+
 /*
 *采购入库详情
 */

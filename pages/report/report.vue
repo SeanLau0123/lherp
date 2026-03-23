@@ -7,7 +7,7 @@
 		</view>
 		<!-- 常用服务 -->
 		<u-cell-group>
-			<u-cell-item icon="pushpin" icon-size="42" title="报表" :arrow="false">
+			<u-cell-item icon="file-text" icon-size="42" title="报表" :arrow="false">
 			</u-cell-item>
 		</u-cell-group>
 		<view>
@@ -114,7 +114,7 @@
 			},
 			{
 				url: "/report/stock_warning_report",
-				page: "stockwarningreport",
+				page: "StockWarning",
 				icon: "stockwarningreport",
 				title: "库存预警"
 			},
@@ -205,7 +205,7 @@
 			case 'MaterialStock':
 				targetRoute = `/pages/report/${page}`;
 				break;
-			case 'stockwarningreport':
+			case 'StockWarning':
 				targetRoute = `/pages/report/${page}`;
 				break;
 			default:
