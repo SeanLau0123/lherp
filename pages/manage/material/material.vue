@@ -6,20 +6,16 @@
 				<u-icon name='search' @click="popupShow = true" color="#ffffff" size="48rpx" label-pos="right"></u-icon>
 			</view>
 		</u-navbar>
+		<u-toast ref="uToastRef" />
 		<scroll-view class="scrollviewpadding">
 			<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="8">
 				<view class="popup-title">
 					<u-form label-width="130rpx">
 						<u-form-item label="关键词："><u-input v-model="searchname"
 								placeholder="请输入名称、条码、助记码查询" /></u-form-item>
-						<!-- <u-form-item label="商品类型">
-							<view>
-								<u-input v-model="categoryName" type="select" @click="selectShow = true" />
-								<u-input v-model="categoryId" />
-								<u-select :list="list" v-model="selectShow" mode="mutil-column"
-									@confirm="confirm"></u-select>
-							</view>
-						</u-form-item> -->
+						<u-form-item label="品牌："><u-input v-model="brand" placeholder="请输入品牌查询" /></u-form-item>
+						<u-form-item label="制造商："><u-input v-model="mfrs" placeholder="请输入制造商查询" /></u-form-item>
+						<u-form-item label="备注："><u-input v-model="remark" placeholder="请输入备注查询" /></u-form-item>
 						<u-gap></u-gap>
 						<u-button type="primary" @click="search()">搜索</u-button>
 						<u-gap></u-gap>
@@ -27,56 +23,78 @@
 					</u-form>
 				</view>
 			</u-popup>
-			<view v-for="(good, index) in materialList" :key="good.id || index">
-				<view class="good-item" style="min-height: 80rpx;">
-					<u-row gutter="10">
-						<u-col span="1">
-							<view class="goods-row">
-								<text class="number">{{ index + 1 }}</text>
-							</view>
-						</u-col>
-						<u-col span="11">
-							<u-collapse :head-style="headStyle">
-								<u-collapse-item :title="good.name">
-									<view class="goods-row-coll">
-										<text class="label">名称：</text>
-										<text>{{ good.name }}</text>
-									</view>
-									<view class="goods-row-coll">
-										<text class="label">采购价：</text>
-										<text style="color: red; font-size: 36rpx;font-weight: bold;">{{
-											good.purchaseDecimal }}</text>
-									</view>
-									<u-line :color="$u.color.primary"></u-line>
-								</u-collapse-item>
-							</u-collapse>
-						</u-col>
-						<u-col span="12">
-							<view class="goods-row">
-								<text class="label">品牌：</text>
-								<text class="value">{{ good.brand || '-' }}</text>
-								<text class="label">商品类别：</text>
-								<text class="value">{{ good.categoryName || '-' }}</text>
-							</view>
-						</u-col>
-						<u-col span="12">
-							<view class="goods-row">
-								<text class="label">销售价：</text>
-								<text class="value">{{ good.wholesaleDecimal || '-' }}</text>
-								<text class="label">零售价：</text>
-								<text class="value">{{ good.commodityDecimal || '-' }}</text>
-							</view>
-						</u-col>
-						<u-col span="12">
-							<view class="goods-row">
-								<text class="label">商品条码：</text>
-								<text class="value">{{good.mBarCode || '-' }}</text>
-								<text class="label">序列号：</text>
-								<text class="value">{{good.enableSerialNumber === '1' ? '是' : '否'}}</text>
-							</view>
-						</u-col>
-					</u-row>
-				</view>
+			<view>
+				<u-swipe-action :show="item.show" :index="index" v-for="(item, index) in materialList" :key="item.id"
+					@click="click" @open="open" :options="getSwipeOptions(item)" :btn-width="btnWidth">
+					<view class="good-item" style="min-height: 80rpx;">
+						<u-row gutter="10">
+							<u-col span="1">
+								<view class="goods-row">
+									<text class="number">{{ index + 1 }}</text>
+								</view>
+							</u-col>
+							<u-col span="11">
+								<u-collapse :head-style="headStyle">
+									<u-collapse-item :title="item.name">
+										<view class="goods-row-coll">
+											<text class="label">名称：</text>
+											<text>{{ item.name }}</text>
+										</view>
+										<view class="goods-row-coll">
+											<text class="label">采购价：</text>
+											<text style="color: red; font-size: 32rpx;font-weight: bold;">{{
+												item.purchaseDecimal }}</text>
+										</view>
+										<u-line :color="$u.color.primary"></u-line>
+									</u-collapse-item>
+								</u-collapse>
+							</u-col>
+							<u-col span="12">
+								<view class="goods-row">
+									<text class="label">品牌：</text>
+									<text class="value">{{ item.brand || '-' }}</text>
+									<text class="label">商品类别：</text>
+									<text class="value">{{ item.categoryName || '-' }}</text>
+								</view>
+							</u-col>
+							<u-col span="12">
+								<view class="goods-row">
+									<text class="label">销售价：</text>
+									<text class="value">{{ item.wholesaleDecimal || '-' }}</text>
+									<text class="label">零售价：</text>
+									<text class="value">{{ item.commodityDecimal || '-' }}</text>
+								</view>
+							</u-col>
+							<u-col span="12">
+								<view class="goods-row">
+									<text class="label">商品条码：</text>
+									<text class="value">{{ item.mBarCode || '-' }}</text>
+									<text class="label">序列号：</text>
+									<text class="value">{{ item.enableSerialNumber === '1' ? '是' : '否' }}</text>
+								</view>
+							</u-col>
+							<u-col span="9">
+								<view class="goods-row">
+									<text class="label">备注：</text>
+									<text class="value">{{ item.remark || '-' }}</text>
+									<u-text v-model="item.id"></u-text>
+								</view>
+							</u-col>
+							<u-col span="3">
+								<view class="goods-row status-right-align">
+									<text v-if="item.enabled == '0'"
+										style="color:red; font-size: 32rpx;font-weight: bold">禁用</text>
+									<text v-if="item.enabled == '1'"
+										style="color:green;font-size: 32rpx;font-weight: bold">启用</text>
+								</view>
+							</u-col>
+						</u-row>
+					</view>
+				</u-swipe-action>
+			</view>
+			<view>
+				<u-modal v-model="deleteShow" :content="content" :show-cancel-button="true" cancel-color="#606266"
+					confirm-color="#2979ff" @confirm="confirm" :show-title="false"></u-modal>
 			</view>
 		</scroll-view>
 		<u-empty text="没有搜索结果" mode="search" :show="emptyShow" class="u-empty-fullscreen"></u-empty>
@@ -87,232 +105,371 @@
 	</view>
 </template>
 <script setup lang="ts">
-	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getMaterialList, getMaterialCategory } from '../../../api/api'
-	import { Request, color, $u, useTheme } from 'uview-pro'
-	const { currentTheme, themes, darkMode } = useTheme();
-	const title = ref<string>('商品信息')
-	const background = reactive({
-		backgroundColor: ""
+import { ref, reactive, onMounted, watch } from 'vue'
+import { getMaterialList, getMaterialCategory, batchSetStatusMaterial, deleteMaterial } from '../../../api/api'
+import { Request, color, $u, useTheme } from 'uview-pro'
+const { currentTheme, themes, darkMode } = useTheme();
+const title = ref<string>('商品信息')
+const background = reactive({
+	backgroundColor: ""
+})
+const updateNavbarBackground = () => {
+	background.backgroundColor = $u.color.primary;
+};
+const uToastRef = ref()
+const showToast = (title: string, type: string) => {
+	uToastRef.value.show({
+		type,
+		title
 	})
-	const updateNavbarBackground = () => {
-		background.backgroundColor = $u.color.primary;
-	};
-	const popupShow = ref<boolean>(false)
-	const emptyShow = ref<boolean>(false)
+}
+// 定义列表项接口
+interface ListItem {
+	id: number
+	name: string
+	status: '0' | '1'
+	show: boolean
+}
 
-	const headStyle = reactive({
-		fontSize: '28rpx',
-		lineHeight: '32rpx',
-		color: $u.color.primary,
-		fontWeight: 'bold',
-		paddingLeft: '10rpx'
-	})
-
-	const uFormRef = ref();
-	const form = reactive({
-		name: '',
-		category: ''
-	});
-
-	function search() {
-		popupShow.value = false;
-		loadGetMaterialList();
+// 定义选项按钮接口
+interface OptionButton {
+	text: string
+	style: {
+		backgroundColor: string
 	}
-	function reset() {
-		searchname.value = '';
-		search();
-	}
-
-
-	//商品分类选择器
-	const selectShow = ref<boolean>(false)
-	const categoryName = ref<string>('')
-	const categoryId = ref<string>('')
-
-	//加载商品列表
-	const materialList = ref<Array>([]);
-	const searchname = ref<string>('');
-	const loadGetMaterialList = async () => {
-		let params = {
-			currentPage: current.value,
-			pageSize: pageSize.value,
-			search: JSON.stringify({
-				materialParam: searchname.value
-			})
-		}
-		const res = await getMaterialList(params)
-		if (res && res.code === 200) {
-			listTotal.value = res.data.total
-			materialList.value = res.data.rows
-			if (listTotal.value == 0) {
-
-				emptyShow.value = true
-				listTotal.value = 0
-
-			}
-			else { emptyShow.value = false }
-		}
-		else {
-			uni.showToast({ title: '数据加载失败', icon: 'none' });
-		}
-	}
-
-	//分页切换
-	const current = ref<number>(1);
-	const pageSize = ref<number>(20);
-	const listTotal = ref<number>(1);
-	function handleChange(val : PaginationChangePayload) {
-		if (val.type === 'next') {
-			current.value = current.value
-		}
-		else {
-			current.value = current.value
-		}
-		loadGetMaterialList();
-	}
-
-	watch(
-		[
-			() => currentTheme.value,
-			() => darkMode.value
-		],
-		([newTheme, newDarkMode], [oldTheme, oldDarkMode]) => {
-			// 仅当主题或暗黑模式变化时，更新导航栏背景
-			if (newTheme !== oldTheme || newDarkMode !== oldDarkMode) {
-				updateNavbarBackground();
-			}
+}
+const disabled = ref<boolean>(false)
+const btnWidth = ref<number>(120)
+const show = ref<boolean>(false)
+const selectedId = ref<string>('')
+const selectedIndex = ref<number>(-1)
+const getSwipeOptions = (item: ListItem): OptionButton[] => {
+	return [
+		{
+			text: item.enabled == '1' ? "禁用" : "启用",
+			style: {
+				backgroundColor: $u.color.warning
+			},
 		},
 		{
-			immediate: true,
-			deep: false
+			text: "编辑",
+			style: {
+				backgroundColor: $u.color.info
+			},
+		},
+		{
+			text: "删除",
+			style: {
+				backgroundColor: $u.color.error
+			},
+		},
+	]
+}
+//设置禁用状态
+const batchSetStatus = async (id: number, targetStatus: number) => {
+	try {
+		const requestParams = {
+			status: targetStatus,
+			ids: `${id},`
+		};
+		const res = await batchSetStatusMaterial(requestParams)
+		if (res.code === 200) {
+			const tipText = targetStatus ? '启用成功' : '禁用成功';
+			showToast(tipText, 'success');
+			await loadGetMaterialList();
+		} else {
+			const tipText = targetStatus ? '启用失败' : '禁用失败';
+			showToast(tipText, 'error');
 		}
-	);
-	onMounted(async () => {
-		await loadGetMaterialList();
+	} catch (error) {
+		showToast('操作失败，请重试', 'error');
+	} finally {
+	}
+}
+const deleteShow = ref<boolean>(false)
+const content = ref<string>('确定要删除所选中的数据吗？')
+
+// 删除确认
+const confirm = async () => {
+	materialList.value.splice(selectedIndex.value, 1)
+	try {
+		const res = await deleteMaterial(selectedId.value)
+		if (res.code === 200) {
+			showToast('删除成功', 'success');
+		} else {
+			showToast('删除失败', 'error');
+		}
+	} catch (error) {
+		console.error('删除失败：', error)
+	} finally {
+		deleteShow.value = false
+		selectedIndex.value = -1;
+		selectedId.value = 0;
+	}
+}
+// 删除取消
+const cancel = () => {
+	deleteShow.value = false
+}
+// 定义点击事件回调函数
+const click = (index: number, index1: number) => {
+	const curItem = materialList.value[index]; // 缓存当前项，避免多次取值
+	selectedId.value = curItem.id;
+	selectedIndex.value = index;
+	curItem.show = false;
+	if (index1 === 2) {
+		deleteShow.value = true;
+	} else if (index1 === 1) {
+		goMaterialDetail(curItem); // 调用编辑方法，传递当前商品数据
+	} else {
+		// 禁用/反禁用分支（核心：获取当前状态，传递给batchSetStatus）
+		const currentStatus = curItem.enabled;
+		const targetStatus = !currentStatus;
+		// 调用修正后的方法，传递id和目标状态
+		batchSetStatus(selectedId.value, targetStatus);
+	}
+}
+
+// 定义打开事件回调函数
+const open = (index: number) => {
+	materialList.value[index].show = true
+	materialList.value.map((val, idx) => {
+		if (index != idx) materialList.value[idx].show = false
 	})
+}
+const popupShow = ref<boolean>(false)
+const emptyShow = ref<boolean>(false)
+
+const headStyle = reactive({
+	fontSize: '28rpx',
+	lineHeight: '32rpx',
+	color: $u.color.primary,
+	fontWeight: 'bold',
+	paddingLeft: '10rpx'
+})
+
+const uFormRef = ref();
+const form = reactive({
+	name: '',
+	category: ''
+});
+
+function search() {
+	popupShow.value = false;
+	loadGetMaterialList();
+}
+function reset() {
+	searchname.value = '';
+	brand.value = '';
+	remark.value = '';
+	mfrs.value = '';
+	search();
+}
+
+
+//商品分类选择器
+const selectShow = ref<boolean>(false)
+const categoryName = ref<string>('')
+const categoryId = ref<string>('')
+
+//加载商品列表
+const materialList = ref<Array>([]);
+const searchname = ref<string>('');
+const brand = ref<string>('');
+const mfrs = ref<string>('');
+const remark = ref<string>('');
+const loadGetMaterialList = async () => {
+	let params = {
+		currentPage: current.value,
+		pageSize: pageSize.value,
+		search: JSON.stringify({
+			materialParam: searchname.value,
+			brand: brand.value,
+			mfrs: mfrs.value,
+			remark: remark.value
+		})
+	}
+	const res = await getMaterialList(params)
+	if (res && res.code === 200) {
+		listTotal.value = res.data.total
+		materialList.value = res.data.rows
+		if (listTotal.value == 0) {
+
+			emptyShow.value = true
+			listTotal.value = 0
+
+		}
+		else { emptyShow.value = false }
+	}
+	else {
+		uni.showToast({ title: '数据加载失败', icon: 'none' });
+	}
+}
+
+//编辑
+function goMaterialDetail(item) {
+	uni.$u.route('/pages/manage/material/AddMaterial?item=' + encodeURIComponent(JSON.stringify(item)) + '&action=edit')
+}
+
+//分页切换
+const current = ref<number>(1);
+const pageSize = ref<number>(20);
+const listTotal = ref<number>(1);
+function handleChange(val: PaginationChangePayload) {
+	if (val.type === 'next') {
+		current.value = current.value
+	}
+	else {
+		current.value = current.value
+	}
+	loadGetMaterialList();
+}
+
+watch(
+	[
+		() => currentTheme.value,
+		() => darkMode.value
+	],
+	([newTheme, newDarkMode], [oldTheme, oldDarkMode]) => {
+		// 仅当主题或暗黑模式变化时，更新导航栏背景
+		if (newTheme !== oldTheme || newDarkMode !== oldDarkMode) {
+			updateNavbarBackground();
+		}
+	},
+	{
+		immediate: true,
+		deep: false
+	}
+);
+onMounted(async () => {
+	await loadGetMaterialList();
+})
 </script>
 
 <style lang="scss">
-	.goods-row-coll {
-		border-radius: 8rpx;
-		width: calc(100% - 32rpx);
-		margin: 10rpx 0rpx 10rpx 10rpx;
-	}
+.goods-row-coll {
+	border-radius: 8rpx;
+	width: calc(100% - 32rpx);
+	margin: 10rpx 0rpx 10rpx 10rpx;
+}
 
-	.colllabel {
-		font-size: 28rpx;
-		width: 120rpx;
-		text-align: right;
-	}
+.colllabel {
+	font-size: 28rpx;
+	width: 120rpx;
+	text-align: right;
+}
 
-	.collvalue {
-		flex: 1;
-		min-width: calc(40% - 130rpx);
-		word-break: break-all;
-		font-size: 28rpx;
-	}
+.collvalue {
+	flex: 1;
+	min-width: calc(40% - 130rpx);
+	word-break: break-all;
+	font-size: 28rpx;
+}
 
-	.good-item {
-		background: rgba(var(--u-type-primary-rgb), 0.15);
-		border: 1px solid rgba(var(--u-type-primary-rgb), 0.2);
-		border-radius: 8rpx;
-		width: calc(100% - 32rpx);
-		margin: 10rpx 12rpx 20rpx;
-	}
+.good-item {
+	background: rgba(var(--u-type-primary-rgb), 0.15);
+	border: 1px solid rgba(var(--u-type-primary-rgb), 0.2);
+	border-radius: 8rpx;
+	width: calc(100% - 32rpx);
+	margin: 10rpx 12rpx 20rpx;
+}
 
-	.goods-row {
-		display: flex;
-		margin-bottom: 5rpx;
-		line-height: 1.5;
-		flex-wrap: wrap;
-	}
+.goods-row {
+	display: flex;
+	margin-bottom: 5rpx;
+	line-height: 1.5;
+	flex-wrap: wrap;
+}
 
-	.label {
-		font-size: 28rpx;
-		color: $u-type-primary;
-		width: 160rpx;
-		text-align: right;
-		padding-right: 10rpx;
-		//border: solid 1px #ffffff;
-	}
+.label {
+	font-size: 28rpx;
+	color: $u-type-primary;
+	width: 160rpx;
+	text-align: right;
+	padding-right: 10rpx;
+	//border: solid 1px #ffffff;
+}
 
-	.value {
-		flex: 1;
-		min-width: calc(40% - 130rpx);
-		word-break: break-all;
-		font-size: 28rpx;
-		color: $u-content-color;
-	}
+.value {
+	flex: 1;
+	min-width: calc(40% - 130rpx);
+	word-break: break-all;
+	font-size: 28rpx;
+	color: $u-content-color;
+}
 
-	.number {
-		width: 35rpx;
-		height: 35rpx;
-		border-radius: 50%;
-		background-color: $u-type-primary;
-		color: #ffffff;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
+.number {
+	width: 35rpx;
+	height: 35rpx;
+	border-radius: 50%;
+	background-color: $u-type-primary;
+	color: #ffffff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
 
-	.name {
-		font-weight: bold;
-		font-size: 30rpx;
-	}
+.name {
+	font-weight: bold;
+	font-size: 30rpx;
+}
 
-	.pagination-fixed {
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		padding: 10rpx 50rpx;
-		///border-top: 1rpx solid #f5f5f5;
-		z-index: 999;
-		background-color: $u-bg-color;
-	}
+.pagination-fixed {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 10rpx 50rpx;
+	///border-top: 1rpx solid #f5f5f5;
+	z-index: 999;
+	background-color: $u-bg-color;
+}
 
-	.scrollviewpadding {
-		padding-bottom: 40px;
-		background: $u-bg-color;
-		min-height: calc(100% - 200rpx);
-	}
+.scrollviewpadding {
+	padding-bottom: 40px;
+	background: $u-bg-color;
+	min-height: calc(100% - 200rpx);
+}
 
-	.navbar-right-icon {
-		position: absolute;
-		right: 20rpx;
-		top: 50%;
-		transform: translateY(-50%);
-		z-index: 99;
-	}
+.navbar-right-icon {
+	position: absolute;
+	right: 20rpx;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 99;
+}
 
-	.popup-title {
-		margin-top: 45px;
-		padding: 10rpx 20rpx;
-	}
+.status-right-align {
+	justify-content: flex-end;
+}
 
-	// 新增：u-empty 全屏样式
-	.u-empty-fullscreen {
-		/* 绝对定位，脱离文档流 */
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		/* 高度铺满整个父容器（100vh），扣除导航栏和分页栏高度 */
-		height: 100%;
-		/* 弹性布局，让内容垂直水平居中（核心） */
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		/* 背景色与页面保持一致，避免透明穿透 */
-		background-color: $u-bg-color;
-		/* 层级低于分页栏，不遮挡分页 */
-		z-index: 1;
-		/* 扣除 navbar 高度，避免内容被导航栏遮挡 */
-		padding-top: var(--u-navbar-height, 88rpx);
-		/* 扣除分页栏高度，避免内容被分页遮挡 */
-		padding-bottom: 40px;
-	}
+.popup-title {
+	margin-top: 45px;
+	padding: 10rpx 20rpx;
+}
+
+// 新增：u-empty 全屏样式
+.u-empty-fullscreen {
+	/* 绝对定位，脱离文档流 */
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	/* 高度铺满整个父容器（100vh），扣除导航栏和分页栏高度 */
+	height: 100%;
+	/* 弹性布局，让内容垂直水平居中（核心） */
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	/* 背景色与页面保持一致，避免透明穿透 */
+	background-color: $u-bg-color;
+	/* 层级低于分页栏，不遮挡分页 */
+	z-index: 1;
+	/* 扣除 navbar 高度，避免内容被导航栏遮挡 */
+	padding-top: var(--u-navbar-height, 88rpx);
+	/* 扣除分页栏高度，避免内容被分页遮挡 */
+	padding-bottom: 40px;
+}
 </style>

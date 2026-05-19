@@ -116,13 +116,13 @@
 			{
 				text: item.enabled == '1' ? "禁用" : "启用",
 				style: {
-					backgroundColor: "#ff9900",
+					backgroundColor: $u.color.warning
 				},
 			},
 			{
 				text: "删除",
 				style: {
-					backgroundColor: "#fa3534",
+					backgroundColor: $u.color.error
 				},
 			},
 		]

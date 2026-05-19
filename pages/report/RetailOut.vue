@@ -18,19 +18,28 @@
 			<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="14">
 				<view class="popup-title">
 					<u-form label-width="160rpx">
-						<u-form-item label="商品信息：">
+						<u-form-item label-align="right" label="商品信息：">
 							<u-input v-model="searchname" placeholder="请输入名称、条码、助记码查询" /></u-form-item>
-						<u-form-item label="开始时间：">
+						<u-form-item label-align="right" label="开始时间：">
 							<u-input v-model="beginTime" :type="type" placeholder="请选择开始时间"
 								@click="pickBeginDateShow = true" />
 							<u-picker v-model="pickBeginDateShow" mode="time" :default-time="beginTime"
 								@confirm="beginTimeConfirm"></u-picker>
 						</u-form-item>
-						<u-form-item label="结束时间：">
+						<u-form-item label-align="right" label="结束时间：">
 							<u-input v-model="endTime" :type="type" placeholder="请选择结束时间"
 								@click="pickEndDateShow = true" />
 							<u-picker v-model="pickEndDateShow" mode="time" :default-time="endTime"
 								@confirm="endTimeConfirm"></u-picker></u-form-item>
+						<u-form-item label-align="right" label="仓库：">
+							<u-input v-model="depotName" :type="type" placeholder="请选择仓库" @click="depotShow = true" />
+							<u-select v-model="depotShow" :list="depotList"
+								@confirm="depotConfirm"></u-select></u-form-item>
+						<u-form-item label-align="right" label="会员卡号：">
+							<u-input v-model="memberName" :type="type" placeholder="请选择会员卡号"
+								@click="memberShow = true" />
+							<u-select v-model="memberShow" :list="memberList"
+								@confirm="memberConfirm"></u-select></u-form-item>
 						<u-gap></u-gap>
 						<u-button type="primary" @click="search()">搜索</u-button>
 						<u-gap></u-gap>
@@ -45,10 +54,20 @@
 							<u-collapse :head-style="headStyle">
 								<u-collapse-item :title="retailOut.materialName">
 									<view class="goods-row">
+										<text class="label">条码：</text>
+										<u-text :text="retailOut.barCode"></u-text>
+									</view>
+									<view class="goods-row">
 										<text class="label">品牌：</text>
 										<u-text :text="retailOut.materialBrand"></u-text>
 										<text class="label">制造商：</text>
 										<u-text :text="retailOut.materialMfrs"></u-text>
+									</view>
+									<view class="goods-row">
+										<text class="label">规格：</text>
+										<u-text :text="retailOut.materialStandard"></u-text>
+										<text class="label">型号：</text>
+										<u-text :text="retailOut.materialModel"></u-text>
 									</view>
 									<u-line :color="$u.color.primary"></u-line>
 								</u-collapse-item>
@@ -97,7 +116,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getRetailOutList } from '@/api/api.js'
+	import { getRetailOutList, getDepotInfo, getMemberBySelect } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('零售统计')
@@ -152,13 +171,60 @@
 		search();
 	}
 
+	//加载仓库列表
+	const selectShow = ref<boolean>(false)
+	const depotShow = ref<boolean>(false)
+	const depotName = ref<string>('');
+	const depotId = ref<any[]>([]);
+	const depotList = ref<ListItem[]>([]);
+
+	const getDepotlList = async () => {
+		const res = await getDepotInfo()
+		if (res && res.code === 200) {
+			depotList.value = res.data.map(item => ({
+				value: item.id.toString() || '',
+				label: item.depotName || ''
+			}));
+		}
+		else {
+			showToast({ title: '仓库加载失败', icon: 'none' });
+		}
+	}
+
+	// 仓库列表确认
+	const depotConfirm = (e : any[]) => {
+		depotName.value = e[0].label;
+		depotId.value = [e[0].value];
+	}
+
+	//加载会员列表
+	const memberShow = ref<boolean>(false)
+	const memberName = ref<string>('');
+	const memberId = ref<string>('');
+	const memberList = ref<ListItem[]>([]);
+	const loadGetmemberlList = async () => {
+		let params = { limit: 1 }
+		const res = await getMemberBySelect(params)
+		if (res) {
+			memberList.value = res.map(item => ({
+				value: item.id.toString() || '',
+				label: item.supplier || ''
+			}));
+		}
+		else {
+			uni.showToast({ title: '会员加载失败', icon: 'none' });
+		}
+	}
+	// 会员列表确认回调函数
+	const memberConfirm = (e : any[]) => {
+		memberName.value = e[0].label;
+		memberId.value = e[0].value;
+	}
 
 	//商品分类选择器
-	const selectShow = ref<boolean>(false)
 	const categoryName = ref<string>('')
 	const categoryId = ref<string>('')
 	const supplierId = ref("");
-	const depotId = ref("");
 	const realityPriceTotal = ref(0);
 
 	const beginTime = ref("");
@@ -169,6 +235,10 @@
 		threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
 		beginTime.value = threeMonthsAgo.toISOString().split('T')[0];
 		endTime.value = new Date().toISOString().split('T')[0];
+		depotId.value = '';
+		depotName.value = '';
+		memberId.value = '';
+		memberName.value = '';
 	};
 	// 定义确认回调函数
 	const beginTimeConfirm = (e : any[]) => {
@@ -197,11 +267,11 @@
 		if (searchname.value) {
 			params.materialParam = searchname.value;
 		}
-		if (supplierId.value) {
-			params.materialParam = supplierId.value;
+		if (memberId.value) {
+			params.organId = memberId.value;
 		}
-		if (depotId.value) {
-			params.depotId = depotId.value;
+		if (depotId.value.length > 0) {
+			params.depotId = depotId.value[0];
 		}
 		const res = await getRetailOutList(params)
 		if (res && res.code === 200) {
@@ -209,7 +279,6 @@
 			retailOutList.value = res.data.rows
 			realityPriceTotal.value = res.data.realityPriceTotal
 			if (listTotal.value == 0) {
-
 				emptyShow.value = true
 				listTotal.value = 1
 
@@ -237,6 +306,8 @@
 
 	onMounted(async () => {
 		initDefaultDates();
+		getDepotlList();
+		loadGetmemberlList();
 		await loadgetretailOutList();
 
 	})
@@ -273,7 +344,7 @@
 	.label {
 		font-size: 28rpx;
 		color: $u-type-primary;
-		width: 220rpx;
+		width: 210rpx;
 		text-align: right;
 		padding-right: 10rpx;
 		//border: solid 1px #ffffff;

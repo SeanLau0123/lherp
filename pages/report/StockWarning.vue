@@ -17,7 +17,14 @@
 								@click="depotShow = true" /></u-form-item>
 						<u-select v-model="depotShow" :list="depotList" :default-value='depotId'
 							@confirm="depotConfirm"></u-select>
-						<u-form-item label="商品信息：">
+						<u-form-item label-align="right" label="商品类别：">
+							<u-select v-model="tkiTreeShow" mode="mutil-column-auto" :list="categoryType"
+								label-name="title" @confirm="tkiTreeParentConfirm"
+								@cancel="tkiTreeParentCancel"></u-select>
+							<u-input type='select' v-model="categoryName" placeholder="请选择类别" :clearable="false"
+								@click="tkiTreeShow = true" />
+						</u-form-item>
+						<u-form-item label-align="right" label="商品信息：">
 							<u-input v-model="searchname" placeholder="请输入名称、条码、助记码查询" /></u-form-item>
 						<u-gap></u-gap>
 						<u-button type="primary" @click="search()">搜索</u-button>
@@ -88,7 +95,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getStockWarning, getDepotInfo } from '@/api/api.js'
+	import { getStockWarning, getDepotInfo, getMaterialCategory } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('库存预警')
@@ -137,6 +144,8 @@
 	}
 	function reset() {
 		searchname.value = '';
+		categoryName.value = '';
+		categoryId.value = '';
 		search();
 	}
 	interface ListItem {
@@ -147,8 +156,20 @@
 	const selectShow = ref<boolean>(false)
 	const depotShow = ref<boolean>(false)
 	const depotName = ref<string>('');
-	const depotId = ref<string>('');
+	const depotId = ref<any[]>([]);
 	const depotList = ref<ListItem[]>([]);
+
+	//商品类别相关变量
+	const tkiTreeShow = ref<boolean>(false)
+	const categoryName = ref<string>('');
+	const categoryId = ref<string>('');
+	interface LinkedListItem {
+		value : number
+		label : string
+		children ?: LinkedListItem[]
+	}
+	const categoryType = ref<LinkedListItem[]>([])
+
 	const getdepotlList = async () => {
 		const res = await getDepotInfo()
 		if (res && res.code === 200) {
@@ -167,10 +188,52 @@
 			uni.showToast({ title: '仓库加载失败', icon: 'none' });
 		}
 	}
+
+	//加载商品类别列表
+	const categoryId_type = ref<Array>([]);
+	const loadCategoryIdTreeData = async () => {
+		let params = { id: '' }
+		const res = await getMaterialCategory(params)
+		if (res && res.length > 0) {
+			categoryType.value = []
+			res.forEach(annItem => {
+				const row = {
+					value: annItem.id,
+					label: annItem.title, // 接口返回title，转换为选择器需要的label
+					children: [] // 初始化子节点数组
+				}
+				// 处理子节点（如果有）
+				if (Array.isArray(annItem.children) && annItem.children.length > 0) {
+					const childList = annItem.children.map(c => ({
+						value: c.id,
+						label: c.title // 子节点同样转换title为label
+					}))
+					row.children = childList
+				}
+				categoryType.value.push(row)
+
+			})
+		}
+		else {
+			uni.showToast({ title: '商品类别加载失败', icon: 'none' });
+		}
+	}
+
+	//商品类别选择确认
+	const tkiTreeParentConfirm = (e : any[]) => {
+		categoryName.value = e[0].label;
+		categoryId.value = e[0].value;
+	}
+
+	//商品类别选择取消
+	const tkiTreeParentCancel = (e : any[]) => {
+		categoryName.value = '';
+		categoryId.value = '';
+	}
 	// 仓库列表确认
 	const depotConfirm = (e : any[]) => {
 		depotName.value = e[0].label;
-		depotId.value = e[0].value;
+		depotId.value = [e[0].value];
 	}
 
 
@@ -186,8 +249,11 @@
 		if (searchname.value) {
 			params.materialParam = searchname.value;
 		}
-		if (depotId.value) {
-			params.materialParam = depotId.value;
+		if (depotId.value.length > 0) {
+			params.depotId = depotId.value[0];
+		}
+		if (categoryId.value) {
+			params.categoryId = categoryId.value;
 		}
 		const res = await getStockWarning(params)
 		if (res && res.code === 200) {
@@ -221,6 +287,7 @@
 
 	onMounted(async () => {
 		await getdepotlList();
+		await loadCategoryIdTreeData();
 		await loadgetStockWarning();
 
 	})

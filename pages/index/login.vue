@@ -21,7 +21,8 @@
 					maxlength="4" fontSize="34rpx" placeholder="请输入验证码" v-model="code"></u-input>
 			</u-col>
 			<u-col span="4">
-				<u-image duration="500" :src="base64Data" width="160rpx" height="60rpx" @click="onRandomImage"></u-image>
+				<u-image duration="500" :src="base64Data" width="160rpx" height="60rpx"
+					@click="onRandomImage"></u-image>
 			</u-col></u-row>
 		<u-row justify="space-between" style="margin-left: 20rpx;margin-top:48rpx;">
 			<u-col span="8">
@@ -44,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-	import { ref, onMounted} from 'vue'
+	import { ref, onMounted } from 'vue'
 	import {
 		ACCESS_TOKEN,
 		USER_ACCOUNT,
@@ -53,8 +54,8 @@
 	import { getPlatformName, getRandomImage, findMenuByPNumber, mLogin } from '@/api/api.js'
 	import md5Libs from "uview-pro/libs/function/md5";
 	import store from '@/store/index.js'
-	import {$u } from 'uview-pro'
-	
+	import { $u } from 'uview-pro'
+
 	const src = ref<string>("https://linghanshop.cn/uploads/attach/2025/11/20251128/c9840ae740abc19c00b3bda853b1abe8.png")
 	const platformName = ref<string>("")
 	const border = ref<boolean>(true)
@@ -127,29 +128,28 @@
 		const menuData = res;
 		uni.setStorageSync('permissionList', menuData);
 	}
-	//登录确认后操作
-	const departConfirm = async (res, loginName) => {
-		if (res.data.msgTip) {
-			//let err = {};
-			if (res.data.msgTip == 'user can login') {
-				getPermissionList()
-				uni.switchTab({
-					url: '/pages/index/index'
-				});
-				showSuccessToast('登录成功！')
-			} else if (res.data.msgTip == 'user is not exist') {
-				showToast('用户不存在!')
-			} else if (res.data.msgTip == 'user password error') {
-				showToast('用户密码不正确!')
-			} else if (res.data.msgTip == 'user is black') {
-				showToast('用户被禁用!')
-			}
-			else if (res.data.msgTip == 'access service error') {
-				showToast('查询服务异常!')
-			}
+	
+	// 登录确认后操作
+	const departConfirm = (response, loginParams) => {
+		// 检查响应码
+		if (response.code === 200 && response.data.msgTip === 'user can login') {
+			getPermissionList()
+			uni.switchTab({
+				url: '/pages/index/index'
+			});
+			showSuccessToast('登录成功！')
+		} else if (response.data.msgTip == 'user is not exist') {
+			showToast('用户不存在!')
+		} else if (response.data.msgTip == 'user password error') {
+			showToast('用户密码不正确!')
+		} else if (response.data.msgTip == 'user is black') {
+			showToast('用户被禁用!')
+		}
+		else if (response.data.msgTip == 'access service error') {
+			showToast('查询服务异常!')
 		}
 		onRandomImage();
-		code.value = ''
+		code.value = '';
 	}
 	const onLogin = async () => {
 		if (!loginName.value || loginName.length == 0) {
@@ -184,24 +184,18 @@
 		try {
 			const response = await store.dispatch('userModule/mLogin', loginParams)
 			departConfirm(response, loginParams)
-		} catch (response) {
-			if (response.code === "200") {
-				// 业务失败：根据不同code提示不同信息
-				switch (response.code) {
-					case 500010:
-						showToast('验证码错误!');
-						break;
-					case 500011:
-						showToast('验证码已失效!');
-						break;
-					default:
-						showToast(`登录失败: ${response.data?.message || '未知错误'}`);
-				}
+		} catch (error) {
+			console.log("登录错误:", error);
+			if (error.code === 500010) {
+				showToast('验证码错误!');
+			} else if (error.code === 500011) {
+				showToast('验证码已失效!');
 			}
 			onRandomImage();
 			code.value = '';
 		}
 	}
+
 	onMounted(async () => {
 		borderColor.value = $u.color.primary;
 		await onPlatformName();

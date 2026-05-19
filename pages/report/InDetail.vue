@@ -123,7 +123,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getInOutDetail, getAllListBySelect } from '@/api/api.js'
+	import { getInOutDetail, getCustomerBySelect } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('入库明细')
@@ -248,7 +248,7 @@
 		let params = {
 			limit: 1
 		}
-		const res = await getAllListBySelect(params)
+		const res = await getCustomerBySelect(params)
 		if (res) {
 			supplierList.value = res.map(item => ({
 				value: item.id.toString(),

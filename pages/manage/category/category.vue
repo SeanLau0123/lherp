@@ -16,16 +16,6 @@
 								placeholder="请输入名称" /></u-form-item></u-col>
 					<u-col span="12">
 						<u-form-item label="上级目录：">
-							<!-- 							<u-action-sheet v-model="tkiTreeShow">
-								<u-action-sheet-item>
-									<scroll-view scroll-y="y" class="scrollviewpadding">
-										<tki-tree ref="tkiTreeParentRef" :selectParent="true" :multiple="false"
-											:range="categoryId_type" @confirm="tkiTreeParentConfirm"
-											rangeKey="name"></tki-tree>
-										<u-divider :color="$u.color.primary">到底了</u-divider>
-									</scroll-view>
-								</u-action-sheet-item>
-							</u-action-sheet> -->
 							<u-select v-model="tkiTreeShow" mode="mutil-column-auto" :list="categoryType"
 								label-name="title" @confirm="tkiTreeParentConfirm"
 								@cancel="tkiTreeParentCancel"></u-select>
@@ -296,9 +286,10 @@
 			})
 		}
 		else {
-			uni.showToast({ title: '数据加载失败', icon: 'none' });
+			showToast({ title: '数据加载失败', icon: 'none' });
 		}
 	}
+	
 </script>
 
 <style lang="scss">

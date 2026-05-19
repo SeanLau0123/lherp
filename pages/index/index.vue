@@ -7,7 +7,7 @@
 		</view>
 		<!-- 轮播 -->
 		<view>
-			<u-swiper height="500rpx" :list="swiperList" interval="5000" :title="true" border-radius="0"></u-swiper>
+			<u-swiper height="500rpx" :list="swiperList" interval="5000" :title="false" border-radius="0"></u-swiper>
 		</view>
 		<scroll-view scroll-y="true">
 			<!-- 常用服务 -->
@@ -87,15 +87,15 @@
 	// 定义轮播图数据
 	const swiperList = ref<SwiperItem[]>([
 		{
-			image: "https://linghanshop.cn/uploads/attach/2025/12/13/7236a0c8fdafdf174edc0bebb657c115.png",
+			image: "https://img.linghanshop.cn/attach/2026/05/2be2c202605131742242415.jpg",
 			title: "昨夜星辰昨夜风，画楼西畔桂堂东",
 		},
 		{
-			image: "https://linghanshop.cn/uploads/attach/2025/12/20251203/1ae2ed7b992b80c2a885d77c3317dca9.png",
+			image: "https://img.linghanshop.cn/attach/2026/05/d76f820260513175254388.jpg",
 			title: "身无彩凤双飞翼，心有灵犀一点通",
 		},
 		{
-			image: "https://linghanshop.cn/uploads/attach/2025/12/03/b836af46efdb76fcaf31d6d72525baf2.png",
+			image: "https://linghanshop.cn/uploads/attach/2026/04/20260429/e20d0e76fb8770ad6cb6e985904100bb.jpg",
 			title: "谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳",
 		},
 	])

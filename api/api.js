@@ -41,6 +41,14 @@ export const findMenuByPNumber = (params, config = {}) => http.post('/function/f
 export const getMaterialList = (params, config = {}) => http.get('/material/list', params, config)
 //根据条码获取商品信息
 export const getMaterialByBarCode = (params, config = {}) => http.get('/material/getMaterialByBarCode', params, config)
+//商品批量设置状态
+export const batchSetStatusMaterial = (params, config = {}) => http.post('/material/batchSetStatus', params, config)
+//删除商品
+export const deleteMaterial = (id, config = {}) => http.delete(`/material/deleteBatch?ids=${id}`, config)
+//获取商品价格扩展信息
+export const getMaterialDetailById = (number, config = {}) => http.get(`/materialsExtend/getDetailList?materialId=${number}`, config)
+//更新商品
+export const updateMaterial = (params, config = {}) => http.put('/material/update', params, config)
 
 //选择商品信息
 export const getMaterialBySelect = (params, config = {}) => http.get('/material/findBySelect', params, config)
@@ -48,8 +56,6 @@ export const getMaterialBySelect = (params, config = {}) => http.get('/material/
 export const getMaterialCategory = (params, config = {}) => http.get('/materialCategory/getMaterialCategoryTree', params, config)
 //根据ID获取商品类型
 export const getMaterialCategoryById = (params, config = {}) => http.get('/materialCategory/findById', params, config)
-
-
 //商品类型更新
 export const updateCategory = (params, config = {}) => http.put('/materialCategory/update', params, config)
 //商品类型删除
@@ -61,7 +67,7 @@ export const addCategory = (params, config = {}) => http.post('/materialCategory
 //获取供应商，客户，会员信息
 export const getPartnerlList = (params, config = {}) => http.get('/supplier/list', params, config)
 //客户选择器
-export const getAllListBySelect = (params, config = {}) => http.post('/supplier/findBySelect_cus', params, config)
+export const getCustomerBySelect = (params, config = {}) => http.post('/supplier/findBySelect_cus', params, config)
 //供应商选择器
 export const getSupplierBySelect = (params, config = {}) => http.post('/supplier/findBySelect_sup', params, config)
 //会员选择器
@@ -113,6 +119,8 @@ export const getStatementAccountList = (params, config = {}) => http.get('/depot
 export const getAccountList = (params, config = {}) => http.get('/account/listWithBalance', params, config)
 //获取结算账户信息余额的统计
 export const getAccountListStatistics = (params, config = {}) => http.get('/account/getStatistics', params, config)
+//获取查看账户流水
+export const getAccountInOutList = (params, config = {}) => http.get('/account/findAccountInOutList', params, config)
 //获取入库明细,出库明细
 export const getInOutDetail = (params, config = {}) => http.get('/depotHead/findInOutDetail', params, config)
 //获取入库汇总,出库汇总

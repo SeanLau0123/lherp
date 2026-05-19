@@ -1,7 +1,7 @@
-<!-- 报表-查看商品库存流水-库存流水 -->
+<!-- 报表-查看账户流水- -->
 <template>
 	<view style="min-height: 100vh;">
-		<u-navbar :is-back="true" :title="title" title-color='#ffffff' back-icon-color='#ffffff'
+		<u-navbar :is-back="true" :title="title" title-width="500" title-color='#ffffff' back-icon-color='#ffffff'
 			:background="background">
 			<view class="navbar-right-icon">
 				<u-icon name='search' @click="popupShow = true" color="#ffffff" size="48rpx" label-pos="right"></u-icon>
@@ -31,27 +31,19 @@
 					</u-form>
 				</view>
 			</u-popup>
-			<view style="min-height: 80rpx;" v-for="(material, index) in DetailList" :key="material.depotId || index">
+			<view style="min-height: 80rpx;" v-for="(account, index) in DetailList" :key="account.depotId || index">
 				<view class="good-item">
 					<u-row gutter="10">
 						<u-col span="12">
 							<u-collapse :head-style="headStyle">
-								<u-collapse-item :title="material.type">
+								<u-collapse-item :title="account.type">
 									<view class="goods-row">
 										<text class="label">单据编号：</text>
-										<text class="value">{{ material.number }}</text>
+										<text class="value">{{ account.number }}</text>
 									</view>
 									<view class="goods-row">
-										<text class="label">条码：</text>
-										<text class="value">{{ material.barCode }}</text>
-									</view>
-									<view class="goods-row">
-										<text class="label">名称：</text>
-										<text class="value">{{ material.materialName }}</text>
-									</view>
-									<view class="goods-row">
-										<text class="label">仓库名称：</text>
-										<text class="value">{{ material.depotName }}</text>
+										<text class="label">单位信息：</text>
+										<text class="value">{{ account.supplierName }}</text>
 									</view>
 									<u-line :color="$u.color.primary"></u-line>
 								</u-collapse-item>
@@ -59,22 +51,20 @@
 						</u-col>
 						<u-col span="12">
 							<view class="goods-row">
-								<text class="label">单价：</text>
-								<u-text mode="price" :text="material.unitPrice"></u-text>
-								<text class="label">数量：</text>
-								<text class="value">{{ material.basicNumber || '-' }}</text>
+								<text class="label">金额：</text>
+								<u-text mode="price" :text="account.changeAmount"></u-text>
 							</view>
 						</u-col>
 						<u-col span="12">
 							<view class="goods-row">
-								<text class="label">库存金额：</text>
-								<u-text mode="price" :text="material.allPrice"></u-text>
+								<text class="label">余额：</text>
+								<u-text mode="price" :text="account.balance"></u-text>
 							</view>
 						</u-col>
 						<u-col span="12">
 							<view class="goods-row">
 								<text class="label">日期：</text>
-								<u-text :text="material.operTime"></u-text>
+								<u-text :text="account.operTime"></u-text>
 							</view>
 						</u-col>
 					</u-row>
@@ -88,9 +78,9 @@
 	import { ref, reactive, onMounted, watch } from 'vue'
 	import { onLoad } from '@dcloudio/uni-app';
 	import { $u, useTheme } from 'uview-pro'
-	import { getMaterialStockRecord } from '@/api/api.js'
+	import { getAccountInOutList } from '@/api/api.js'
 	const { currentTheme, themes, darkMode } = useTheme();
-	const title = ref<string>('库存流水')
+	const title = ref<string>('账户流水')
 	const background = reactive({
 		backgroundColor: ""
 	})
@@ -155,7 +145,7 @@
 
 	function search() {
 		popupShow.value = false;
-		loadRecord();
+		loadInOutList();
 	}
 	function reset() {
 		number.value = '';
@@ -164,21 +154,24 @@
 	}
 	//获取库存分布详情
 	const show = ref<boolean>(true)
-	const materialId = ref<string>('')
+	const accountId = ref<string>('')
+
+	const accountName = ref<string>('');
+
 	const number = ref<string>('');
 	const DetailList = ref<any>('');
 	const total = ref<number>(1);
-	const loadRecord = async () => {
+	const loadInOutList = async () => {
 		let params = {
-			depotIds: '',
-			materialId: materialId.value || '1290',
+			initialAmount: '0',
+			accountId: accountId.value || '',
 			number: number.value,
 			beginTime: beginTime.value,
 			endTime: endTime.value,
 			currentPage: 1,
 			pageSize: 10
 		}
-		const res = await getMaterialStockRecord(params)
+		const res = await getAccountInOutList(params)
 		if (res && res.code === 200) {
 			total.value = res.data.total
 			DetailList.value = res.data.rows
@@ -189,10 +182,13 @@
 	}
 
 	onLoad((options) => {
-		loadRecord();
-		if (options && options.materialId) {
-			materialId.value = options.materialId;
-			loadRecord();
+		if (options && options.id) {
+			accountId.value = options.id;
+			accountName.value = options.name;
+			if (accountName.value) {
+				title.value = `账户流水-${accountName.value}`;
+			}
+			loadInOutList();
 		} else {
 			console.warn("未接收到单号参数");
 		}

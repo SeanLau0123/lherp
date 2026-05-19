@@ -18,19 +18,28 @@
 			<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="14">
 				<view class="popup-title">
 					<u-form label-width="160rpx">
-						<u-form-item label="商品信息：">
+						<u-form-item label-align="right" label="商品信息：">
 							<u-input v-model="searchname" placeholder="请输入名称、条码、助记码查询" /></u-form-item>
-						<u-form-item label="开始时间：">
+						<u-form-item label-align="right" label="开始时间：">
 							<u-input v-model="beginTime" :type="type" placeholder="请选择开始时间"
 								@click="pickBeginDateShow = true" />
 							<u-picker v-model="pickBeginDateShow" mode="time" :default-time="beginTime"
 								@confirm="beginTimeConfirm"></u-picker>
 						</u-form-item>
-						<u-form-item label="结束时间：">
+						<u-form-item label-align="right" label="结束时间：">
 							<u-input v-model="endTime" :type="type" placeholder="请选择结束时间"
 								@click="pickEndDateShow = true" />
 							<u-picker v-model="pickEndDateShow" mode="time" :default-time="endTime"
 								@confirm="endTimeConfirm"></u-picker></u-form-item>
+						<u-form-item label-align="right" label="仓库：">
+							<u-input v-model="depotName" :type="type" placeholder="请选择仓库" @click="depotShow = true" />
+							<u-select v-model="depotShow" :list="depotList"
+								@confirm="depotConfirm"></u-select></u-form-item>
+						<u-form-item label-align="right" label="供应商：">
+							<u-input v-model="supplierName" :type="type" placeholder="请选择供应商"
+								@click="supplierShow = true" />
+							<u-select v-model="supplierShow" :list="supplierList"
+								@confirm="supplierConfirm"></u-select></u-form-item>
 						<u-gap></u-gap>
 						<u-button type="primary" @click="search()">搜索</u-button>
 						<u-gap></u-gap>
@@ -97,7 +106,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getbuyInList } from '@/api/api.js'
+	import { getbuyInList, getDepotInfo, getSupplierBySelect } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('采购统计')
@@ -151,14 +160,58 @@
 		initDefaultDates();
 		search();
 	}
+	//加载仓库列表
+	const selectShow = ref<boolean>(false)
+	const depotShow = ref<boolean>(false)
+	const depotName = ref<string>('');
+	const depotId = ref<any[]>([]);
+	const depotList = ref<ListItem[]>([]);
 
+	const getDepotlList = async () => {
+		const res = await getDepotInfo()
+		if (res && res.code === 200) {
+			depotList.value = res.data.map(item => ({
+				value: item.id.toString() || '',
+				label: item.depotName || ''
+			}));
+		}
+		else {
+			showToast({ title: '仓库加载失败', icon: 'none' });
+		}
+	}
+
+	// 仓库列表确认
+	const depotConfirm = (e : any[]) => {
+		depotName.value = e[0].label;
+		depotId.value = [e[0].value];
+	}
+	//加载供应商列表
+	const supplierShow = ref<boolean>(false)
+	const supplierName = ref<string>('');
+	const supplierId = ref<string[]>([]);
+	const supplierList = ref<ListItem[]>([]);
+	const loadGetSupplierlList = async () => {
+		let params = { limit: 1 }
+		const res = await getSupplierBySelect(params)
+		if (res && res.length > 0) {
+			supplierList.value = res.map(item => ({
+				value: item.id.toString(),
+				label: item.supplier
+			}));
+		}
+		else {
+			uni.showToast({ title: '供应商加载失败', icon: 'none' });
+		}
+	}
+	// 定义确认回调函数
+	const supplierConfirm = (e : any[]) => {
+		supplierName.value = e[0].label;
+		supplierId.value = [e[0].value];
+	}
 
 	//商品分类选择器
-	const selectShow = ref<boolean>(false)
 	const categoryName = ref<string>('')
 	const categoryId = ref<string>('')
-	const supplierId = ref("");
-	const depotId = ref("");
 	const realityPriceTotal = ref(0);
 
 	const beginTime = ref("");
@@ -169,6 +222,10 @@
 		threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
 		beginTime.value = threeMonthsAgo.toISOString().split('T')[0];
 		endTime.value = new Date().toISOString().split('T')[0];
+		supplierId.value = '';
+		supplierName.value = '';
+		depotId.value = '';
+		depotName.value = '';
 	};
 	// 定义确认回调函数
 	const beginTimeConfirm = (e : any[]) => {
@@ -183,10 +240,6 @@
 		endTime.value = formattedDate
 	}
 
-
-
-
-
 	const buyInList = ref<Array>([]);
 	const searchname = ref<string>('');
 	const loadGetbuyInList = async () => {
@@ -198,13 +251,11 @@
 			endTime: endTime.value,
 			mpList: ''
 		}
-
-
 		if (searchname.value) {
 			params.materialParam = searchname.value;
 		}
 		if (supplierId.value) {
-			params.materialParam = supplierId.value;
+			params.organId = supplierId.value;
 		}
 		if (depotId.value) {
 			params.depotId = depotId.value;
@@ -243,6 +294,8 @@
 
 	onMounted(async () => {
 		initDefaultDates();
+		getDepotlList();
+		loadGetSupplierlList();
 		await loadGetbuyInList();
 
 	})

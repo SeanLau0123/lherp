@@ -211,7 +211,7 @@
 	import type { FormRules } from 'uview-pro/types/global';
 	import {USER_INFO} from "@/common/util/constants";
 	import {
-		getAllListBySelect, getOrderNumber, getAllAccount, getDepotInfo,
+		getCustomerBySelect, getOrderNumber, getAllAccount, getDepotInfo,
 		addSaveOrder, getInOutDetailById, getMaterialListByNumber, updateSaleOut, getMaterialByBarCode,
 		getSupplierBySelect
 	} from '@/api/api.js'

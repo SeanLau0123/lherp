@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "echarts": "^6.0.0",
-    "uview-pro": "^0.5.12"
+    "md5-file": "^5.0.0",
+    "uview-pro": "^0.5.17"
   },
   "devDependencies": {
     "@uni-ku/root": "^1.4.1"

@@ -101,7 +101,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getStatementAccountList, getAllListBySelect } from '@/api/api.js'
+	import { getStatementAccountList, getCustomerBySelect } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('客户对账')
@@ -176,6 +176,8 @@
 		debType.value = '有欠款';
 		customerName.value = "";
 		customerId.value = [];
+		depotId.value = '';
+		depotName.value = '';
 
 	};
 	// 定义确认回调函数
@@ -214,7 +216,7 @@
 	const customerList = ref<ListItem[]>([]);
 	const loadGetCustomerlList = async () => {
 		let params = { limit: 1 }
-		const res = await getAllListBySelect(params)
+		const res = await getCustomerBySelect(params)
 		if (res) {
 			customerList.value = res.map(item => ({
 				value: item.id.toString() || '',

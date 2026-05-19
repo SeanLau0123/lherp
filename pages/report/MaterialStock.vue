@@ -20,8 +20,17 @@
 			<u-popup v-model="popupShow" mode="right" width="600rpx" height="300px" border-radius="14">
 				<view class="popup-title">
 					<u-form label-width="160rpx">
-						<u-form-item label="商品信息：">
+						<u-form-item label-align="right" label="仓库：">
+							<u-input v-model="depotName" :type="type" placeholder="请选择仓库" @click="depotShow = true" />
+							<u-select v-model="depotShow" :list="depotList"
+								@confirm="depotConfirm"></u-select></u-form-item>
+						<u-form-item label-align="right" label="商品信息：">
 							<u-input v-model="searchname" placeholder="请输入名称、条码、助记码查询" /></u-form-item>
+						<u-form-item label-align="right" label="零库存：">
+							<u-input v-model="zeroStockType" :type="type" @click="zeroStockShow = true" />
+							<u-select v-model="zeroStockShow" :list="zeroStockList" :default-value='zeroStockselected'
+								@confirm="zeroStockTypeConfirm"></u-select>
+						</u-form-item>
 						<u-gap></u-gap>
 						<u-button type="primary" @click="search()">搜索</u-button>
 						<u-gap></u-gap>
@@ -104,7 +113,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getMaterialStock } from '@/api/api.js'
+	import { getMaterialStock, getDepotInfo } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('商品库存')
@@ -153,20 +162,60 @@
 	}
 	function reset() {
 		searchname.value = '';
+		initDefaultDates();
 		search();
+	}
+	const initDefaultDates = () => {
+		zeroStockselected.value = [0];
+		zeroStockType.value = '隐藏';
+		depotId.value = '';
+		depotName.value = '';
+		
+	};
+	//加载仓库列表
+	const selectShow = ref<boolean>(false)
+	const depotShow = ref<boolean>(false)
+	const depotName = ref<string>('');
+	const depotId = ref<any[]>([]);
+	const depotList = ref<ListItem[]>([]);
+
+	const getdepotlList = async () => {
+		const res = await getDepotInfo()
+		if (res && res.code === 200) {
+			depotList.value = res.data.map(item => ({
+				value: item.id.toString() || '',
+				label: item.depotName || ''
+			}));
+		}
+		else {
+			showToast({ title: '仓库加载失败', icon: 'none' });
+		}
+	}
+
+	// 仓库列表确认
+	const depotConfirm = (e : any[]) => {
+		depotName.value = e[0].label;
+		depotId.value = [e[0].value];
+	}
+
+	const zeroStockShow = ref<boolean>(false)
+	const zeroStockType = ref<string>('');
+	const zeroStockselected = ref<string[]>([]);
+	interface ListItem {
+		value : string
+		label : string
+	}
+	const zeroStockList = ref<ListItem[]>([
+		{ label: '隐藏', value: '0' }, { label: '显示', value: '1' }])
+	// 定义确认回调函数
+	const zeroStockTypeConfirm = (e : any[]) => {
+		zeroStockType.value = e[0].label;
+		zeroStockselected.value = [e[0].value];
 	}
 
 
-	//商品分类选择器
-	const selectShow = ref<boolean>(false)
-	const categoryName = ref<string>('')
-	const categoryId = ref<string>('')
-	const supplierId = ref("");
-	const depotId = ref("");
 	const currentStock = ref(0);
 	const currentStockPrice = ref(0);
-
-
 	const materialStockList = ref<Array>([]);
 	const searchname = ref<string>('');
 	const loadgetMaterialStock = async () => {
@@ -174,18 +223,15 @@
 			currentPage: current.value,
 			pageSize: pageSize.value,
 			materialParam: '',
-			position:'',
-			zeroStock:'0',
+			position: '',
+			zeroStock: zeroStockselected.value,
 			mpList: '扩展1,扩展2,扩展3'
 		}
 		if (searchname.value) {
 			params.materialParam = searchname.value;
 		}
-		if (supplierId.value) {
-			params.materialParam = supplierId.value;
-		}
-		if (depotId.value) {
-			params.depotId = depotId.value;
+		if (depotId.value.length > 0) {
+			params.depotIds = depotId.value[0];
 		}
 		const res = await getMaterialStock(params)
 		if (res && res.code === 200) {
@@ -204,7 +250,7 @@
 			uni.showToast({ title: '数据加载失败', icon: 'none' });
 		}
 	}
-	
+
 	//查看库存流水
 	function lookRecord(materialId : string) {
 		uni.$u.route('pages/report/InventoryRecord',
@@ -213,7 +259,7 @@
 			});
 	}
 	//查看库存分布
-	function lookDetail(barCode : string, materialName : string,materialId : string, unitPrice : string) {
+	function lookDetail(barCode : string, materialName : string, materialId : string, unitPrice : string) {
 		uni.$u.route('pages/report/InventoryDetail',
 			{
 				barCode: barCode,
@@ -222,7 +268,7 @@
 				unitPrice: unitPrice
 			});
 	}
-	
+
 	//分页切换
 	const current = ref<number>(1);
 	const pageSize = ref<number>(20);
@@ -238,6 +284,8 @@
 	}
 
 	onMounted(async () => {
+		initDefaultDates();
+		await getdepotlList();
 		await loadgetMaterialStock();
 
 	})

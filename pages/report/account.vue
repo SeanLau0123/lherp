@@ -58,7 +58,7 @@
 							</view>
 							<view class="goods-row">
 								<u-text :bold="true" type="primary" decoration="underline"
-									@click="goToAccountFlow(item.id)">流水</u-text>
+									@click="goToAccountFlow(item.id,item.name)">流水</u-text>
 							</view>
 						</u-col>
 					</u-row>
@@ -76,7 +76,7 @@
 	import { getAccountList, getAccountListStatistics } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
-	const title = ref<string>('账户统计')
+	const title = ref<string>('账户统计') 
 	const background = reactive({
 		backgroundColor: ""
 	})
@@ -179,10 +179,10 @@
 	}
 
 	//新增：跳转到账户流水页面
-	function goToAccountFlow(id) {
-		console.log('跳转到账户流水页面', id)
-		uni.$u.route('pages/account/flow/RetailReturnDetail',
-			{ id: id });
+	function goToAccountFlow(id,name) {
+		uni.$u.route('pages/report/AccountStatement',
+			{ id: id,
+			 name:name});
 	}
 	onMounted(async () => {
 		loadgetAccountList();

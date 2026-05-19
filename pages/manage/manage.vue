@@ -55,7 +55,7 @@
 	const systemList = ref<string>([])
 	// 初始化物料列表
 	const initMaterialList = () => {
-		// 从本地缓存获取权限列表
+		//从本地缓存获取权限列表
 		const permissionList = uni.getStorageSync("permissionList");
 		const data = []
 		const sysdata = []

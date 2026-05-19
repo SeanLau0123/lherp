@@ -31,6 +31,15 @@
 								@click="pickEndDateShow = true" />
 							<u-picker v-model="pickEndDateShow" mode="time" :default-time="endTime"
 								@confirm="endTimeConfirm"></u-picker></u-form-item>
+						<u-form-item label-align="right" label="客户：">
+							<u-input v-model="customerName" :type="type" placeholder="请选择客户"
+								@click="customerShow = true" />
+							<u-select v-model="customerShow" :list="customerList" :default-value='customerId'
+								@confirm="customerConfirm"></u-select></u-form-item>
+						<u-form-item label-align="right" label="仓库：">
+							<u-input v-model="depotName" :type="type" placeholder="请选择仓库" @click="depotShow = true" />
+							<u-select v-model="depotShow" :list="depotList"
+								@confirm="depotConfirm"></u-select></u-form-item>
 						<u-gap></u-gap>
 						<u-button type="primary" @click="search()">搜索</u-button>
 						<u-gap></u-gap>
@@ -97,7 +106,7 @@
 </template>
 <script setup lang="ts">
 	import { ref, reactive, onMounted, watch } from 'vue'
-	import { getSaleOutList } from '@/api/api.js'
+	import { getSaleOutList, getCustomerBySelect, getDepotInfo } from '@/api/api.js'
 	import { $u, useTheme } from 'uview-pro'
 	const { currentTheme, themes, darkMode } = useTheme();
 	const title = ref<string>('销售统计')
@@ -151,14 +160,59 @@
 		initDefaultDates();
 		search();
 	}
-
-
-	//商品分类选择器
+	//加载仓库列表
 	const selectShow = ref<boolean>(false)
+	const depotShow = ref<boolean>(false)
+	const depotName = ref<string>('');
+	const depotId = ref<any[]>([]);
+	const depotList = ref<ListItem[]>([]);
+
+	const getDepotlList = async () => {
+		const res = await getDepotInfo()
+		if (res && res.code === 200) {
+			depotList.value = res.data.map(item => ({
+				value: item.id.toString() || '',
+				label: item.depotName || ''
+			}));
+		}
+		else {
+			showToast({ title: '仓库加载失败', icon: 'none' });
+		}
+	}
+
+	// 仓库列表确认
+	const depotConfirm = (e : any[]) => {
+		depotName.value = e[0].label;
+		depotId.value = [e[0].value];
+	}
+
+	//加载客户列表
+	const customerShow = ref<boolean>(false)
+	const customerName = ref<string>('');
+	const customerId = ref<string[]>([]);
+	const customerList = ref<ListItem[]>([]);
+	const loadGetCustomerlList = async () => {
+		let params = { limit: 1 }
+		const res = await getCustomerBySelect(params)
+		if (res) {
+			customerList.value = res.map(item => ({
+				value: item.id.toString() || '',
+				label: item.supplier || ''
+			}));
+		}
+		else {
+			uni.showToast({ title: '客户加载失败', icon: 'none' });
+		}
+	}
+	// 定义确认回调函数
+	const customerConfirm = (e : any[]) => {
+		customerName.value = e[0].label;
+		customerId.value = [e[0].value];
+	}
+	//商品分类选择器
 	const categoryName = ref<string>('')
 	const categoryId = ref<string>('')
 	const supplierId = ref("");
-	const depotId = ref("");
 	const realityPriceTotal = ref(0);
 
 	const beginTime = ref("");
@@ -169,6 +223,10 @@
 		threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
 		beginTime.value = threeMonthsAgo.toISOString().split('T')[0];
 		endTime.value = new Date().toISOString().split('T')[0];
+		customerName.value = "";
+		customerId.value = [];
+		depotName.value = "";
+		depotId.value = [];
 	};
 	// 定义确认回调函数
 	const beginTimeConfirm = (e : any[]) => {
@@ -182,10 +240,6 @@
 		const formattedDate = `${e.year}-${e.month}-${e.day}`;
 		endTime.value = formattedDate
 	}
-
-
-
-
 
 	const saleOutList = ref<Array>([]);
 	const searchname = ref<string>('');
@@ -201,11 +255,11 @@
 		if (searchname.value) {
 			params.materialParam = searchname.value;
 		}
-		if (supplierId.value) {
-			params.materialParam = supplierId.value;
+		if (customerId.value) {
+			params.organId = customerId.value;
 		}
-		if (depotId.value) {
-			params.depotId = depotId.value;
+		if (depotId.value.length > 0) {
+			params.depotId = depotId.value[0];
 		}
 		const res = await getSaleOutList(params)
 		if (res && res.code === 200) {
@@ -241,6 +295,8 @@
 
 	onMounted(async () => {
 		initDefaultDates();
+		getDepotlList();
+		loadGetCustomerlList();
 		await loadgetsaleOutList();
 
 	})

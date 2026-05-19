@@ -211,7 +211,7 @@
 	import type { FormRules } from 'uview-pro/types/global';
 	import {USER_INFO} from "@/common/util/constants";
 	import {
-		getAllListBySelect, getOrderNumber, getAllAccount, getDepotInfo,
+		getCustomerBySelect, getOrderNumber, getAllAccount, getDepotInfo,
 		addSaveOrder, getInOutDetailById, getMaterialListByNumber, updateSaleOut, getMaterialByBarCode
 	} from '@/api/api.js'
 	const { currentTheme, themes, darkMode } = useTheme();
@@ -269,7 +269,7 @@
 	const supplierList = ref<ListItem[]>([]);
 	const loadGetMemberList = async () => {
 		let params = { limit: 1 }
-		const res = await getAllListBySelect(params)
+		const res = await getCustomerBySelect(params)
 		if (res) {
 			supplierList.value = res.map(item => ({
 				value: item.id.toString() || '',

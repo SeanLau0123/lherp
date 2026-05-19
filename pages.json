@@ -224,7 +224,8 @@
 			"style": {
 				"navigationBarTitleText": ""
 			}
-		}, {
+		},
+		{
 			"path": "pages/manage/members/members",
 			"style": {
 				"navigationBarTitleText": ""
@@ -307,7 +308,7 @@
 			"style": {
 				"navigationBarTitleText": ""
 			}
-		}, 
+		},
 		{
 			"path": "pages/openorder/PurchaseReturn/PurchaseReturnDetail",
 			"style": {
@@ -403,7 +404,8 @@
 			"style": {
 				"navigationBarTitleText": ""
 			}
-		}, {
+		},
+		{
 			"path": "pages/openorder/InboundOrder/InboundOrder",
 			"style": {
 				"navigationBarTitleText": ""
@@ -460,6 +462,18 @@
 			"style": {
 				"navigationBarTitleText": ""
 			}
+		},
+		{
+			"path": "pages/report/AccountStatement",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/manage/material/AddMaterial",
+			"style": {
+				"navigationBarTitleText": ""
+			}
 		}
 	],
 	"easycom": {
@@ -484,7 +498,8 @@
 		"backgroundColor": "#ffffff",
 		"borderStyle": "false",
 		"custom": true,
-		"list": [{
+		"list": [
+			{
 				"pagePath": "pages/index/index",
 				"text": "首页"
 			},
